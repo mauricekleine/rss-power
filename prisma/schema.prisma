@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id String @id @default(cuid())
+
+  email String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  feeds    Channel[]
+  password Password?
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model Channel {
+  id String @id @default(cuid())
+
+  description String
+  link        String
+  origin      String @unique
+  title       String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  imageId String?
+  image   Image?        @relation(fields: [imageId], references: [id])
+  items   ChannelItem[]
+  users   User[]
+
+}
+
+model ChannelItem {
+  id String @id @default(cuid())
+
+  description String
+  link        String    @unique
+  pubDate     DateTime?
+  title       String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channelId String
+  image     Image?  @relation(fields: [imageId], references: [id])
+  imageId   String?
+}
+
+model Image {
+  id String @id @default(cuid())
+
+  link  String?
+  title String?
+  url   String  @unique
+
+  channels Channel[]
+  items    ChannelItem[]
+}
