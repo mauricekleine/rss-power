@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "gimme@feedz.io";
+  const email = "test@rsspower.com";
 
   // cleanup the existing database
   await prisma.channel.deleteMany();
@@ -12,7 +12,7 @@ async function seed() {
   await prisma.image.deleteMany();
   await prisma.user.deleteMany();
 
-  const hashedPassword = await bcrypt.hash("feedzarefun", 10);
+  const hashedPassword = await bcrypt.hash("rssisfun", 10);
 
   const user = await prisma.user.create({
     data: {
