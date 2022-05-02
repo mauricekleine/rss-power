@@ -1,30 +1,19 @@
-# Remix Blues Stack
+# RSS Power
 
-![The Remix Blues Stack](https://repository-images.githubusercontent.com/461012689/37d5bd8b-fa9c-4ab0-893c-f0a199d5012d)
+The power of RSS
 
-Learn more about [Remix Stacks](https://remix.run/stacks).
+## Installation
 
-```
-npx create-remix --template remix-run/blues-stack
-```
+- Instal dependencies:
 
-## What's in the stack
+  ```sh
+  npm run i
+  ```
 
-- [Multi-region Fly app deployment](https://fly.io/docs/reference/scaling/) with [Docker](https://www.docker.com/)
-- [Multi-region Fly PostgreSQL Cluster](https://fly.io/docs/getting-started/multi-region-databases/)
-- Healthcheck endpoint for [Fly backups region fallbacks](https://fly.io/docs/reference/configuration/#services-http_checks)
-- [GitHub Actions](https://github.com/features/actions) for deploy on merge to production and staging environments
-- Email/Password Authentication with [cookie-based sessions](https://remix.run/docs/en/v1/api/remix#createcookiesessionstorage)
-- Database ORM with [Prisma](https://prisma.io)
-- Styling with [Tailwind](https://tailwindcss.com/)
-- End-to-end testing with [Cypress](https://cypress.io)
-- Local third party request mocking with [MSW](https://mswjs.io)
-- Unit testing with [Vitest](https://vitest.dev) and [Testing Library](https://testing-library.com)
-- Code formatting with [Prettier](https://prettier.io)
-- Linting with [ESLint](https://eslint.org)
-- Static Types with [TypeScript](https://typescriptlang.org)
-
-Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --template your/repo`! Make it your own.
+- Set up env variables:
+  ```sh
+  cp ./env.example ./env
+  ```
 
 ## Development
 
@@ -58,18 +47,8 @@ This starts your app in development mode, rebuilding assets on file changes.
 
 The database seed script creates a new user with some data you can use to get started:
 
-- Email: `rachel@remix.run`
-- Password: `racheliscool`
-
-If you'd prefer not to use Docker, you can also use Fly's Wireguard VPN to connect to a development database (or even your production database). You can find the instructions to set up Wireguard [here](https://fly.io/docs/reference/private-networking/#install-your-wireguard-app), and the instructions for creating a development database [here](https://fly.io/docs/reference/postgres/).
-
-### Relevant code:
-
-This is a pretty simple note-taking app, but it's a good example of how you can build a full stack app with Prisma and Remix. The main functionality is creating users, logging in and out, and creating and deleting notes.
-
-- creating users, and logging in and out [./app/models/user.server.ts](./app/models/user.server.ts)
-- user sessions, and verifying them [./app/session.server.ts](./app/session.server.ts)
-- creating, and deleting notes [./app/models/note.server.ts](./app/models/note.server.ts)
+- Email: `test@rsspower.com`
+- Password: `rssisfun`
 
 ## Deployment
 
@@ -201,3 +180,27 @@ This project uses ESLint for linting. That is configured in `.eslintrc.js`.
 ### Formatting
 
 We use [Prettier](https://prettier.io/) for auto-formatting in this project. It's recommended to install an editor plugin (like the [VSCode Prettier plugin](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)) to get auto-formatting on save. There's also a `npm run format` script you can run to format all files in the project.
+
+## Remix Blues Stack
+
+This app is bootstrapped using [Remix Stacks](https://remix.run/stacks).
+
+```
+npx create-remix --template remix-run/blues-stack
+```
+
+### What's in the stack
+
+- [Multi-region Fly app deployment](https://fly.io/docs/reference/scaling/) with [Docker](https://www.docker.com/)
+- [Multi-region Fly PostgreSQL Cluster](https://fly.io/docs/getting-started/multi-region-databases/)
+- Healthcheck endpoint for [Fly backups region fallbacks](https://fly.io/docs/reference/configuration/#services-http_checks)
+- [GitHub Actions](https://github.com/features/actions) for deploy on merge to production and staging environments
+- Email/Password Authentication with [cookie-based sessions](https://remix.run/docs/en/v1/api/remix#createcookiesessionstorage)
+- Database ORM with [Prisma](https://prisma.io)
+- Styling with [Tailwind](https://tailwindcss.com/)
+- End-to-end testing with [Cypress](https://cypress.io)
+- Local third party request mocking with [MSW](https://mswjs.io)
+- Unit testing with [Vitest](https://vitest.dev) and [Testing Library](https://testing-library.com)
+- Code formatting with [Prettier](https://prettier.io)
+- Linting with [ESLint](https://eslint.org)
+- Static Types with [TypeScript](https://typescriptlang.org)
