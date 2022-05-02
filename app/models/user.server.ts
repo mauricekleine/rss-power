@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
-import type { Password, User } from "~/generated/prisma";
+import type { Password, User } from "@prisma/client";
 
-export type { User } from "~/generated/prisma";
+export type { User } from "@prisma/client";
 
 export async function getUserById(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });

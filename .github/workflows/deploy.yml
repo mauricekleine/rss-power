@@ -22,21 +22,11 @@ jobs:
         with:
           node-version: 16
 
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.1.0
-        with:
-          version: 6.0.2
-          run_install: true
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
 
       - name: 🔬 Lint
-        run: pnpm run lint
+        run: npm run lint
 
   typecheck:
     name: ʦ TypeScript
@@ -53,21 +43,11 @@ jobs:
         with:
           node-version: 16
 
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.1.0
-        with:
-          version: 6.0.2
-          run_install: true
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
 
       - name: 🔎 Type check
-        run: pnpm run typecheck --if-present
+        run: npm run typecheck --if-present
 
   vitest:
     name: ⚡ Vitest
@@ -84,21 +64,11 @@ jobs:
         with:
           node-version: 16
 
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.1.0
-        with:
-          version: 6.0.2
-          run_install: true
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
 
       - name: ⚡ Run vitest
-        run: pnpm run test -- --coverage
+        run: npm run test -- --coverage
 
   cypress:
     name: ⚫️ Cypress
@@ -118,10 +88,8 @@ jobs:
         with:
           node-version: 16
 
-      - uses: pnpm/action-setup@v2.1.0
-        with:
-          version: 6.0.2
-          run_install: true
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
 
       - name: 🐳 Docker compose
         # the sleep is just there to give time for postgres to get started
@@ -130,16 +98,15 @@ jobs:
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
 
       - name: 🛠 Setup Database
-        run: pnpx prisma migrate reset --force
+        run: npx prisma migrate reset --force
 
       - name: ⚙️ Build
-        run: pnpm run build
+        run: npm run build
 
       - name: 🌳 Cypress run
         uses: cypress-io/github-action@v3
         with:
-          install: false
-          start: pnpm run start:mocks
+          start: npm run start:mocks
           wait-on: "http://localhost:8811"
         env:
           PORT: "8811"

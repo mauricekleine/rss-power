@@ -1,4 +1,4 @@
-name: 15-minute-cron
+name: update-feeds
 on:
   schedule:
     - cron: "*/5 * * * *"
@@ -9,5 +9,5 @@ jobs:
       - name: Call our API route
         run: |
           curl --request POST \
-          --url 'https://yoursite.com/api/cron' \
+          --url 'https://rsspower.com/api/feeds/update' \
           --header 'Authorization: Bearer ${{ secrets.API_SECRET_KEY }}'
