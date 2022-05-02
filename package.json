@@ -34,6 +34,7 @@
   },
   "prettier": {},
   "eslintIgnore": [
+    "/app/generated",
     "/node_modules",
     "/build",
     "/public/build"
