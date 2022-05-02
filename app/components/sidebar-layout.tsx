@@ -6,8 +6,8 @@ import { Fragment, useState } from "react";
 
 import SidebarChannelLink from "./sidebar-channel-link";
 
-import type { User } from "prisma/client";
 import type { getChannelsForUserId } from "~/models/channel.server";
+import type { User } from "~/models/user.server";
 
 type Props = {
   channels: Awaited<ReturnType<typeof getChannelsForUserId>>;
