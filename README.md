@@ -4,17 +4,15 @@ The power of RSS
 
 ## Installation
 
-This project uses [pnpm](pnpm.io/), see the website on how to install it.
-
 - Instal dependencies:
 
   ```sh
-  pnpm run i
+  npm run i
   ```
 
 - Set up env variables:
   ```sh
-  cp ./env.example ./en
+  cp ./env.example ./env
   ```
 
 ## Development
@@ -22,7 +20,7 @@ This project uses [pnpm](pnpm.io/), see the website on how to install it.
 - Start the Postgres Database in [Docker](https://www.docker.com/get-started):
 
   ```sh
-  pnpm run docker
+  npm run docker
   ```
 
   > **Note:** The npm script will complete while Docker sets up the container in the background. Ensure that Docker has finished and your container is running before proceeding.
@@ -30,19 +28,19 @@ This project uses [pnpm](pnpm.io/), see the website on how to install it.
 - Initial setup:
 
   ```sh
-  pnpm run setup
+  npm run setup
   ```
 
 - Run the first build:
 
   ```sh
-  pnpm run build
+  npm run build
   ```
 
 - Start dev server:
 
   ```sh
-  pnpm run dev
+  npm run dev
   ```
 
 This starts your app in development mode, rebuilding assets on file changes.
