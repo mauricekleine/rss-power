@@ -6,6 +6,7 @@ node_modules
 
 /cypress/screenshots
 /cypress/videos
+/prisma/client
 /postgres-data
 
 /app/styles/tailwind.css

@@ -1,5 +1,4 @@
 import { Dialog, Transition } from "@headlessui/react";
-import type { User } from "@prisma/client";
 import { Form, Link } from "@remix-run/react";
 import { List, PlusCircle, Rss, User as UserIcon, X } from "phosphor-react";
 import type { ReactNode } from "react";
@@ -7,6 +6,7 @@ import { Fragment, useState } from "react";
 
 import SidebarChannelLink from "./sidebar-channel-link";
 
+import type { User } from "prisma/client";
 import type { getChannelsForUserId } from "~/models/channel.server";
 
 type Props = {

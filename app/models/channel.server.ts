@@ -1,8 +1,7 @@
-import type { Channel, ChannelItem, Image, User } from "@prisma/client";
-
+import type { Channel, ChannelItem, Image, User } from "prisma/client";
 import { prisma } from "~/db.server";
 
-export type { Channel, ChannelItem } from "@prisma/client";
+export type { Channel, ChannelItem } from "prisma/client";
 
 export function addUserToChannel({
   id,

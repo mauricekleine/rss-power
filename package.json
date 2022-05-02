@@ -1,5 +1,5 @@
 {
-  "name": "rss-power-80f0",
+  "name": "rss-power",
   "private": true,
   "description": "",
   "license": "",
@@ -59,6 +59,8 @@
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
+    "@babel/core": "7",
+    "@babel/preset-env": "7",
     "@faker-js/faker": "^6.1.1",
     "@remix-run/dev": "^1.4.1",
     "@remix-run/eslint-config": "^1.4.1",
