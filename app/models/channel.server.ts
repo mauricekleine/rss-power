@@ -1,5 +1,6 @@
-import { prisma } from "~/db.server";
 import type { Channel, ChannelItem, Image, User } from "@prisma/client";
+
+import { prisma } from "~/db.server";
 
 export type { Channel, ChannelItem } from "@prisma/client";
 

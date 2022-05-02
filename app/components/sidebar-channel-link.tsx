@@ -31,7 +31,7 @@ export default function SidebarChannelLink({
             "bg-gray-100 text-gray-900": isActive,
             "text-gray-700 hover:bg-gray-50 hover:text-gray-900": !isActive,
           },
-          "group flex flex-col px-2 py-2 text-sm font-medium rounded-md"
+          "group flex flex-col rounded-md px-2 py-2 text-sm font-medium"
         )
       }
       to={channel.id}
@@ -39,7 +39,7 @@ export default function SidebarChannelLink({
       {({ isActive }) => (
         <>
           <div className="flex items-center space-x-2">
-            <p className="flex-1 text-base truncate">{channel.title}</p>
+            <p className="flex-1 truncate text-base">{channel.title}</p>
 
             {itemCount > 0 ? (
               <span
@@ -52,7 +52,7 @@ export default function SidebarChannelLink({
                       hasUpdates && !isActive,
                     "bg-red-200 text-red-800": hasUpdates && isActive,
                   },
-                  "ml-auto inline-block py-0.5 px-3 text-xs rounded-full"
+                  "ml-auto inline-block rounded-full py-0.5 px-3 text-xs"
                 )}
               >
                 {itemCount > 99 ? "99+" : itemCount}
@@ -60,7 +60,7 @@ export default function SidebarChannelLink({
             ) : null}
           </div>
 
-          <p className="text-gray-500 text-sm truncate">
+          <p className="truncate text-sm text-gray-500">
             {channel.description}
           </p>
         </>

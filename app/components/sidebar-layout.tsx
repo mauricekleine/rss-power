@@ -17,15 +17,15 @@ type Props = {
 
 function SidebarNavigation({ channels, user }: Omit<Props, "children">) {
   return (
-    <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
-      <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-        <div className="flex items-center flex-shrink-0 px-4 space-x-2 border-b border-gray-200 pb-4">
+    <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
+      <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
+        <div className="flex flex-shrink-0 items-center space-x-2 border-b border-gray-200 px-4 pb-4">
           <Rss color="black" size={32} weight="bold" />
 
-          <span className="font-bold text-3xl">RSS Power</span>
+          <span className="text-3xl font-bold">RSS Power</span>
         </div>
 
-        <nav className="mt-2 flex-1 px-2 bg-white space-y-1">
+        <nav className="mt-2 flex-1 space-y-1 bg-white px-2">
           {channels.length === 0 ? (
             <p className="p-4">No channels yet</p>
           ) : (
@@ -45,7 +45,7 @@ function SidebarNavigation({ channels, user }: Omit<Props, "children">) {
         <div className="px-2">
           <Link
             to="new"
-            className="flex items-center space-x-2 px-4 hover:bg-blue-700 py-2 bg-blue-500 text-white rounded-lg"
+            className="flex items-center space-x-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
           >
             <PlusCircle size={16} weight="bold" />
 
@@ -54,8 +54,8 @@ function SidebarNavigation({ channels, user }: Omit<Props, "children">) {
         </div>
       </div>
 
-      <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-        <div className="flex-shrink-0 w-full block">
+      <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
+        <div className="block w-full flex-shrink-0">
           <div className="flex items-center">
             <div>
               <UserIcon size={32} />
@@ -85,7 +85,7 @@ export default function SidebarLayout({ channels, children, user }: Props) {
       <Transition.Root show={isSidebarOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 flex z-40 md:hidden"
+          className="fixed inset-0 z-40 flex md:hidden"
           onClose={setIsSidebarOpen}
         >
           <Transition.Child
@@ -109,7 +109,7 @@ export default function SidebarLayout({ channels, children, user }: Props) {
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
-            <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+            <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white">
               <Transition.Child
                 as={Fragment}
                 enter="ease-in-out duration-300"
@@ -122,7 +122,7 @@ export default function SidebarLayout({ channels, children, user }: Props) {
                 <div className="absolute top-0 right-0 -mr-12 pt-2">
                   <button
                     type="button"
-                    className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                    className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                     onClick={() => setIsSidebarOpen(false)}
                   >
                     <span className="sr-only">Close sidebar</span>
@@ -136,7 +136,7 @@ export default function SidebarLayout({ channels, children, user }: Props) {
             </div>
           </Transition.Child>
 
-          <div className="flex-shrink-0 w-14" aria-hidden="true">
+          <div className="w-14 flex-shrink-0" aria-hidden="true">
             {/* Force sidebar to shrink to fit close icon */}
           </div>
         </Dialog>
@@ -144,15 +144,15 @@ export default function SidebarLayout({ channels, children, user }: Props) {
 
       {/* Static sidebar for desktop */}
 
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+      <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <SidebarNavigation channels={channels} user={user} />
       </div>
 
-      <div className="md:pl-64 flex flex-col flex-1">
-        <div className="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-gray-100">
+      <div className="flex flex-1 flex-col md:pl-64">
+        <div className="sticky top-0 z-10 bg-gray-100 pl-1 pt-1 sm:pl-3 sm:pt-3 md:hidden">
           <button
             type="button"
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+            className="-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
             onClick={() => setIsSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
@@ -163,7 +163,7 @@ export default function SidebarLayout({ channels, children, user }: Props) {
 
         <main className="flex-1">
           <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
               {children}
             </div>
           </div>

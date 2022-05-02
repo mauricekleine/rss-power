@@ -52,19 +52,19 @@ export default function NoteDetailsPage() {
 
   return (
     <div>
-      <div className="pb-5 border-b border-gray-200 mb-5">
+      <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {data.channel.image ? (
               <img
                 alt={data.channel.image.title ?? data.channel.title}
-                className="w-12 h-12 rounded-lg"
+                className="h-12 w-12 rounded-lg"
                 src={data.channel?.image?.url}
               />
             ) : null}
 
             <div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
+              <h3 className="text-lg font-medium leading-6 text-gray-900">
                 {data.channel.title}
               </h3>
 
@@ -82,7 +82,7 @@ export default function NoteDetailsPage() {
           <Form method="post">
             <button
               type="submit"
-              className="flex items-center space-x-2 rounded py-2 px-4 text-gray-600 hover:text-gray-800 underline text-sm"
+              className="flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600 underline hover:text-gray-800"
             >
               <BellSimpleSlash weight="bold" />
 
@@ -105,11 +105,11 @@ export default function NoteDetailsPage() {
             rel="noreferrer"
             target="_blank"
           >
-            <div className="bg-white overflow-hidden shadow rounded-lg hover:bg-gray-50">
+            <div className="overflow-hidden rounded-lg bg-white shadow hover:bg-gray-50">
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex justify-between space-x-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="truncate text-sm font-medium text-gray-900">
                       {item.title}
                     </p>
                   </div>

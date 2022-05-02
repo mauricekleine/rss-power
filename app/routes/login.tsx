@@ -180,6 +180,7 @@ export default function LoginPage() {
 
             <div className="text-center text-sm text-gray-500">
               Don't have an account?{" "}
+
               <Link
                 className="text-blue-500 underline"
                 to={{
