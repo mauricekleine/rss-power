@@ -1,7 +1,9 @@
 import { Form, useSubmit } from "@remix-run/react";
 import classnames from "classnames";
 import { formatDistance } from "date-fns";
+import DOMPurify from "isomorphic-dompurify";
 import { Book, BookOpen } from "phosphor-react";
+import { useMemo } from "react";
 
 import type { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
 
@@ -19,7 +21,19 @@ export default function ChannelItemCard({ item }: Props) {
     });
   };
 
-  const hasRead = item.userChannelItems[0]?.hasRead;
+  const hasRead = useMemo(() => {
+    if (!Array.isArray(item.userChannelItems)) {
+      return false;
+    }
+
+    return item.userChannelItems[0]?.hasRead;
+  }, [item.userChannelItems]);
+
+  const itemDescription = useMemo(() => {
+    return DOMPurify.sanitize(item.description, {
+      ALLOWED_TAGS: [], // strip all HTML from an item's description
+    });
+  }, [item.description]);
 
   return (
     <div
@@ -37,7 +51,6 @@ export default function ChannelItemCard({ item }: Props) {
           "bg-white hover:bg-gray-50": !hasRead,
         })}
         href={item.link}
-        key={item.id}
         onClick={handleClick}
         rel="noreferrer"
         target="_blank"
@@ -66,14 +79,13 @@ export default function ChannelItemCard({ item }: Props) {
           </time>
         </div>
 
-        <div className="mt-1">
-          <p
-            className={classnames("line-clamp-2 text-sm", {
-              "text-gray-500": hasRead,
-              "text-gray-600": !hasRead,
-            })}
-            dangerouslySetInnerHTML={{ __html: item.description }}
-          />
+        <div
+          className={classnames("line-clamp-2 mt-1 text-sm", {
+            "text-gray-500": hasRead,
+            "text-gray-600": !hasRead,
+          })}
+        >
+          {itemDescription}
         </div>
       </a>
 
