@@ -10,4 +10,4 @@ jobs:
         run: |
           curl --request POST \
           --url 'https://rsspower.com/api/feeds/update' \
-          --header 'Authorization: Bearer ${{ secrets.API_SECRET_KEY }}'
+          --header 'Authorization: Bearer ${{ secrets.UPDATE_CRON_KEY }}'
