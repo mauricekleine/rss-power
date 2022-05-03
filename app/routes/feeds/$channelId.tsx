@@ -58,7 +58,7 @@ export default function NoteDetailsPage() {
             {data.channel.image ? (
               <img
                 alt={data.channel.image.title ?? data.channel.title}
-                className="h-12 w-12 rounded-lg"
+                className="h-12 w-12 rounded-lg object-cover"
                 src={data.channel?.image?.url}
               />
             ) : null}
