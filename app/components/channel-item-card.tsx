@@ -2,23 +2,31 @@ import { Form, useSubmit } from "@remix-run/react";
 import classnames from "classnames";
 import { formatDistance } from "date-fns";
 import DOMPurify from "isomorphic-dompurify";
-import { Book, BookOpen } from "phosphor-react";
+import { BookOpen, BookmarkSimple, Check, CheckCircle } from "phosphor-react";
 import { useMemo } from "react";
 
 import type { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
+import { ChannelItemActions } from "~/routes/feeds/$channelId";
 
 type Props = {
   item: Awaited<ReturnType<typeof getChannelItemsForChannelIdAndUserId>>[0];
+  showChannelInformation?: boolean;
 };
 
-export default function ChannelItemCard({ item }: Props) {
+export default function ChannelItemCard({
+  item,
+  showChannelInformation,
+}: Props) {
   const submit = useSubmit();
 
   const handleClick = () => {
-    submit(null, {
-      method: "post",
-      action: `/feeds/${item.channelId}/${item.id}`,
-    });
+    submit(
+      { channelItemId: item.id },
+      {
+        method: "post",
+        action: `/feeds/${item.channelId}/${item.id}`,
+      }
+    );
   };
 
   const hasRead = useMemo(() => {
@@ -27,6 +35,14 @@ export default function ChannelItemCard({ item }: Props) {
     }
 
     return item.userChannelItems[0]?.hasRead;
+  }, [item.userChannelItems]);
+
+  const isReadLater = useMemo(() => {
+    if (!Array.isArray(item.userChannelItems)) {
+      return false;
+    }
+
+    return item.userChannelItems[0]?.isReadLater;
   }, [item.userChannelItems]);
 
   const itemDescription = useMemo(() => {
@@ -45,6 +61,37 @@ export default function ChannelItemCard({ item }: Props) {
         }
       )}
     >
+      {showChannelInformation ? (
+        <div className="flex items-center space-x-2 px-4 py-5 leading-none sm:px-6">
+          {item.channel.image ? (
+            <div className="flex-shrink-0">
+              <img
+                alt={item.channel.image.title ?? item.channel.title}
+                className="h-8 w-8 rounded-full object-cover"
+                src={item.channel?.image?.url}
+              />
+            </div>
+          ) : null}
+
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-gray-900">
+              {item.channel.title}
+            </p>
+
+            <time
+              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
+              dateTime={
+                item.pubDate ? new Date(item.pubDate).toISOString() : undefined
+              }
+            >
+              {item.pubDate
+                ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
+                : null}
+            </time>
+          </div>
+        </div>
+      ) : null}
+
       <a
         className={classnames("block px-4 py-5 sm:p-6", {
           "bg-gray-100": hasRead,
@@ -66,17 +113,6 @@ export default function ChannelItemCard({ item }: Props) {
               {item.title}
             </p>
           </div>
-
-          <time
-            className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
-            dateTime={
-              item.pubDate ? new Date(item.pubDate).toISOString() : undefined
-            }
-          >
-            {item.pubDate
-              ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
-              : null}
-          </time>
         </div>
 
         <div
@@ -95,7 +131,36 @@ export default function ChannelItemCard({ item }: Props) {
           "bg-gray-50": !hasRead,
         })}
       >
-        <Form action={`/feeds/${item.channelId}/${item.id}`} method="post">
+        {hasRead ? null : (
+          <Form method="post">
+            <input name="channelItemId" type="hidden" value={item.id} />
+
+            <button
+              className={classnames(
+                "flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600",
+                {
+                  "underline hover:text-gray-800": !isReadLater,
+                }
+              )}
+              disabled={isReadLater}
+              name="action"
+              value={ChannelItemActions.READ_LATER}
+              type="submit"
+            >
+              {isReadLater ? (
+                <CheckCircle weight="bold" />
+              ) : (
+                <BookmarkSimple weight="bold" />
+              )}
+
+              <span>{isReadLater ? "Added to read later" : "Read later"}</span>
+            </button>
+          </Form>
+        )}
+
+        <Form method="post">
+          <input name="channelItemId" type="hidden" value={item.id} />
+
           <button
             className={classnames(
               "flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600",
@@ -104,9 +169,11 @@ export default function ChannelItemCard({ item }: Props) {
               }
             )}
             disabled={hasRead}
+            name="action"
+            value={ChannelItemActions.MARK_AS_READ}
             type="submit"
           >
-            {hasRead ? <Book weight="bold" /> : <BookOpen weight="bold" />}
+            {hasRead ? <Check weight="bold" /> : <BookOpen weight="bold" />}
 
             <span>{hasRead ? "Read" : "Mark as read"}</span>
           </button>

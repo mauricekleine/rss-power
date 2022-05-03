@@ -23,8 +23,9 @@ model User {
 model UserChannelItem {
   id String @id @default(cuid())
 
-  hasRead Boolean  @default(false)
-  readAt  DateTime
+  hasRead     Boolean   @default(false)
+  isReadLater Boolean   @default(false)
+  readAt      DateTime?
 
   channelItem   ChannelItem @relation(fields: [channelItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   channelItemId String
