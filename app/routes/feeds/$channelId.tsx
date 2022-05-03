@@ -1,20 +1,18 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
-import { formatDistance } from "date-fns";
 import { BellSimpleSlash } from "phosphor-react";
 import invariant from "tiny-invariant";
 
-import {
-  getChannel,
-  getChannelItems,
-  removeUserFromChannel,
-} from "~/models/channel.server";
+import ChannelItemCard from "~/components/channel-item-card";
+
+import { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
+import { getChannel, removeUserFromChannel } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
 
 type LoaderData = {
   channel: NonNullable<Awaited<ReturnType<typeof getChannel>>>;
-  items: Awaited<ReturnType<typeof getChannelItems>>;
+  items: Awaited<ReturnType<typeof getChannelItemsForChannelIdAndUserId>>;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -25,7 +23,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   try {
     const [channel, items] = await Promise.all([
       getChannel({ id: params.channelId }),
-      getChannelItems({ channelId: params.channelId }),
+      getChannelItemsForChannelIdAndUserId({
+        channelId: params.channelId,
+        userId,
+      }),
     ]);
 
     if (!channel) {
@@ -34,6 +35,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
     return json<LoaderData>({ channel, items });
   } catch (e) {
+    console.log(e);
     throw new Response("Not Found", { status: 404 });
   }
 };
@@ -98,48 +100,7 @@ export default function NoteDetailsPage() {
 
       <div className="space-y-4">
         {data.items.map((item) => (
-          <a
-            className="block"
-            href={item.link}
-            key={item.id}
-            rel="noreferrer"
-            target="_blank"
-          >
-            <div className="overflow-hidden rounded-lg bg-white shadow hover:bg-gray-50">
-              <div className="px-4 py-5 sm:p-6">
-                <div className="flex justify-between space-x-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">
-                      {item.title}
-                    </p>
-                  </div>
-
-                  <time
-                    className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
-                    dateTime={
-                      item.pubDate
-                        ? new Date(item.pubDate).toISOString()
-                        : undefined
-                    }
-                  >
-                    {item.pubDate
-                      ? `${formatDistance(
-                          new Date(item.pubDate),
-                          new Date()
-                        )} ago`
-                      : null}
-                  </time>
-                </div>
-
-                <div className="mt-1">
-                  <p
-                    className="line-clamp-2 text-sm text-gray-600"
-                    dangerouslySetInnerHTML={{ __html: item.description }}
-                  />
-                </div>
-              </div>
-            </div>
-          </a>
+          <ChannelItemCard item={item} key={item.id} />
         ))}
       </div>
     </div>

@@ -2,7 +2,7 @@ import type { Channel, ChannelItem, Image, User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
-export type { Channel, ChannelItem } from "@prisma/client";
+export type { Channel } from "@prisma/client";
 
 export function addUserToChannel({
   id,
@@ -95,13 +95,6 @@ export function getChannel({ id }: { id: Channel["id"] }) {
       image: true,
     },
     where: { id },
-  });
-}
-
-export function getChannelItems({ channelId }: { channelId: Channel["id"] }) {
-  return prisma.channelItem.findMany({
-    where: { channelId },
-    orderBy: { pubDate: "desc" },
   });
 }
 

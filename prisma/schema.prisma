@@ -15,8 +15,23 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  feeds    Channel[]
-  password Password?
+  feeds            Channel[]
+  password         Password?
+  userChannelItems UserChannelItem[]
+}
+
+model UserChannelItem {
+  id String @id @default(cuid())
+
+  hasRead Boolean  @default(false)
+  readAt  DateTime
+
+  channelItem   ChannelItem @relation(fields: [channelItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channelItemId String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId        String
+
+  @@unique([channelItemId, userId])
 }
 
 model Password {
@@ -55,10 +70,11 @@ model ChannelItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  channelId String
-  image     Image?  @relation(fields: [imageId], references: [id])
-  imageId   String?
+  channel          Channel           @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channelId        String
+  image            Image?            @relation(fields: [imageId], references: [id])
+  imageId          String?
+  userChannelItems UserChannelItem[]
 }
 
 model Image {
