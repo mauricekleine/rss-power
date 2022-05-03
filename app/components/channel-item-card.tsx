@@ -24,7 +24,6 @@ export default function ChannelItemCard({
       { channelItemId: item.id },
       {
         method: "post",
-        action: `/feeds/${item.channelId}/${item.id}`,
       }
     );
   };
