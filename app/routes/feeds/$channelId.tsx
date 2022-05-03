@@ -6,9 +6,18 @@ import invariant from "tiny-invariant";
 
 import ChannelItemCard from "~/components/channel-item-card";
 
-import { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
+import {
+  getChannelItemsForChannelIdAndUserId,
+  markChannelItemAsRead,
+  saveChannelItemToReadLater,
+} from "~/models/channel-item.server";
 import { getChannel, removeUserFromChannel } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
+
+export const ChannelItemActions = {
+  MARK_AS_READ: "mark-as-read",
+  READ_LATER: "read-later",
+} as const;
 
 type LoaderData = {
   channel: NonNullable<Awaited<ReturnType<typeof getChannel>>>;
@@ -44,9 +53,37 @@ export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);
   invariant(params.channelId, "channelId not found");
 
-  await removeUserFromChannel({ id: params.channelId, userId });
+  const formData = await request.formData();
+  const action = formData.get("action");
 
-  return redirect("/feeds");
+  if (action === "unsubscribe") {
+    await removeUserFromChannel({ id: params.channelId, userId });
+
+    return redirect("/feeds");
+  }
+
+  const channelItemId = formData.get("channelItemId");
+  invariant(channelItemId, "channelItemId not found");
+
+  if (typeof channelItemId !== "string") {
+    throw new Response("channelItemId not found", { status: 401 });
+  }
+
+  if (action === ChannelItemActions.MARK_AS_READ) {
+    await markChannelItemAsRead({
+      channelItemId,
+      userId,
+    });
+  }
+
+  if (action === ChannelItemActions.READ_LATER) {
+    await saveChannelItemToReadLater({
+      channelItemId,
+      userId,
+    });
+  }
+
+  return redirect(`/feeds/${params.channelId}`);
 };
 
 export default function NoteDetailsPage() {
@@ -56,7 +93,7 @@ export default function NoteDetailsPage() {
     <div>
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div className="static flex items-center space-x-2">
             {data.channel.image ? (
               <img
                 alt={data.channel.image.title ?? data.channel.title}
@@ -83,8 +120,10 @@ export default function NoteDetailsPage() {
 
           <Form method="post">
             <button
-              type="submit"
               className="flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600 underline hover:text-gray-800"
+              name="action"
+              type="submit"
+              value="unsubscribe"
             >
               <BellSimpleSlash weight="bold" />
 
