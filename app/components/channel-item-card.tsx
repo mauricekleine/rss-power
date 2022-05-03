@@ -113,6 +113,19 @@ export default function ChannelItemCard({
               {item.title}
             </p>
           </div>
+
+          {showChannelInformation ? null : (
+            <time
+              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
+              dateTime={
+                item.pubDate ? new Date(item.pubDate).toISOString() : undefined
+              }
+            >
+              {item.pubDate
+                ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
+                : null}
+            </time>
+          )}
         </div>
 
         <div
