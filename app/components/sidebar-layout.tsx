@@ -1,10 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Form, Link } from "@remix-run/react";
-import { List, PlusCircle, Rss, User as UserIcon, X } from "phosphor-react";
+import { List, X } from "phosphor-react";
 import type { ReactNode } from "react";
 import { Fragment, useState } from "react";
 
-import SidebarChannelLink from "./sidebar-channel-link";
+import SidebarNavigation from "./sidebar-navigation";
 
 import type { getChannelsForUserId } from "~/models/channel.server";
 import type { User } from "~/models/user.server";
@@ -14,68 +13,6 @@ type Props = {
   children: ReactNode;
   user: User;
 };
-
-function SidebarNavigation({ channels, user }: Omit<Props, "children">) {
-  return (
-    <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
-      <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
-        <div className="flex flex-shrink-0 items-center space-x-2 border-b border-gray-200 px-4 pb-4">
-          <Rss color="black" size={32} weight="bold" />
-
-          <span className="text-3xl font-bold">RSS Power</span>
-        </div>
-
-        <nav className="mt-2 flex-1 space-y-1 bg-white px-2">
-          {channels.length === 0 ? (
-            <p className="p-4">No channels yet</p>
-          ) : (
-            <ol>
-              {channels.map((channel) => (
-                <li key={channel.id}>
-                  <SidebarChannelLink
-                    channel={channel}
-                    itemCount={channel._count.items}
-                  />
-                </li>
-              ))}
-            </ol>
-          )}
-        </nav>
-
-        <div className="px-2">
-          <Link
-            to="new"
-            className="flex items-center space-x-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-          >
-            <PlusCircle size={16} weight="bold" />
-
-            <span>New channel</span>
-          </Link>
-        </div>
-      </div>
-
-      <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-        <div className="block w-full flex-shrink-0">
-          <div className="flex items-center">
-            <div>
-              <UserIcon size={32} />
-            </div>
-
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-700">{user.email}</p>
-
-              <div className="text-xs font-medium text-gray-500 hover:text-gray-700">
-                <Form action="/logout" method="post">
-                  <button type="submit">Logout</button>
-                </Form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function SidebarLayout({ channels, children, user }: Props) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
