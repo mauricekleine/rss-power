@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 type Props = {
   channel: Pick<Channel, "title"> & {
-    image?: Image | null;
+    image: Pick<Image, "title" | "url"> | null;
   };
   children?: ReactNode;
 };

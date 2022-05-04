@@ -1,3 +1,9 @@
+import type {
+  Channel,
+  ChannelItem,
+  Image,
+  UserChannelItem,
+} from "@prisma/client";
 import { Form, useSubmit, useTransition } from "@remix-run/react";
 import classNames from "classNames";
 import { formatDistance } from "date-fns";
@@ -8,11 +14,15 @@ import { useMemo } from "react";
 import ChannelAvatar from "./channel-avatar";
 import TextButton from "./ui/text-button";
 
-import type { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
 import { ChannelItemActions } from "~/routes/feeds/$channelId";
 
 type Props = {
-  item: Awaited<ReturnType<typeof getChannelItemsForChannelIdAndUserId>>[0];
+  item: ChannelItem & {
+    channel: Pick<Channel, "title"> & {
+      image: Pick<Image, "title" | "url"> | null;
+    };
+    userChannelItems: Pick<UserChannelItem, "hasRead" | "isReadLater">[];
+  };
   showChannelInformation?: boolean;
 };
 
