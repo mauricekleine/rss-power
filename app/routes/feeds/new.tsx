@@ -154,7 +154,9 @@ export default function NewFeedPage() {
                 aria-errormessage={
                   actionData?.errors?.origin ? "url-error" : undefined
                 }
+                autoFocus
                 className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                id="origin"
                 name="origin"
                 placeholder="https://example.com/feed"
                 ref={titleRef}
