@@ -95,6 +95,11 @@ export function deleteChannelImage({ id }: Pick<Image, "id">) {
 export function getChannel({ id }: { id: Channel["id"] }) {
   return prisma.channel.findUnique({
     include: {
+      _count: {
+        select: {
+          items: true,
+        },
+      },
       image: true,
     },
     where: { id },
