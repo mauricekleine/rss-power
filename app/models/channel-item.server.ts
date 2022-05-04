@@ -6,19 +6,14 @@ export type { ChannelItem } from "@prisma/client";
 
 export function getChannelItemsForChannelIdAndUserId({
   channelId,
-  cursor,
+  start,
   userId,
 }: {
   channelId: Channel["id"];
-  cursor?: ChannelItem["id"];
+  start?: number;
   userId: User["id"];
 }) {
   return prisma.channelItem.findMany({
-    cursor: cursor
-      ? {
-          id: cursor,
-        }
-      : undefined,
     include: {
       channel: {
         select: {
@@ -36,9 +31,9 @@ export function getChannelItemsForChannelIdAndUserId({
         },
       },
     },
-    skip: cursor ? 1 : 0,
-    take: 50,
     orderBy: [{ pubDate: "desc" }, { order: "desc" }],
+    skip: start,
+    take: 50,
     where: { channelId },
   });
 }
@@ -76,6 +71,77 @@ export function getChannelItemsSavedForLater({
       userChannelItems: {
         some: {
           isReadLater: true,
+          userId,
+        },
+      },
+    },
+  });
+}
+
+export function getUnreadChannelItemsForUserId({
+  start,
+  userId,
+}: {
+  start?: number;
+  userId: User["id"];
+}) {
+  return prisma.channelItem.findMany({
+    include: {
+      channel: {
+        select: {
+          image: true,
+          title: true,
+        },
+      },
+      userChannelItems: {
+        select: {
+          isReadLater: true,
+          hasRead: true,
+        },
+        where: {
+          userId,
+        },
+      },
+    },
+    orderBy: [{ pubDate: "desc" }],
+    skip: start,
+    take: 50,
+    where: {
+      NOT: {
+        pubDate: {
+          equals: null,
+        },
+      },
+      userChannelItems: {
+        every: {
+          userId,
+        },
+        none: {
+          hasRead: true,
+        },
+      },
+    },
+  });
+}
+
+export function getUnreadChannelItemsCountForUserId({
+  userId,
+}: {
+  userId: User["id"];
+}) {
+  return prisma.channelItem.count({
+    select: {
+      _all: true,
+    },
+    where: {
+      pubDate: {
+        not: {
+          equals: null,
+        },
+      },
+      userChannelItems: {
+        every: {
+          hasRead: false,
           userId,
         },
       },

@@ -4,18 +4,16 @@ import type {
   Image,
   UserChannelItem,
 } from "@prisma/client";
-import { Form, useSubmit, useTransition } from "@remix-run/react";
+import { useSubmit } from "@remix-run/react";
 import classNames from "classnames";
 import { formatDistance } from "date-fns";
 import DOMPurify from "isomorphic-dompurify";
-import { BookOpen, BookmarkSimple, Check, CheckCircle } from "phosphor-react";
 import { useMemo } from "react";
 
 import ChannelAvatar from "~/components/channels/channel-avatar";
+import ChannelItemMarkAsReadForm from "~/components/channels/channel-item-mark-as-read-form";
+import ChannelItemReadLaterForm from "~/components/channels/channel-item-read-later-form";
 import Card from "~/components/ui/cards/card";
-import TextButton from "~/components/ui/text-button";
-
-import { ChannelItemActions } from "~/routes/feeds/$channelId";
 
 type Props = {
   item: ChannelItem & {
@@ -32,7 +30,6 @@ export default function ChannelItemCard({
   showChannelInformation,
 }: Props) {
   const submit = useSubmit();
-  const transition = useTransition();
 
   const handleClick = () => {
     submit(
@@ -137,55 +134,10 @@ export default function ChannelItemCard({
       <Card.CardFooter>
         <div className="-mr-4 flex justify-end">
           {hasRead ? null : (
-            <Form method="post">
-              <input name="channelItemId" type="hidden" value={item.id} />
-
-              <TextButton
-                disabled={isReadLater}
-                isLoading={
-                  transition.state === "submitting" &&
-                  transition.submission.formData.get("action") ===
-                    ChannelItemActions.READ_LATER &&
-                  transition.submission.formData.get("channelItemId") ===
-                    item.id
-                }
-                name="action"
-                value={ChannelItemActions.READ_LATER}
-                type="submit"
-              >
-                {isReadLater ? (
-                  <CheckCircle weight="bold" />
-                ) : (
-                  <BookmarkSimple weight="bold" />
-                )}
-
-                <span>
-                  {isReadLater ? "Added to read later" : "Read later"}
-                </span>
-              </TextButton>
-            </Form>
+            <ChannelItemReadLaterForm isReadLater={isReadLater} item={item} />
           )}
 
-          <Form method="post">
-            <input name="channelItemId" type="hidden" value={item.id} />
-
-            <TextButton
-              disabled={hasRead}
-              isLoading={
-                transition.state === "submitting" &&
-                transition.submission.formData.get("action") ===
-                  ChannelItemActions.MARK_AS_READ &&
-                transition.submission.formData.get("channelItemId") === item.id
-              }
-              name="action"
-              value={ChannelItemActions.MARK_AS_READ}
-              type="submit"
-            >
-              {hasRead ? <Check weight="bold" /> : <BookOpen weight="bold" />}
-
-              <span>{hasRead ? "Read" : "Mark as read"}</span>
-            </TextButton>
-          </Form>
+          <ChannelItemMarkAsReadForm hasRead={hasRead} item={item} />
         </div>
       </Card.CardFooter>
     </Card>

@@ -1,10 +1,13 @@
-import { Form, Link, NavLink } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import {
   BookmarkSimple,
   PlusCircle,
   Rss,
+  Tray,
   User as UserIcon,
 } from "phosphor-react";
+
+import SidebarFolderLink from "./sidebar-folder-link";
 
 import SidebarChannelLink from "~/components/sidebar/sidebar-channel-link";
 import SectionHeader from "~/components/ui/typography/section-header";
@@ -33,17 +36,18 @@ export default function SidebarNavigation({ channels, user }: Props) {
               <SectionHeader>Folders</SectionHeader>
             </div>
 
-            <div className="mt-1 space-y-1" aria-labelledby="projects-headline">
-              <NavLink
-                to="read-later"
-                className="group flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              >
-                <span className="flex items-center space-x-2 truncate">
-                  <BookmarkSimple weight="bold" />
+            <div className="mt-1 space-y-1">
+              <SidebarFolderLink to="inbox">
+                <Tray weight="bold" />
 
-                  <span>Read later</span>
-                </span>
-              </NavLink>
+                <span>Inbox</span>
+              </SidebarFolderLink>
+
+              <SidebarFolderLink to="read-later">
+                <BookmarkSimple weight="bold" />
+
+                <span>Read later</span>
+              </SidebarFolderLink>
             </div>
           </div>
 
