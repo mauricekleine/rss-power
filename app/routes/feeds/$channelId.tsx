@@ -1,12 +1,20 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useCatch,
+  useFetcher,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 import classNames from "classnames";
 import { BellSimpleSlash, CircleNotch } from "phosphor-react";
 import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 
-import ChannelItemCard from "~/components/channel-item-card";
+import ChannelItemCard from "~/components/channels/channel-item-card";
+import TextButton from "~/components/ui/text-button";
+import PageHeader from "~/components/ui/typography/page-header";
 
 import {
   getChannelItemsForChannelIdAndUserId,
@@ -98,8 +106,8 @@ export default function ChannelDetailsPage() {
   const fetcher = useFetcher<LoaderData>();
   const data = useLoaderData() as LoaderData;
   const ref = useRef<HTMLDivElement>(null);
-
   const [items, setItems] = useState(data.items);
+  const transition = useTransition();
 
   const handleLoadMore = () => {
     if (fetcher.state !== "idle") {
@@ -159,7 +167,7 @@ export default function ChannelDetailsPage() {
     <div>
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex items-center justify-between">
-          <div className="static flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             {data.channel.image ? (
               <img
                 alt={data.channel.image.title ?? data.channel.title}
@@ -169,9 +177,7 @@ export default function ChannelDetailsPage() {
             ) : null}
 
             <div>
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
-                {data.channel.title}
-              </h3>
+              <PageHeader>{data.channel.title}</PageHeader>
 
               <a
                 className="text-sm font-medium text-blue-500 hover:text-blue-700"
@@ -185,8 +191,11 @@ export default function ChannelDetailsPage() {
           </div>
 
           <Form method="post">
-            <button
-              className="flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600 underline hover:text-gray-800"
+            <TextButton
+              isLoading={
+                transition.state === "submitting" &&
+                transition.submission.formData.get("action") === "unsubscribe"
+              }
               name="action"
               type="submit"
               value="unsubscribe"
@@ -194,7 +203,7 @@ export default function ChannelDetailsPage() {
               <BellSimpleSlash weight="bold" />
 
               <span>Unsubscribe</span>
-            </button>
+            </TextButton>
           </Form>
         </div>
 
@@ -209,23 +218,20 @@ export default function ChannelDetailsPage() {
         ))}
 
         {items.length < data.channel._count.items ? (
-          <div>
-            <div className="flex justify-center">
-              <button
-                className="flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600 underline hover:text-gray-800"
-                onClick={handleLoadMore}
-                type="button"
-              >
-                <CircleNotch
-                  className={classNames({
-                    "animate-spin": fetcher.state === "loading",
-                  })}
-                  weight="bold"
-                />
+          <div className="flex justify-center">
+            <TextButton
+              isLoading={fetcher.state === "loading"}
+              onClick={handleLoadMore}
+            >
+              <CircleNotch
+                className={classNames({
+                  "animate-spin": fetcher.state === "loading",
+                })}
+                weight="bold"
+              />
 
-                <span>Load more</span>
-              </button>
-            </div>
+              <span>Load more</span>
+            </TextButton>
           </div>
         ) : null}
       </div>
