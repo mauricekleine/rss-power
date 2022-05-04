@@ -64,7 +64,9 @@ model ChannelItem {
   id String @id @default(cuid())
 
   description String
-  link        String    @unique
+  guid        String?
+  link        String
+  order       Int       @default(autoincrement())
   pubDate     DateTime?
   title       String
 

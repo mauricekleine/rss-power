@@ -34,7 +34,7 @@ export function getChannelItemsForChannelIdAndUserId({
         },
       },
     },
-    orderBy: { pubDate: "desc" },
+    orderBy: [{ pubDate: "desc" }, { order: "desc" }],
     where: { channelId },
   });
 }
@@ -67,7 +67,7 @@ export function getChannelItemsSavedForLater({
         },
       },
     },
-    orderBy: { pubDate: "desc" },
+    orderBy: [{ pubDate: "desc" }, { order: "desc" }],
     where: {
       userChannelItems: {
         some: {
