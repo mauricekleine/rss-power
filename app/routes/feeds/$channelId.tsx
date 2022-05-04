@@ -118,19 +118,6 @@ export default function ChannelDetailsPage() {
       clearTimeout(debounce);
 
       debounce = setTimeout(() => {
-        console.log({
-          container: {
-            offsetHeight: ref.current?.offsetHeight,
-            offsetTop: ref.current?.offsetTop,
-            clientTop: ref.current?.clientTop,
-            scrollTop: ref.current?.scrollTop,
-          },
-          innerHeight: window.innerHeight,
-          offsetHeight: document.documentElement.offsetHeight,
-          scrollTop: document.documentElement.scrollTop,
-          state: fetcher.state,
-        });
-
         if (fetcher.state !== "idle" || !ref.current) {
           return;
         }
