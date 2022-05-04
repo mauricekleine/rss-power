@@ -4,7 +4,8 @@ import { json } from "@remix-run/node";
 import { useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import ChannelItemCard from "~/components/channel-item-card";
+import ChannelItemCard from "~/components/channels/channel-item-card";
+import PageHeader from "~/components/ui/typography/page-header";
 
 import {
   getChannelItemsSavedForLater,
@@ -50,7 +51,7 @@ export const action: ActionFunction = async ({ request }) => {
   return redirect(`/feeds/read-later`);
 };
 
-export default function NoteDetailsPage() {
+export default function ReadLaterPage() {
   const data = useLoaderData() as LoaderData;
 
   return (
@@ -58,11 +59,7 @@ export default function NoteDetailsPage() {
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div>
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
-                Read later
-              </h3>
-            </div>
+            <PageHeader>Read later</PageHeader>
           </div>
         </div>
 

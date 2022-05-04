@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 
-export default function NoteIndexPage() {
+export default function FeedsIndexPage() {
   return (
     <p>
       <span>No feed selected. Select a feed on the left, or </span>
