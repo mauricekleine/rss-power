@@ -5,6 +5,7 @@ import * as React from "react";
 import RssParser from "rss-parser";
 
 import ChannelCard from "~/components/channel-card";
+import SectionHeader from "~/components/ui/typography/section-header";
 
 import {
   addUserToChannel,
@@ -133,9 +134,7 @@ export default function NewFeedPage() {
   return (
     <div>
       <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-          Add a new feed
-        </h3>
+        <SectionHeader>Add a new feed</SectionHeader>
 
         <Form
           method="post"
@@ -181,9 +180,7 @@ export default function NewFeedPage() {
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-          Subscribe to trending feeds
-        </h3>
+        <SectionHeader>Subscribe to trending feeds</SectionHeader>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.channels

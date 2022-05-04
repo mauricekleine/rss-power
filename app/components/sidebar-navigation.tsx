@@ -7,6 +7,7 @@ import {
 } from "phosphor-react";
 
 import SidebarChannelLink from "./sidebar-channel-link";
+import SectionHeader from "./ui/typography/section-header";
 
 import type { getChannelsForUserId } from "~/models/channel.server";
 import type { User } from "~/models/user.server";
@@ -28,9 +29,9 @@ export default function SidebarNavigation({ channels, user }: Props) {
 
         <nav className="flex-1 space-y-6">
           <div className="mt-4 px-2">
-            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Folders
-            </h3>
+            <div className="px-2">
+              <SectionHeader>Folders</SectionHeader>
+            </div>
 
             <div className="mt-1 space-y-1" aria-labelledby="projects-headline">
               <NavLink
@@ -47,9 +48,9 @@ export default function SidebarNavigation({ channels, user }: Props) {
           </div>
 
           <div className="space-y-1 px-2">
-            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Channels
-            </h3>
+            <div className="px-2">
+              <SectionHeader>Channels</SectionHeader>
+            </div>
 
             {channels.length === 0 ? (
               <p className="p-4">No channels yet</p>

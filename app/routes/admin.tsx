@@ -3,6 +3,8 @@ import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
+import SectionHeader from "~/components/ui/typography/section-header";
+
 import { getChannels } from "~/models/channel.server";
 import { getUsers } from "~/models/user.server";
 import { requireUser } from "~/session.server";
@@ -32,9 +34,7 @@ export default function AdminPage() {
       <div className="py-6">
         <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 md:px-8">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Channels
-            </p>
+            <SectionHeader>Channels</SectionHeader>
 
             <table className="text-left">
               <thead>
@@ -64,9 +64,7 @@ export default function AdminPage() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Users
-            </p>
+            <SectionHeader>Users</SectionHeader>
 
             <table className="text-left">
               <thead>

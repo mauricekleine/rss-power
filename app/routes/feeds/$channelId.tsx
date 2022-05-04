@@ -14,6 +14,7 @@ import invariant from "tiny-invariant";
 
 import ChannelItemCard from "~/components/channel-item-card";
 import TextButton from "~/components/ui/text-button";
+import PageHeader from "~/components/ui/typography/page-header";
 
 import {
   getChannelItemsForChannelIdAndUserId,
@@ -176,9 +177,7 @@ export default function ChannelDetailsPage() {
             ) : null}
 
             <div>
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
-                {data.channel.title}
-              </h3>
+              <PageHeader>{data.channel.title}</PageHeader>
 
               <a
                 className="text-sm font-medium text-blue-500 hover:text-blue-700"

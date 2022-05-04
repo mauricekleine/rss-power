@@ -163,7 +163,7 @@ export default function ChannelItemCard({
                 <BookmarkSimple weight="bold" />
               )}
 
-              {isReadLater ? "Added to read later" : "Read later"}
+              <span>{isReadLater ? "Added to read later" : "Read later"}</span>
             </TextButton>
           </Form>
         )}
