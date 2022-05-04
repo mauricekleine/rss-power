@@ -31,7 +31,9 @@ export default function ChannelCard({ channel }: Props) {
         ) : null}
 
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-gray-900">{channel.title}</p>
+          <p className="truncate text-sm font-medium text-gray-900">
+            {channel.title}
+          </p>
         </div>
       </div>
 
