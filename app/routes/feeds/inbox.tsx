@@ -75,7 +75,9 @@ export default function InboxPage() {
         loadMoreItems={(count) => {
           fetcher.load(`/feeds/inbox?start=${count}`);
         }}
-        renderItem={(item) => <ChannelItemCard item={item} />}
+        renderItem={(item) => (
+          <ChannelItemCard item={item} showChannelInformation />
+        )}
       />
     </div>
   );
