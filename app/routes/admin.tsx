@@ -26,8 +26,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function AdminPage() {
   const data = useLoaderData() as LoaderData;
 
-  console.log(data);
-
   return (
     <main className="flex-1">
       <div className="py-6">
