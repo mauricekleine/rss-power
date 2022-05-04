@@ -4,7 +4,7 @@ import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
 import RssParser from "rss-parser";
 
-import ChannelCard from "~/components/channel-card";
+import ChannelCard from "~/components/channels/channel-card";
 import SectionHeader from "~/components/ui/typography/section-header";
 
 import {

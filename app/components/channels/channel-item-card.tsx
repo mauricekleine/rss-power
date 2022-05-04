@@ -11,8 +11,8 @@ import DOMPurify from "isomorphic-dompurify";
 import { BookOpen, BookmarkSimple, Check, CheckCircle } from "phosphor-react";
 import { useMemo } from "react";
 
-import ChannelAvatar from "./channel-avatar";
-import TextButton from "./ui/text-button";
+import ChannelAvatar from "~/components/channels/channel-avatar";
+import TextButton from "~/components/ui/text-button";
 
 import { ChannelItemActions } from "~/routes/feeds/$channelId";
 

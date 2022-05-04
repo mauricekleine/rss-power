@@ -1,8 +1,8 @@
 import { Form, useTransition } from "@remix-run/react";
 import { Bell, User, Users, UsersFour, UsersThree } from "phosphor-react";
 
-import ChannelAvatar from "./channel-avatar";
-import TextButton from "./ui/text-button";
+import ChannelAvatar from "~/components/channels/channel-avatar";
+import TextButton from "~/components/ui/text-button";
 
 import type { getUnsubscribedChannelsForUserId } from "~/models/channel.server";
 

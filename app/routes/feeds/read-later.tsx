@@ -4,7 +4,7 @@ import { json } from "@remix-run/node";
 import { useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import ChannelItemCard from "~/components/channel-item-card";
+import ChannelItemCard from "~/components/channels/channel-item-card";
 import PageHeader from "~/components/ui/typography/page-header";
 
 import {

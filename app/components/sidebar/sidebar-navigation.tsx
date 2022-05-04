@@ -6,8 +6,8 @@ import {
   User as UserIcon,
 } from "phosphor-react";
 
-import SidebarChannelLink from "./sidebar-channel-link";
-import SectionHeader from "./ui/typography/section-header";
+import SidebarChannelLink from "~/components/sidebar/sidebar-channel-link";
+import SectionHeader from "~/components/ui/typography/section-header";
 
 import type { getChannelsForUserId } from "~/models/channel.server";
 import type { User } from "~/models/user.server";

@@ -3,7 +3,7 @@ import { List, X } from "phosphor-react";
 import type { ReactNode } from "react";
 import { Fragment, useState } from "react";
 
-import SidebarNavigation from "./sidebar-navigation";
+import SidebarNavigation from "~/components/sidebar/sidebar-navigation";
 
 import type { getChannelsForUserId } from "~/models/channel.server";
 import type { User } from "~/models/user.server";

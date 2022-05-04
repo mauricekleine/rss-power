@@ -12,7 +12,7 @@ import { BellSimpleSlash, CircleNotch } from "phosphor-react";
 import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 
-import ChannelItemCard from "~/components/channel-item-card";
+import ChannelItemCard from "~/components/channels/channel-item-card";
 import TextButton from "~/components/ui/text-button";
 import PageHeader from "~/components/ui/typography/page-header";
 

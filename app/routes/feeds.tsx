@@ -3,7 +3,7 @@ import { json } from "@remix-run/node";
 import { Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
-import SidebarLayout from "~/components/sidebar-layout";
+import SidebarLayout from "~/components/sidebar/sidebar-layout";
 
 import { getChannelsForUserId } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
