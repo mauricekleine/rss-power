@@ -1,7 +1,9 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
-import { BellSimpleSlash } from "phosphor-react";
+import { Form, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
+import classNames from "classnames";
+import { BellSimpleSlash, CircleNotch } from "phosphor-react";
+import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 
 import ChannelItemCard from "~/components/channel-item-card";
@@ -29,11 +31,15 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   invariant(params.channelId, "channelId not found");
 
+  const url = new URL(request.url);
+  const cursor = url.searchParams.get("cursor") ?? undefined;
+
   try {
     const [channel, items] = await Promise.all([
       getChannel({ id: params.channelId }),
       getChannelItemsForChannelIdAndUserId({
         channelId: params.channelId,
+        cursor,
         userId,
       }),
     ]);
@@ -86,8 +92,68 @@ export const action: ActionFunction = async ({ request, params }) => {
   return redirect(`/feeds/${params.channelId}`);
 };
 
-export default function NoteDetailsPage() {
+const SCROLL_OFFSET = 750;
+
+export default function ChannelDetailsPage() {
+  const fetcher = useFetcher<LoaderData>();
   const data = useLoaderData() as LoaderData;
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [items, setItems] = useState(data.items);
+
+  const handleLoadMore = () => {
+    if (fetcher.state !== "idle") {
+      return;
+    }
+
+    fetcher.load(
+      `/feeds/${data.channel.id}?cursor=${items[items.length - 1].id}`
+    );
+  };
+
+  useEffect(() => {
+    let debounce: NodeJS.Timer;
+
+    const scrollHandler = (event: Event) => {
+      clearTimeout(debounce);
+
+      debounce = setTimeout(() => {
+        if (fetcher.state !== "idle" || !ref.current) {
+          return;
+        }
+
+        if (
+          document.documentElement.scrollTop >
+          ref.current?.offsetHeight - SCROLL_OFFSET
+        ) {
+          fetcher.load(
+            `/feeds/${data.channel.id}?cursor=${items[items.length - 1].id}`
+          );
+        }
+      }, 100);
+    };
+
+    window.addEventListener("scroll", scrollHandler);
+
+    return () => {
+      clearTimeout(debounce);
+      window.removeEventListener("scroll", scrollHandler);
+    };
+  }, [data.channel.id, fetcher, items]);
+
+  useEffect(() => {
+    if (fetcher.state !== "idle") {
+      return;
+    }
+
+    if (fetcher.data) {
+      setItems((items) => [...items, ...fetcher.data.items]);
+    }
+  }, [fetcher.data, fetcher.state, setItems]);
+
+  useEffect(() => {
+    setItems(data.items);
+  }, [data.items]);
 
   return (
     <div>
@@ -137,10 +203,31 @@ export default function NoteDetailsPage() {
         </p>
       </div>
 
-      <div className="space-y-4">
-        {data.items.map((item) => (
+      <div className="space-y-4" ref={ref}>
+        {items.map((item) => (
           <ChannelItemCard item={item} key={item.id} />
         ))}
+
+        {items.length < data.channel._count.items ? (
+          <div>
+            <div className="flex justify-center">
+              <button
+                className="flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600 underline hover:text-gray-800"
+                onClick={handleLoadMore}
+                type="button"
+              >
+                <CircleNotch
+                  className={classNames({
+                    "animate-spin": fetcher.state === "loading",
+                  })}
+                  weight="bold"
+                />
+
+                <span>Load more</span>
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
