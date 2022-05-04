@@ -1,13 +1,16 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
 import RssParser from "rss-parser";
+
+import ChannelCard from "~/components/channel-card";
 
 import {
   addUserToChannel,
   createChannel,
   getChannelForOrigin,
+  getUnsubscribedChannelsForUserId,
 } from "~/models/channel.server";
 import { requireUserId } from "~/session.server";
 
@@ -98,8 +101,26 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
+type LoaderData = {
+  channels: Awaited<ReturnType<typeof getUnsubscribedChannelsForUserId>>;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
+
+  try {
+    const channels = await getUnsubscribedChannelsForUserId({ userId });
+
+    return json<LoaderData>({ channels });
+  } catch (e) {
+    console.log(e);
+    throw new Response("Not Found", { status: 404 });
+  }
+};
+
 export default function NewNotePage() {
   const actionData = useActionData() as ActionData;
+  const data = useLoaderData() as LoaderData;
 
   const titleRef = React.useRef<HTMLInputElement>(null);
 
@@ -110,45 +131,71 @@ export default function NewNotePage() {
   }, [actionData]);
 
   return (
-    <Form
-      method="post"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        width: "100%",
-      }}
-    >
+    <div>
       <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>URL: </span>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          Add a new feed
+        </h3>
 
-          <input
-            ref={titleRef}
-            name="origin"
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.origin ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.origin ? "url-error" : undefined
-            }
-          />
-        </label>
-
-        {actionData?.errors?.origin && (
-          <div className="pt-1 text-red-700" id="origin-error">
-            {actionData.errors.origin}
-          </div>
-        )}
-      </div>
-
-      <div className="text-right">
-        <button
-          type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+        <Form
+          method="post"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            width: "100%",
+          }}
         >
-          Save
-        </button>
+          <div>
+            <label className="flex w-full flex-col gap-1">
+              <span>Feed URL</span>
+
+              <input
+                aria-invalid={actionData?.errors?.origin ? true : undefined}
+                aria-errormessage={
+                  actionData?.errors?.origin ? "url-error" : undefined
+                }
+                className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                name="origin"
+                placeholder="https://example.com/feed"
+                ref={titleRef}
+              />
+            </label>
+
+            {actionData?.errors?.origin && (
+              <div className="pt-1 text-red-700" id="origin-error">
+                {actionData.errors.origin}
+              </div>
+            )}
+          </div>
+
+          <div className="text-right">
+            <button
+              className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+              type="submit"
+            >
+              Save
+            </button>
+          </div>
+        </Form>
       </div>
-    </Form>
+
+      <div className="space-y-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          Subscribe to trending feeds
+        </h3>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {data.channels
+            .sort(
+              (channelA, channelB) =>
+                channelB.users.length - channelA.users.length
+            )
+            .map((channel) => (
+              <ChannelCard channel={channel} key={channel.id} />
+            ))}
+        </div>
+      </div>
+    </div>
   );
 }
