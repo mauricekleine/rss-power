@@ -12,6 +12,7 @@ import { BookOpen, BookmarkSimple, Check, CheckCircle } from "phosphor-react";
 import { useMemo } from "react";
 
 import ChannelAvatar from "~/components/channels/channel-avatar";
+import Card from "~/components/ui/cards/card";
 import TextButton from "~/components/ui/text-button";
 
 import { ChannelItemActions } from "~/routes/feeds/$channelId";
@@ -65,15 +66,7 @@ export default function ChannelItemCard({
   }, [item.description]);
 
   return (
-    <div
-      className={classNames(
-        "divide-y divide-gray-200 overflow-hidden rounded-lg shadow",
-        {
-          "bg-gray-100": hasRead,
-          "bg-white ": !hasRead,
-        }
-      )}
-    >
+    <Card isInactive={hasRead}>
       {showChannelInformation ? (
         <ChannelAvatar channel={item.channel}>
           <time
@@ -90,7 +83,7 @@ export default function ChannelItemCard({
       ) : null}
 
       <a
-        className={classNames("block px-4 py-5 sm:p-6", {
+        className={classNames({
           "bg-gray-100": hasRead,
           "bg-white hover:bg-gray-50": !hasRead,
         })}
@@ -99,96 +92,100 @@ export default function ChannelItemCard({
         rel="noreferrer"
         target="_blank"
       >
-        <div className="flex justify-between space-x-3">
-          <div className="min-w-0 flex-1">
-            <p
-              className={classNames("truncate text-sm font-medium", {
-                "text-gray-600": hasRead,
-                "text-gray-900": !hasRead,
-              })}
-            >
-              {item.title}
-            </p>
+        <Card.CardBody>
+          <div className="flex justify-between space-x-3">
+            <div className="min-w-0 flex-1">
+              <p
+                className={classNames("truncate text-sm font-medium", {
+                  "text-gray-600": hasRead,
+                  "text-gray-900": !hasRead,
+                })}
+              >
+                {item.title}
+              </p>
+            </div>
+
+            {showChannelInformation ? null : (
+              <time
+                className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
+                dateTime={
+                  item.pubDate
+                    ? new Date(item.pubDate).toISOString()
+                    : undefined
+                }
+              >
+                {item.pubDate
+                  ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
+                  : null}
+              </time>
+            )}
           </div>
 
-          {showChannelInformation ? null : (
-            <time
-              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
-              dateTime={
-                item.pubDate ? new Date(item.pubDate).toISOString() : undefined
-              }
-            >
-              {item.pubDate
-                ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
-                : null}
-            </time>
-          )}
-        </div>
-
-        <div
-          className={classNames("mt-1 text-sm line-clamp-2", {
-            "text-gray-500": hasRead,
-            "text-gray-600": !hasRead,
-          })}
-        >
-          {itemDescription}
-        </div>
+          <div
+            className={classNames("mt-1 text-sm line-clamp-2", {
+              "text-gray-500": hasRead,
+              "text-gray-600": !hasRead,
+            })}
+          >
+            {itemDescription}
+          </div>
+        </Card.CardBody>
       </a>
 
-      <div
-        className={classNames("flex justify-end py-2 sm:px-2", {
-          "bg-gray-100": hasRead,
-          "bg-gray-50": !hasRead,
-        })}
-      >
-        {hasRead ? null : (
+      <Card.CardFooter>
+        <div className="-mr-4 flex justify-end">
+          {hasRead ? null : (
+            <Form method="post">
+              <input name="channelItemId" type="hidden" value={item.id} />
+
+              <TextButton
+                disabled={isReadLater}
+                isLoading={
+                  transition.state === "submitting" &&
+                  transition.submission.formData.get("action") ===
+                    ChannelItemActions.READ_LATER &&
+                  transition.submission.formData.get("channelItemId") ===
+                    item.id
+                }
+                name="action"
+                value={ChannelItemActions.READ_LATER}
+                type="submit"
+              >
+                {isReadLater ? (
+                  <CheckCircle weight="bold" />
+                ) : (
+                  <BookmarkSimple weight="bold" />
+                )}
+
+                <span>
+                  {isReadLater ? "Added to read later" : "Read later"}
+                </span>
+              </TextButton>
+            </Form>
+          )}
+
           <Form method="post">
             <input name="channelItemId" type="hidden" value={item.id} />
 
             <TextButton
-              disabled={isReadLater}
+              disabled={hasRead}
               isLoading={
                 transition.state === "submitting" &&
                 transition.submission.formData.get("action") ===
-                  ChannelItemActions.READ_LATER &&
+                  ChannelItemActions.MARK_AS_READ &&
                 transition.submission.formData.get("channelItemId") === item.id
               }
               name="action"
-              value={ChannelItemActions.READ_LATER}
+              value={ChannelItemActions.MARK_AS_READ}
               type="submit"
             >
-              {isReadLater ? (
-                <CheckCircle weight="bold" />
-              ) : (
-                <BookmarkSimple weight="bold" />
-              )}
+              {hasRead ? <Check weight="bold" /> : <BookOpen weight="bold" />}
 
-              <span>{isReadLater ? "Added to read later" : "Read later"}</span>
+              <span>{hasRead ? "Read" : "Mark as read"}</span>
             </TextButton>
           </Form>
-        )}
-
-        <Form method="post">
-          <input name="channelItemId" type="hidden" value={item.id} />
-
-          <TextButton
-            disabled={hasRead}
-            isLoading={
-              transition.state === "submitting" &&
-              transition.submission.formData.get("action") ===
-                ChannelItemActions.MARK_AS_READ &&
-              transition.submission.formData.get("channelItemId") === item.id
-            }
-            name="action"
-            value={ChannelItemActions.MARK_AS_READ}
-            type="submit"
-          >
-            {hasRead ? <Check weight="bold" /> : <BookOpen weight="bold" />}
-
-            <span>{hasRead ? "Read" : "Mark as read"}</span>
-          </TextButton>
-        </Form>
-      </div>
-    </div>
+        </div>
+      </Card.CardFooter>
+    </Card>
   );
 }
