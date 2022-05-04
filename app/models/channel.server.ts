@@ -32,7 +32,10 @@ export function createChannel({
   userId,
 }: Pick<Channel, "description" | "link" | "origin" | "title"> & {
   image?: Pick<Image, "link" | "title" | "url">;
-  items: Pick<ChannelItem, "description" | "link" | "pubDate" | "title">[];
+  items: Pick<
+    ChannelItem,
+    "description" | "guid" | "link" | "pubDate" | "title"
+  >[];
   userId: User["id"];
 }) {
   return prisma.channel.create({
@@ -110,7 +113,7 @@ export function getChannelsToUpdate() {
         select: { id: true, url: true },
       },
       items: {
-        select: { link: true },
+        select: { guid: true, link: true, pubDate: true, title: true },
       },
     },
   });
