@@ -101,6 +101,25 @@ export function getChannel({ id }: { id: Channel["id"] }) {
   });
 }
 
+export function getChannels() {
+  return prisma.channel.findMany({
+    select: {
+      id: true,
+      items: {
+        select: {
+          _count: true,
+        },
+      },
+      title: true,
+      users: {
+        select: {
+          _count: true,
+        },
+      },
+    },
+  });
+}
+
 export function getChannelsToUpdate() {
   return prisma.channel.findMany({
     include: {
