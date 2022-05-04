@@ -1,4 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
@@ -15,7 +16,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const user = await requireUser(request);
 
   if (user.email !== "test@rsspower.com") {
-    return new Response("Unauthorized", { status: 401 });
+    return redirect("/feeds");
   }
 
   const [channels, users] = await Promise.all([getChannels(), getUsers()]);
