@@ -118,7 +118,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 };
 
-export default function NewNotePage() {
+export default function NewFeedPage() {
   const actionData = useActionData() as ActionData;
   const data = useLoaderData() as LoaderData;
 

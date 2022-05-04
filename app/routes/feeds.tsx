@@ -22,7 +22,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({ channels });
 };
 
-export default function NotesPage() {
+export default function FeedsPage() {
   const fetcher = useFetcher<LoaderData>();
   const loaderData = useLoaderData() as LoaderData;
   const [data, setData] = useState<LoaderData>(loaderData);

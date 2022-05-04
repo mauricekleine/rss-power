@@ -1,6 +1,8 @@
-import { Form } from "@remix-run/react";
+import { Form, useTransition } from "@remix-run/react";
 import classNames from "classnames";
 import { Bell, User, Users, UsersFour, UsersThree } from "phosphor-react";
+
+import TextButton from "./ui/text-button";
 
 import type { getUnsubscribedChannelsForUserId } from "~/models/channel.server";
 
@@ -9,6 +11,8 @@ type Props = {
 };
 
 export default function ChannelCard({ channel }: Props) {
+  const transition = useTransition();
+
   return (
     <div className="flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow">
       <div
@@ -58,17 +62,20 @@ export default function ChannelCard({ channel }: Props) {
           <span className="text-sm">{channel.users.length}</span>
         </div>
 
-        <Form method="post">
+        <Form className="-mr-4" method="post">
           <input name="origin" type="hidden" value={channel.origin} />
 
-          <button
-            className="-mr-4 flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600 underline hover:text-gray-800"
+          <TextButton
+            isLoading={
+              transition.state === "submitting" &&
+              transition.submission.formData.get("origin") === channel.origin
+            }
             type="submit"
           >
             <Bell weight="bold" />
 
             <span>Subscribe</span>
-          </button>
+          </TextButton>
         </Form>
       </div>
     </div>

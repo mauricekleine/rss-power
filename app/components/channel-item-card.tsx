@@ -1,9 +1,11 @@
-import { Form, useSubmit } from "@remix-run/react";
-import classnames from "classnames";
+import { Form, useSubmit, useTransition } from "@remix-run/react";
+import classNames from "classNames";
 import { formatDistance } from "date-fns";
 import DOMPurify from "isomorphic-dompurify";
 import { BookOpen, BookmarkSimple, Check, CheckCircle } from "phosphor-react";
 import { useMemo } from "react";
+
+import TextButton from "./ui/text-button";
 
 import type { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
 import { ChannelItemActions } from "~/routes/feeds/$channelId";
@@ -18,6 +20,7 @@ export default function ChannelItemCard({
   showChannelInformation,
 }: Props) {
   const submit = useSubmit();
+  const transition = useTransition();
 
   const handleClick = () => {
     submit(
@@ -52,7 +55,7 @@ export default function ChannelItemCard({
 
   return (
     <div
-      className={classnames(
+      className={classNames(
         "divide-y divide-gray-200 overflow-hidden rounded-lg shadow",
         {
           "bg-gray-100": hasRead,
@@ -92,7 +95,7 @@ export default function ChannelItemCard({
       ) : null}
 
       <a
-        className={classnames("block px-4 py-5 sm:p-6", {
+        className={classNames("block px-4 py-5 sm:p-6", {
           "bg-gray-100": hasRead,
           "bg-white hover:bg-gray-50": !hasRead,
         })}
@@ -104,7 +107,7 @@ export default function ChannelItemCard({
         <div className="flex justify-between space-x-3">
           <div className="min-w-0 flex-1">
             <p
-              className={classnames("truncate text-sm font-medium", {
+              className={classNames("truncate text-sm font-medium", {
                 "text-gray-600": hasRead,
                 "text-gray-900": !hasRead,
               })}
@@ -128,7 +131,7 @@ export default function ChannelItemCard({
         </div>
 
         <div
-          className={classnames("line-clamp-2 mt-1 text-sm", {
+          className={classNames("mt-1 text-sm line-clamp-2", {
             "text-gray-500": hasRead,
             "text-gray-600": !hasRead,
           })}
@@ -138,7 +141,7 @@ export default function ChannelItemCard({
       </a>
 
       <div
-        className={classnames("flex justify-end py-2 sm:px-2", {
+        className={classNames("flex justify-end py-2 sm:px-2", {
           "bg-gray-100": hasRead,
           "bg-gray-50": !hasRead,
         })}
@@ -147,14 +150,14 @@ export default function ChannelItemCard({
           <Form method="post">
             <input name="channelItemId" type="hidden" value={item.id} />
 
-            <button
-              className={classnames(
-                "flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600",
-                {
-                  "underline hover:text-gray-800": !isReadLater,
-                }
-              )}
+            <TextButton
               disabled={isReadLater}
+              isLoading={
+                transition.state === "submitting" &&
+                transition.submission.formData.get("action") ===
+                  ChannelItemActions.READ_LATER &&
+                transition.submission.formData.get("channelItemId") === item.id
+              }
               name="action"
               value={ChannelItemActions.READ_LATER}
               type="submit"
@@ -165,22 +168,22 @@ export default function ChannelItemCard({
                 <BookmarkSimple weight="bold" />
               )}
 
-              <span>{isReadLater ? "Added to read later" : "Read later"}</span>
-            </button>
+              {isReadLater ? "Added to read later" : "Read later"}
+            </TextButton>
           </Form>
         )}
 
         <Form method="post">
           <input name="channelItemId" type="hidden" value={item.id} />
 
-          <button
-            className={classnames(
-              "flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600",
-              {
-                "underline hover:text-gray-800": !hasRead,
-              }
-            )}
+          <TextButton
             disabled={hasRead}
+            isLoading={
+              transition.state === "submitting" &&
+              transition.submission.formData.get("action") ===
+                ChannelItemActions.MARK_AS_READ &&
+              transition.submission.formData.get("channelItemId") === item.id
+            }
             name="action"
             value={ChannelItemActions.MARK_AS_READ}
             type="submit"
@@ -188,7 +191,7 @@ export default function ChannelItemCard({
             {hasRead ? <Check weight="bold" /> : <BookOpen weight="bold" />}
 
             <span>{hasRead ? "Read" : "Mark as read"}</span>
-          </button>
+          </TextButton>
         </Form>
       </div>
     </div>

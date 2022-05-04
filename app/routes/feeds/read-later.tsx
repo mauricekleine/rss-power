@@ -50,7 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
   return redirect(`/feeds/read-later`);
 };
 
-export default function NoteDetailsPage() {
+export default function ReadLaterPage() {
   const data = useLoaderData() as LoaderData;
 
   return (
