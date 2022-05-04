@@ -6,12 +6,19 @@ export type { ChannelItem } from "@prisma/client";
 
 export function getChannelItemsForChannelIdAndUserId({
   channelId,
+  cursor,
   userId,
 }: {
   channelId: Channel["id"];
+  cursor?: ChannelItem["id"];
   userId: User["id"];
 }) {
   return prisma.channelItem.findMany({
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
     include: {
       channel: {
         select: {
@@ -34,6 +41,8 @@ export function getChannelItemsForChannelIdAndUserId({
         },
       },
     },
+    skip: cursor ? 1 : 0,
+    take: 50,
     orderBy: [{ pubDate: "desc" }, { order: "desc" }],
     where: { channelId },
   });
