@@ -157,6 +157,38 @@ export function getChannelForOrigin({ origin }: { origin: Channel["origin"] }) {
   });
 }
 
+export function getUnsubscribedChannelsForUserId({
+  userId,
+}: {
+  userId: User["id"];
+}) {
+  return prisma.channel.findMany({
+    select: {
+      description: true,
+      id: true,
+      image: true,
+      link: true,
+      origin: true,
+      title: true,
+      users: {
+        select: {
+          _count: true,
+        },
+      },
+    },
+    take: 10,
+    where: {
+      users: {
+        every: {
+          id: {
+            not: userId,
+          },
+        },
+      },
+    },
+  });
+}
+
 export function removeUserFromChannel({
   id,
   userId,
