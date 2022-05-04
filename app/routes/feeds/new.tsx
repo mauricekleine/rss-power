@@ -58,6 +58,13 @@ export const action: ActionFunction = async ({ request }) => {
       );
     }
 
+    /*
+      Assuming that items are returned in the order the author intended,
+      we want to give the last element returned the lowest `order`.
+      Since we rely on auto-increment, reversing the array should be sufficient.
+    */
+    const ascendingItems = parsed.items.reverse();
+
     const channel = await createChannel({
       description: parsed.description ?? "",
       image: parsed.image?.url
@@ -67,10 +74,11 @@ export const action: ActionFunction = async ({ request }) => {
             url: parsed.image.url,
           }
         : undefined,
-      items: parsed.items.map((item) => ({
+      items: ascendingItems.map((item) => ({
         description: item.summary ?? item.content ?? "",
+        guid: item.guid ?? null,
         link: item.link ?? "",
-        pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
+        pubDate: item.pubDate ? new Date(item.pubDate) : null,
         title: item.title ?? "",
       })),
       link: parsed.link,

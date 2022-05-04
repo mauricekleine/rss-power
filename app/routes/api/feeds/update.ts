@@ -1,4 +1,5 @@
 import type { ActionFunction } from "@remix-run/server-runtime";
+import { compareAsc } from "date-fns";
 import RssParser from "rss-parser";
 
 import {
@@ -26,8 +27,31 @@ export const action: ActionFunction = async ({ request }) => {
         const parsed = await parser.parseURL(channel.origin);
 
         const newItems = parsed.items.filter(
-          (newItem) => !channel.items.find((item) => item.link === newItem.link)
+          (newItem) =>
+            !channel.items.find((item) => {
+              const hasSameGuid = item.guid === newItem.guid;
+              const hasSameLink = item.link === newItem.link;
+              const hasSamePubDate =
+                item.pubDate !== null &&
+                typeof newItem.pubDate === "string" &&
+                compareAsc(item.pubDate, new Date(newItem.pubDate)) === 0;
+              const hasSameTitle = item.title === newItem.title;
+
+              // TODO: is this enough to guarantee uniqueness?
+              return (
+                hasSameGuid ||
+                (hasSamePubDate && hasSameTitle) ||
+                (hasSameLink && hasSameTitle)
+              );
+            })
         );
+
+        /*
+          Assuming that items are returned in the order the author intended,
+          we want to give the last element returned the lowest `order`.
+          Since we rely on auto-increment, reversing the array should be sufficient.
+        */
+        const ascendingItems = newItems.reverse();
 
         console.log(`Updating channel ${channel.title} from ${channel.origin}`);
 
@@ -51,10 +75,11 @@ export const action: ActionFunction = async ({ request }) => {
                     url: parsed.image.url,
                   }
                 : undefined,
-            items: newItems.map((item) => ({
+            items: ascendingItems.map((item) => ({
               description: item.summary ?? item.content ?? "",
+              guid: item.guid ?? null,
               link: item.link ?? "",
-              pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
+              pubDate: item.pubDate ? new Date(item.pubDate) : null,
               title: item.title ?? "",
             })),
             link: parsed.link ?? channel.title,
