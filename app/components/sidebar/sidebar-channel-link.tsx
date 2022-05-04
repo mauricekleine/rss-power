@@ -27,11 +27,11 @@ export default function SidebarChannelLink({
     <NavLink
       className={({ isActive }) =>
         classNames(
+          "group flex flex-col rounded-md px-2 py-2 text-sm font-medium",
           {
             "bg-gray-100 text-gray-900": isActive,
             "text-gray-700 hover:bg-gray-50 hover:text-gray-900": !isActive,
-          },
-          "group flex flex-col rounded-md px-2 py-2 text-sm font-medium"
+          }
         )
       }
       to={channel.id}
