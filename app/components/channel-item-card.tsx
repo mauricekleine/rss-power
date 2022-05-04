@@ -5,6 +5,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { BookOpen, BookmarkSimple, Check, CheckCircle } from "phosphor-react";
 import { useMemo } from "react";
 
+import ChannelAvatar from "./channel-avatar";
 import TextButton from "./ui/text-button";
 
 import type { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
@@ -64,34 +65,18 @@ export default function ChannelItemCard({
       )}
     >
       {showChannelInformation ? (
-        <div className="flex items-center space-x-2 px-4 py-5 leading-none sm:px-6">
-          {item.channel.image ? (
-            <div className="flex-shrink-0">
-              <img
-                alt={item.channel.image.title ?? item.channel.title}
-                className="h-8 w-8 rounded-full object-cover"
-                src={item.channel?.image?.url}
-              />
-            </div>
-          ) : null}
-
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-gray-900">
-              {item.channel.title}
-            </p>
-
-            <time
-              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
-              dateTime={
-                item.pubDate ? new Date(item.pubDate).toISOString() : undefined
-              }
-            >
-              {item.pubDate
-                ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
-                : null}
-            </time>
-          </div>
-        </div>
+        <ChannelAvatar channel={item.channel}>
+          <time
+            className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
+            dateTime={
+              item.pubDate ? new Date(item.pubDate).toISOString() : undefined
+            }
+          >
+            {item.pubDate
+              ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
+              : null}
+          </time>
+        </ChannelAvatar>
       ) : null}
 
       <a

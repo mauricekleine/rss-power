@@ -1,7 +1,7 @@
 import { Form, useTransition } from "@remix-run/react";
-import classNames from "classnames";
 import { Bell, User, Users, UsersFour, UsersThree } from "phosphor-react";
 
+import ChannelAvatar from "./channel-avatar";
 import TextButton from "./ui/text-button";
 
 import type { getUnsubscribedChannelsForUserId } from "~/models/channel.server";
@@ -15,31 +15,7 @@ export default function ChannelCard({ channel }: Props) {
 
   return (
     <div className="flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow">
-      <div
-        className={classNames(
-          "flex items-center space-x-2 px-4 leading-none sm:px-6",
-          {
-            "py-3.5": channel.image,
-            "py-5": !channel.image,
-          }
-        )}
-      >
-        {channel.image ? (
-          <div className="flex-shrink-0">
-            <img
-              alt={channel.image.title ?? channel.title}
-              className="h-8 w-8 rounded-full object-cover"
-              src={channel?.image?.url}
-            />
-          </div>
-        ) : null}
-
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-gray-900">
-            {channel.title}
-          </p>
-        </div>
-      </div>
+      <ChannelAvatar channel={channel} />
 
       <div className="flex-1 px-4 py-5 sm:p-6">
         <div className="flex justify-between space-x-3">

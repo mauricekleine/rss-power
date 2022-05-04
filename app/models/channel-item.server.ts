@@ -22,12 +22,7 @@ export function getChannelItemsForChannelIdAndUserId({
     include: {
       channel: {
         select: {
-          image: {
-            select: {
-              title: true,
-              url: true,
-            },
-          },
+          image: true,
           title: true,
         },
       },
