@@ -112,6 +112,13 @@ export function getUnreadChannelItemsForUserId({
           equals: null,
         },
       },
+      channel: {
+        users: {
+          some: {
+            id: userId,
+          },
+        },
+      },
       userChannelItems: {
         every: {
           userId,
