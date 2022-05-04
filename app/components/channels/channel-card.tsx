@@ -39,7 +39,9 @@ export default function ChannelCard({ channel }: Props) {
 
             {channel.users.length >= 4 ? <UsersFour weight="bold" /> : null}
 
-            <span className="text-sm">{channel.users.length}</span>
+            {channel.users.length > 0 ? (
+              <span className="text-sm">{channel.users.length}</span>
+            ) : null}
           </div>
 
           <Form className="-mr-4" method="post">
