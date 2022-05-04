@@ -16,7 +16,9 @@ export default function ChannelCard({ channel }: Props) {
 
   return (
     <Card>
-      <ChannelAvatar channel={channel} />
+      <Card.CardHeader>
+        <ChannelAvatar channel={channel} />
+      </Card.CardHeader>
 
       <Card.CardBody>
         <div className="flex justify-between space-x-3">

@@ -27,6 +27,14 @@ function Card({ children, isInactive = false }: CardProps) {
   );
 }
 
+type CardHeaderProps = {
+  children: ReactNode | ReactNode[];
+};
+
+function CardHeader({ children }: CardHeaderProps) {
+  return <div className="px-4 py-5 sm:px-6">{children}</div>;
+}
+
 type CardBodyProps = {
   children: ReactNode | ReactNode[];
 };
@@ -56,5 +64,6 @@ function CardFooter({ children }: CardFooterProps) {
 
 Card.CardBody = CardBody;
 Card.CardFooter = CardFooter;
+Card.CardHeader = CardHeader;
 
 export default Card;

@@ -5,7 +5,7 @@ import type {
   UserChannelItem,
 } from "@prisma/client";
 import { Form, useSubmit, useTransition } from "@remix-run/react";
-import classNames from "classNames";
+import classNames from "classnames";
 import { formatDistance } from "date-fns";
 import DOMPurify from "isomorphic-dompurify";
 import { BookOpen, BookmarkSimple, Check, CheckCircle } from "phosphor-react";
@@ -68,18 +68,20 @@ export default function ChannelItemCard({
   return (
     <Card isInactive={hasRead}>
       {showChannelInformation ? (
-        <ChannelAvatar channel={item.channel}>
-          <time
-            className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
-            dateTime={
-              item.pubDate ? new Date(item.pubDate).toISOString() : undefined
-            }
-          >
-            {item.pubDate
-              ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
-              : null}
-          </time>
-        </ChannelAvatar>
+        <Card.CardHeader>
+          <ChannelAvatar channel={item.channel}>
+            <time
+              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
+              dateTime={
+                item.pubDate ? new Date(item.pubDate).toISOString() : undefined
+              }
+            >
+              {item.pubDate
+                ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
+                : null}
+            </time>
+          </ChannelAvatar>
+        </Card.CardHeader>
       ) : null}
 
       <a

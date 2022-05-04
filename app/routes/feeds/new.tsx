@@ -1,10 +1,12 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Bell, Rss } from "phosphor-react";
 import * as React from "react";
 import RssParser from "rss-parser";
 
 import ChannelCard from "~/components/channels/channel-card";
+import Card from "~/components/ui/cards/card";
 import SectionHeader from "~/components/ui/typography/section-header";
 
 import {
@@ -132,52 +134,62 @@ export default function NewFeedPage() {
   }, [actionData]);
 
   return (
-    <div>
-      <div>
+    <div className="space-y-8">
+      <div className="space-y-4">
         <SectionHeader>Add a new feed</SectionHeader>
 
-        <Form
-          method="post"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 8,
-            width: "100%",
-          }}
-        >
-          <div>
-            <label className="flex w-full flex-col gap-1">
-              <span>Feed URL</span>
+        <Form method="post">
+          <Card>
+            <Card.CardBody>
+              <div>
+                <label
+                  className="block text-sm font-medium text-gray-700"
+                  htmlFor="origin"
+                >
+                  Feed url
+                </label>
 
-              <input
-                aria-invalid={actionData?.errors?.origin ? true : undefined}
-                aria-errormessage={
-                  actionData?.errors?.origin ? "url-error" : undefined
-                }
-                autoFocus
-                className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-                id="origin"
-                name="origin"
-                placeholder="https://example.com/feed"
-                ref={titleRef}
-              />
-            </label>
+                <div className="relative mt-1 rounded-md shadow-sm">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Rss className="h-5 w-5 text-gray-400" weight="bold" />
+                  </div>
 
-            {actionData?.errors?.origin && (
-              <div className="pt-1 text-red-700" id="origin-error">
-                {actionData.errors.origin}
+                  <input
+                    aria-invalid={actionData?.errors?.origin ? true : undefined}
+                    aria-errormessage={
+                      actionData?.errors?.origin ? "url-error" : undefined
+                    }
+                    autoFocus
+                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-600 sm:text-sm"
+                    id="origin"
+                    name="origin"
+                    placeholder="https://example.com/feed"
+                    type="url"
+                    ref={titleRef}
+                  />
+
+                  {actionData?.errors?.origin && (
+                    <div className="pt-1 text-red-700" id="origin-error">
+                      {actionData.errors.origin}
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
+            </Card.CardBody>
 
-          <div className="text-right">
-            <button
-              className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-              type="submit"
-            >
-              Save
-            </button>
-          </div>
+            <Card.CardFooter>
+              <div className="flex justify-end">
+                <button
+                  className="flex items-center space-x-2 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+                  type="submit"
+                >
+                  <Bell weight="bold" />
+
+                  <span>Save</span>
+                </button>
+              </div>
+            </Card.CardFooter>
+          </Card>
         </Form>
       </div>
 

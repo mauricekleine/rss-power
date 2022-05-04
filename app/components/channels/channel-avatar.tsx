@@ -12,13 +12,9 @@ type Props = {
 export default function ChannelAvatar({ channel, children }: Props) {
   return (
     <div
-      className={classNames(
-        "flex items-center space-x-2 px-4 leading-none sm:px-6",
-        {
-          "py-3.5": channel.image,
-          "py-5": !channel.image,
-        }
-      )}
+      className={classNames("flex items-center space-x-2 leading-none", {
+        "-my-1.5": channel.image,
+      })}
     >
       {channel.image ? (
         <div className="flex-shrink-0">
