@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   content: ["./app/**/*.{ts,tsx,jsx,js}"],
   theme: {
@@ -5,6 +7,9 @@ module.exports = {
       animation: {
         "fade-in": "fade-in 150ms ease-in-out",
         "slide-from-left": "slide-from-left 150ms ease-in",
+      },
+      fontFamily: {
+        sans: ["Inter var", ...defaultTheme.fontFamily.sans],
       },
       keyframes: {
         "fade-in": {
