@@ -7,9 +7,7 @@ import {
   User as UserIcon,
 } from "phosphor-react";
 
-import SidebarFolderLink from "./sidebar-folder-link";
-
-import SidebarChannelLink from "~/components/sidebar/sidebar-channel-link";
+import SidebarLink from "~/components/sidebar/sidebar-link";
 import SectionHeader from "~/components/ui/typography/section-header";
 
 import type { getChannelsForUserId } from "~/models/channel.server";
@@ -17,10 +15,17 @@ import type { User } from "~/models/user.server";
 
 type Props = {
   channels: Awaited<ReturnType<typeof getChannelsForUserId>>;
+  inboxCount: number;
+  readLaterCount: number;
   user: User;
 };
 
-export default function SidebarNavigation({ channels, user }: Props) {
+export default function SidebarNavigation({
+  channels,
+  inboxCount,
+  readLaterCount,
+  user,
+}: Props) {
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
       <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
@@ -36,40 +41,41 @@ export default function SidebarNavigation({ channels, user }: Props) {
               <SectionHeader>Folders</SectionHeader>
             </div>
 
-            <div className="mt-1 space-y-1">
-              <SidebarFolderLink to="inbox">
-                <Tray weight="bold" />
+            <div className="mt-1">
+              <SidebarLink itemCount={inboxCount} to="inbox">
+                <Tray className="text-black" weight="bold" />
 
                 <span>Inbox</span>
-              </SidebarFolderLink>
+              </SidebarLink>
 
-              <SidebarFolderLink to="read-later">
-                <BookmarkSimple weight="bold" />
+              <SidebarLink itemCount={readLaterCount} to="read-later">
+                <BookmarkSimple className="text-black" weight="bold" />
 
                 <span>Read later</span>
-              </SidebarFolderLink>
+              </SidebarLink>
             </div>
           </div>
 
-          <div className="space-y-1 px-2">
+          <div className="px-2">
             <div className="px-2">
               <SectionHeader>Channels</SectionHeader>
             </div>
 
-            {channels.length === 0 ? (
-              <p className="p-4">No channels yet</p>
-            ) : (
-              <ol>
-                {channels.map((channel) => (
-                  <li key={channel.id}>
-                    <SidebarChannelLink
-                      channel={channel}
-                      itemCount={channel._count.items}
-                    />
-                  </li>
-                ))}
-              </ol>
-            )}
+            <div className="mt-1">
+              {channels.length === 0 ? (
+                <p className="p-4">No channels yet</p>
+              ) : (
+                channels.map((channel) => (
+                  <SidebarLink
+                    itemCount={channel._count.items}
+                    key={channel.id}
+                    to={channel.id}
+                  >
+                    {channel.title}
+                  </SidebarLink>
+                ))
+              )}
+            </div>
           </div>
         </nav>
 
