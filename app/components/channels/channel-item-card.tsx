@@ -6,9 +6,10 @@ import type {
 } from "@prisma/client";
 import { useSubmit } from "@remix-run/react";
 import classNames from "classnames";
-import { formatDistance } from "date-fns";
 import DOMPurify from "isomorphic-dompurify";
 import { useMemo } from "react";
+
+import RelativeDate from "../ui/typography/relative-date";
 
 import ChannelAvatar from "~/components/channels/channel-avatar";
 import ChannelItemMarkAsReadForm from "~/components/channels/channel-item-mark-as-read-form";
@@ -67,16 +68,7 @@ export default function ChannelItemCard({
       {showChannelInformation ? (
         <Card.CardHeader>
           <ChannelAvatar channel={item.channel}>
-            <time
-              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
-              dateTime={
-                item.pubDate ? new Date(item.pubDate).toISOString() : undefined
-              }
-            >
-              {item.pubDate
-                ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
-                : null}
-            </time>
+            {item.pubDate ? <RelativeDate date={item.pubDate} /> : null}
           </ChannelAvatar>
         </Card.CardHeader>
       ) : null}
@@ -92,32 +84,23 @@ export default function ChannelItemCard({
         target="_blank"
       >
         <Card.CardBody>
-          <div className="flex justify-between space-x-3">
-            <div className="min-w-0 flex-1">
-              <p
-                className={classNames("truncate text-sm font-medium", {
-                  "text-gray-600": hasRead,
-                  "text-gray-900": !hasRead,
-                })}
-              >
-                {item.title}
-              </p>
-            </div>
+          <div className="flex flex-row justify-between space-x-2 sm:justify-start">
+            <p
+              className={classNames("truncate text-sm font-medium", {
+                "text-gray-600": hasRead,
+                "text-gray-900": !hasRead,
+              })}
+            >
+              {item.title}
+            </p>
 
-            {showChannelInformation ? null : (
-              <time
-                className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
-                dateTime={
-                  item.pubDate
-                    ? new Date(item.pubDate).toISOString()
-                    : undefined
-                }
-              >
-                {item.pubDate
-                  ? `${formatDistance(new Date(item.pubDate), new Date())} ago`
-                  : null}
-              </time>
-            )}
+            {item.pubDate && !showChannelInformation ? (
+              <>
+                <p className="hidden text-sm text-gray-500 sm:block">·</p>
+
+                <RelativeDate date={item.pubDate} />
+              </>
+            ) : null}
           </div>
 
           <div
