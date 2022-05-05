@@ -10,10 +10,18 @@ import type { User } from "~/models/user.server";
 type Props = {
   channels: Awaited<ReturnType<typeof getChannelsForUserId>>;
   children: ReactNode;
+  inboxCount: number;
+  readLaterCount: number;
   user: User;
 };
 
-export default function SidebarLayout({ channels, children, user }: Props) {
+export default function SidebarLayout({
+  channels,
+  children,
+  inboxCount,
+  readLaterCount,
+  user,
+}: Props) {
   return (
     <>
       <Drawer>
@@ -24,7 +32,12 @@ export default function SidebarLayout({ channels, children, user }: Props) {
         </Drawer.Trigger>
 
         <Drawer.Content>
-          <SidebarNavigation channels={channels} user={user} />
+          <SidebarNavigation
+            channels={channels}
+            inboxCount={inboxCount}
+            readLaterCount={readLaterCount}
+            user={user}
+          />
 
           <Drawer.Close>
             <span className="sr-only">Close sidebar</span>
@@ -37,7 +50,12 @@ export default function SidebarLayout({ channels, children, user }: Props) {
       {/* Static sidebar for desktop */}
 
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-        <SidebarNavigation channels={channels} user={user} />
+        <SidebarNavigation
+          channels={channels}
+          inboxCount={inboxCount}
+          readLaterCount={readLaterCount}
+          user={user}
+        />
       </div>
 
       <div className="flex flex-1 flex-col md:pl-64">

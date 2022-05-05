@@ -54,8 +54,8 @@ export default function InboxPage() {
     <div>
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Tray className="h-5 w-5 text-gray-900" weight="bold" />
+          <div className="flex items-center space-x-1">
+            <Tray className="h-6 w-6 text-black" weight="bold" />
 
             <PageHeader>Inbox</PageHeader>
           </div>

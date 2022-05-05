@@ -78,6 +78,26 @@ export function getChannelItemsSavedForLater({
   });
 }
 
+export function getChannelItemsSavedForLaterCount({
+  userId,
+}: {
+  userId: User["id"];
+}) {
+  return prisma.channelItem.count({
+    select: {
+      _all: true,
+    },
+    where: {
+      userChannelItems: {
+        some: {
+          isReadLater: true,
+          userId,
+        },
+      },
+    },
+  });
+}
+
 export function getUnreadChannelItemsForUserId({
   start,
   userId,

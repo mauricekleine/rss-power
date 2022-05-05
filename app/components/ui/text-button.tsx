@@ -23,7 +23,7 @@ export default function TextButton({
   return (
     <button
       className={classNames(
-        "flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600",
+        "flex items-center space-x-2 rounded py-2 px-4 text-sm font-normal text-gray-600",
         {
           "underline hover:text-gray-800": !disabled && !isLoading,
           "animate-pulse": isLoading,

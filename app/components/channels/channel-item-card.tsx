@@ -94,7 +94,7 @@ export default function ChannelItemCard({
         <Card.CardBody>
           <div className="flex flex-row justify-between space-x-2 sm:justify-start">
             <p
-              className={classNames("truncate text-sm font-medium", {
+              className={classNames("text-sm font-medium", {
                 "text-gray-600": hasRead,
                 "text-gray-900": !hasRead,
               })}
@@ -112,7 +112,7 @@ export default function ChannelItemCard({
           </div>
 
           <div
-            className={classNames("mt-1 text-sm line-clamp-2", {
+            className={classNames("mt-1 text-sm line-clamp-5", {
               "text-gray-500": hasRead,
               "text-gray-600": !hasRead,
             })}
