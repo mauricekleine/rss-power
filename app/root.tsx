@@ -17,7 +17,13 @@ import { getUser } from "~/session.server";
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
+  return [
+    { href: tailwindStylesheetUrl, rel: "stylesheet" },
+    {
+      href: "https://rsms.me/inter/inter.css",
+      rel: "stylesheet",
+    },
+  ];
 };
 
 export const meta: MetaFunction = () => ({
