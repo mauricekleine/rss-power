@@ -76,7 +76,7 @@ export default function ChannelDetailsPage() {
   return (
     <div>
       <div className="mb-5 border-b border-gray-200 pb-5">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-start">
           <div className="flex items-center space-x-2">
             {data.channel.image ? (
               <img
@@ -100,7 +100,7 @@ export default function ChannelDetailsPage() {
             </div>
           </div>
 
-          <Form method="post">
+          <Form className="-mt-1.5 flex justify-end" method="post">
             <TextButton
               isLoading={
                 transition.state === "submitting" &&
