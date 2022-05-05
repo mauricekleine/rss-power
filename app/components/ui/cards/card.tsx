@@ -14,10 +14,10 @@ function Card({ children, isInactive = false }: CardProps) {
     <CardContext.Provider value={{ isInactive }}>
       <div
         className={classNames(
-          "flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg shadow",
+          "flex flex-col divide-y divide-gray-200 dark:divide-neutral-700 overflow-hidden rounded-lg shadow",
           {
-            "bg-gray-100": isInactive,
-            "bg-white ": !isInactive,
+            "bg-gray-100 dark:bg-neutral-800 dark:opacity-90": isInactive,
+            "bg-white dark:bg-neutral-800": !isInactive,
           }
         )}
       >
@@ -53,8 +53,8 @@ function CardFooter({ children }: CardFooterProps) {
   return (
     <div
       className={classNames("py-2 px-4 sm:px-6", {
-        "bg-gray-100": isInactive,
-        "bg-gray-50": !isInactive,
+        "bg-gray-100 dark:bg-neutral-900 dark:opacity-90": isInactive,
+        "bg-gray-50 dark:bg-neutral-800": !isInactive,
       })}
     >
       {children}

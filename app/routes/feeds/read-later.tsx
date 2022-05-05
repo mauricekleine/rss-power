@@ -57,16 +57,16 @@ export default function ReadLaterPage() {
 
   return (
     <div>
-      <div className="mb-5 border-b border-gray-200 pb-5">
+      <div className="mb-5 border-b border-gray-200 dark:border-neutral-800 pb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <BookmarkSimple className="h-5 w-5 text-gray-900" weight="bold" />
+            <BookmarkSimple className="h-5 w-5 text-gray-900 dark:text-neutral-600" weight="bold" />
 
             <PageHeader>Read later</PageHeader>
           </div>
         </div>
 
-        <p className="mt-2 max-w-4xl text-sm text-gray-600">
+        <p className="mt-2 max-w-4xl text-sm text-gray-600 dark:text-neutral-600">
           Articles you've marked as read later
         </p>
       </div>

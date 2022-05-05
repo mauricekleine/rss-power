@@ -13,10 +13,10 @@ export default function SidebarFolderLink({ children, to }: Props) {
       to={to}
       className={({ isActive }) =>
         classNames(
-          "group flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+          "group flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 dark:text-neutral-500 dark:divide-neutral-600 hover:bg-gray-50 dark:hover:bg-neutral-600 hover:text-gray-900 dark:hover:text-neutral-100",
           {
-            "bg-gray-100 text-gray-900": isActive,
-            "text-gray-700 hover:bg-gray-50 hover:text-gray-900": !isActive,
+            "bg-gray-100 text-gray-900 dark:text-neutral-200 dark:bg-neutral-700": isActive,
+            "text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-neutral-700 dark:hover:text-neutral-100": !isActive,
           }
         )
       }

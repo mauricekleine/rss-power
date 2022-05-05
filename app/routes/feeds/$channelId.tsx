@@ -75,7 +75,7 @@ export default function ChannelDetailsPage() {
 
   return (
     <div>
-      <div className="mb-5 border-b border-gray-200 pb-5">
+      <div className="mb-5 border-b border-gray-200 dark:border-neutral-800 pb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {data.channel.image ? (
@@ -115,7 +115,7 @@ export default function ChannelDetailsPage() {
           </Form>
         </div>
 
-        <p className="mt-2 max-w-4xl text-sm text-gray-600">
+        <p className="mt-2 max-w-4xl text-sm text-gray-600 dark:text-neutral-600">
           {data.channel.description}
         </p>
       </div>

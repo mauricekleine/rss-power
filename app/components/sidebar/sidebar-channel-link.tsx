@@ -27,10 +27,10 @@ export default function SidebarChannelLink({
     <NavLink
       className={({ isActive }) =>
         classNames(
-          "group flex flex-col rounded-md px-2 py-2 text-sm font-medium",
+          "group flex flex-col rounded-md px-2 py-2 text-sm font-medium mb-2",
           {
-            "bg-gray-100 text-gray-900": isActive,
-            "text-gray-700 hover:bg-gray-50 hover:text-gray-900": !isActive,
+            "bg-gray-100 text-gray-900 dark:text-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600": isActive,
+            "text-gray-700 dark:text-neutral-400 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-neutral-700 dark:hover:text-neutral-100": !isActive,
           }
         )
       }
@@ -45,8 +45,8 @@ export default function SidebarChannelLink({
               <span
                 className={classNames(
                   {
-                    "bg-white": !hasUpdates && isActive,
-                    "bg-gray-100 text-gray-600 group-hover:bg-gray-200":
+                    "bg-white dark:bg-neutral-600 dark:text-neutral-300": !hasUpdates && isActive,
+                    "bg-gray-100 dark:bg-neutral-600 text-gray-600 dark:text-neutral-300 group-hover:bg-gray-200 dark:group-hover:bg-neutral-500":
                       !hasUpdates && !isActive,
                     "bg-red-100 text-red-800 group-hover:bg-red-200":
                       hasUpdates && !isActive,
@@ -60,7 +60,7 @@ export default function SidebarChannelLink({
             ) : null}
           </div>
 
-          <p className="truncate text-sm text-gray-500">
+          <p className="truncate text-sm text-gray-500 dark:text-neutral-500">
             {channel.description}
           </p>
         </>

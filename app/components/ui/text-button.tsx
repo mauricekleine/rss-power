@@ -23,9 +23,9 @@ export default function TextButton({
   return (
     <button
       className={classNames(
-        "flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600",
+        "flex items-center space-x-2 rounded py-2 px-4 text-sm text-gray-600 dark:text-blue-400",
         {
-          "underline hover:text-gray-800": !disabled && !isLoading,
+          "underline hover:text-gray-800 dark:hover:text-neutral-50": !disabled && !isLoading,
           "animate-pulse": isLoading,
         }
       )}

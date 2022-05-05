@@ -143,7 +143,7 @@ export default function NewFeedPage() {
             <Card.CardBody>
               <div>
                 <label
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 dark:text-neutral-500"
                   htmlFor="origin"
                 >
                   Feed url
@@ -160,7 +160,7 @@ export default function NewFeedPage() {
                       actionData?.errors?.origin ? "url-error" : undefined
                     }
                     autoFocus
-                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-600 sm:text-sm"
+                    className="dark:bg-neutral-500 dark:text-neutral-50 dark:placeholder-neutral-400 block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-600 sm:text-sm"
                     id="origin"
                     name="origin"
                     placeholder="https://example.com/feed"

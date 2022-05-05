@@ -22,12 +22,12 @@ type Props = {
 
 export default function SidebarNavigation({ channels, user }: Props) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
+    <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 dark:border-stone-800 bg-white dark:bg-neutral-900">
       <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
-        <div className="flex flex-shrink-0 items-center space-x-2 border-b border-gray-200 px-4 pb-4">
+        <div className="flex flex-shrink-0 items-center space-x-2 border-b border-gray-200 dark:border-stone-800 px-4 pb-4">
           <Rss color="black" size={32} weight="bold" />
 
-          <span className="text-3xl font-bold">RSS Power</span>
+          <span className="text-3xl font-bold dark:text-white">RSS Power</span>
         </div>
 
         <nav className="flex-1 space-y-6">
@@ -85,7 +85,7 @@ export default function SidebarNavigation({ channels, user }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
+      <div className="flex flex-shrink-0 border-t border-gray-200 dark:border-stone-800 p-4">
         <div className="block w-full flex-shrink-0">
           <div className="flex items-center">
             <div>

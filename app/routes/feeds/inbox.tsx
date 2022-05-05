@@ -52,16 +52,16 @@ export default function InboxPage() {
 
   return (
     <div>
-      <div className="mb-5 border-b border-gray-200 pb-5">
+      <div className="mb-5 border-b border-gray-200 dark:border-neutral-800 pb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Tray className="h-5 w-5 text-gray-900" weight="bold" />
+            <Tray className="h-5 w-5 text-gray-900 dark:text-neutral-300" weight="bold" />
 
             <PageHeader>Inbox</PageHeader>
           </div>
         </div>
 
-        <p className="mt-2 max-w-4xl text-sm text-gray-600">
+        <p className="mt-2 max-w-4xl text-sm text-gray-600 dark:text-neutral-600">
           One place for all your unread feeds
         </p>
       </div>

@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function App() {
   return (
-    <html className="h-full bg-gray-100" lang="en">
+    <html className="h-full bg-gray-100 dark:bg-black" lang="en">
       <head>
         <Meta />
 

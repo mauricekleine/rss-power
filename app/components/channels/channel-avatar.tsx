@@ -27,7 +27,7 @@ export default function ChannelAvatar({ channel, children }: Props) {
       ) : null}
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-900">
+        <p className="truncate text-sm font-medium text-gray-900 dark:text-stone-200">
           {channel.title}
         </p>
 

@@ -68,7 +68,7 @@ export default function ChannelItemCard({
         <Card.CardHeader>
           <ChannelAvatar channel={item.channel}>
             <time
-              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
+              className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-600 dark:divide-neutral-600"
               dateTime={
                 item.pubDate ? new Date(item.pubDate).toISOString() : undefined
               }
@@ -83,8 +83,8 @@ export default function ChannelItemCard({
 
       <a
         className={classNames({
-          "bg-gray-100": hasRead,
-          "bg-white hover:bg-gray-50": !hasRead,
+          "bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:opacity-90": hasRead,
+          "bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800": !hasRead,
         })}
         href={item.link}
         onClick={handleClick}
@@ -96,8 +96,8 @@ export default function ChannelItemCard({
             <div className="min-w-0 flex-1">
               <p
                 className={classNames("truncate text-sm font-medium", {
-                  "text-gray-600": hasRead,
-                  "text-gray-900": !hasRead,
+                  "text-gray-600 dark:text-neutral-500": hasRead,
+                  "text-gray-900 dark:text-neutral-300": !hasRead,
                 })}
               >
                 {item.title}
@@ -106,7 +106,7 @@ export default function ChannelItemCard({
 
             {showChannelInformation ? null : (
               <time
-                className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500"
+                className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-700"
                 dateTime={
                   item.pubDate
                     ? new Date(item.pubDate).toISOString()
@@ -122,8 +122,8 @@ export default function ChannelItemCard({
 
           <div
             className={classNames("mt-1 text-sm line-clamp-2", {
-              "text-gray-500": hasRead,
-              "text-gray-600": !hasRead,
+              "text-gray-500 dark:text-neutral-500": hasRead,
+              "text-gray-600 dark:text-neutral-600": !hasRead,
             })}
           >
             {itemDescription}
