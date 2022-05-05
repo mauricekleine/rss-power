@@ -16,6 +16,8 @@ import ChannelItemMarkAsReadForm from "~/components/channels/channel-item-mark-a
 import ChannelItemReadLaterForm from "~/components/channels/channel-item-read-later-form";
 import Card from "~/components/ui/cards/card";
 
+import { ChannelItemActions } from "~/routes/feeds/item/$channelItemId";
+
 type Props = {
   item: ChannelItem & {
     channel: Pick<Channel, "title"> & {
@@ -34,8 +36,14 @@ export default function ChannelItemCard({
 
   const handleClick = () => {
     submit(
-      { channelItemId: item.id },
       {
+        action: ChannelItemActions.MARK_AS_READ,
+        channelItemId: item.id,
+        redirectTo:
+          typeof document !== "undefined" ? new URL(document.URL).pathname : "",
+      },
+      {
+        action: `/feeds/item/${item.id}`,
         method: "post",
       }
     );
