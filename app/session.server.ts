@@ -1,7 +1,7 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
-import { getUserById } from "~/models/user.server";
+import { getUserById, updateLastActiveAtById } from "~/models/user.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -49,6 +49,9 @@ export async function requireUserId(
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
   }
+
+  await updateLastActiveAtById(userId);
+
   return userId;
 }
 

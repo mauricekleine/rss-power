@@ -108,19 +108,18 @@ export function getChannel({ id }: { id: Channel["id"] }) {
 
 export function getChannels() {
   return prisma.channel.findMany({
+    orderBy: {
+      title: "asc",
+    },
     select: {
+      _count: {
+        select: {
+          items: true,
+          users: true,
+        },
+      },
       id: true,
-      items: {
-        select: {
-          _count: true,
-        },
-      },
       title: true,
-      users: {
-        select: {
-          _count: true,
-        },
-      },
     },
   });
 }
