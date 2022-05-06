@@ -67,7 +67,7 @@ type DrawerTriggerProps = {
 
 function DrawerTrigger({ children }: DrawerTriggerProps) {
   return (
-    <DialogPrimitive.Trigger className="absolute right-2 bottom-2 z-10 rounded-full bg-slate-400/75 p-2 md:hidden">
+    <DialogPrimitive.Trigger className="fixed right-2 bottom-2 z-10 rounded-full bg-slate-400/75 p-2 md:hidden">
       {children}
     </DialogPrimitive.Trigger>
   );
