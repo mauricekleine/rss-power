@@ -2,6 +2,7 @@ import type { LoaderFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { format } from "date-fns";
 
 import SectionHeader from "~/components/ui/typography/section-header";
 
@@ -34,28 +35,49 @@ export default function AdminPage() {
       <div className="py-6">
         <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 md:px-8">
           <div>
-            <SectionHeader>Channels</SectionHeader>
+            <SectionHeader>{`Channels (${data.channels.length})`}</SectionHeader>
 
-            <table className="text-left">
+            <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
-                  <th className="w-64 truncate">Title</th>
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 md:pl-0"
+                  >
+                    Title
+                  </th>
 
-                  <th className="w-24">Items</th>
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Items
+                  </th>
 
-                  <th className="w-24">Users</th>
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Users
+                  </th>
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody className="divide-y divide-gray-200">
                 {data.channels.map((channel) => {
                   return (
                     <tr key={channel.id}>
-                      <td>{channel.title}</td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 md:pl-0">
+                        {channel.title}
+                      </td>
 
-                      <td>{channel.items.length}</td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {channel._count.items}
+                      </td>
 
-                      <td>{channel.users.length}</td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {channel._count.users}
+                      </td>
                     </tr>
                   );
                 })}
@@ -64,23 +86,57 @@ export default function AdminPage() {
           </div>
 
           <div>
-            <SectionHeader>Users</SectionHeader>
+            <SectionHeader>{`Users (${data.users.length})`}</SectionHeader>
 
-            <table className="text-left">
+            <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
-                  <th className="w-64 truncate">User</th>
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 md:pl-0"
+                  >
+                    User
+                  </th>
 
-                  <th className="w-24">Feeds</th>
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Created at
+                  </th>
 
-                  <th className="w-24">Has read</th>
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Last active at
+                  </th>
 
-                  <th className="w-24">Read later</th>
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Feeds
+                  </th>
+
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Has read
+                  </th>
+
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Read later
+                  </th>
                 </tr>
               </thead>
 
-              <tbody>
-                {data.users.map((user, index) => {
+              <tbody className="divide-y divide-gray-200">
+                {data.users.map((user) => {
                   const hasRead = user.userChannelItems.filter(
                     (item) => item.hasRead
                   );
@@ -90,13 +146,37 @@ export default function AdminPage() {
 
                   return (
                     <tr key={user.id}>
-                      <td>{user.id}</td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 md:pl-0">
+                        {user.id}
+                      </td>
 
-                      <td>{user._count.feeds}</td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {format(
+                          new Date(user.createdAt),
+                          "MMM d, yyyy 'at' hh:mmb"
+                        )}
+                      </td>
 
-                      <td>{hasRead.length}</td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {user.lastActiveAt
+                          ? format(
+                              new Date(user.lastActiveAt),
+                              "MMM d, yyyy 'at' hh:mmb"
+                            )
+                          : null}
+                      </td>
 
-                      <td>{readLater.length}</td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {user._count.feeds}
+                      </td>
+
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {hasRead.length}
+                      </td>
+
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {readLater.length}
+                      </td>
                     </tr>
                   );
                 })}

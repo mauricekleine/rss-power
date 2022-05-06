@@ -5,29 +5,6 @@ import { prisma } from "~/db.server";
 
 export type { User } from "@prisma/client";
 
-export async function getUserById(id: User["id"]) {
-  return prisma.user.findUnique({ where: { id } });
-}
-
-export async function getUserByEmail(email: User["email"]) {
-  return prisma.user.findUnique({ where: { email } });
-}
-
-export async function getUsers() {
-  return prisma.user.findMany({
-    select: {
-      _count: true,
-      id: true,
-      userChannelItems: {
-        select: {
-          isReadLater: true,
-          hasRead: true,
-        },
-      },
-    },
-  });
-}
-
 export async function createUser(email: User["email"], password: string) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -45,6 +22,45 @@ export async function createUser(email: User["email"], password: string) {
 
 export async function deleteUserByEmail(email: User["email"]) {
   return prisma.user.delete({ where: { email } });
+}
+
+export async function getUserById(id: User["id"]) {
+  return prisma.user.findUnique({ where: { id } });
+}
+
+export async function getUserByEmail(email: User["email"]) {
+  return prisma.user.findUnique({ where: { email } });
+}
+
+export async function getUsers() {
+  return prisma.user.findMany({
+    orderBy: {
+      lastActiveAt: "desc",
+    },
+    select: {
+      _count: {},
+      createdAt: true,
+      id: true,
+      lastActiveAt: true,
+      userChannelItems: {
+        select: {
+          isReadLater: true,
+          hasRead: true,
+        },
+      },
+    },
+  });
+}
+
+export async function updateLastActiveAtById(id: User["id"]) {
+  return prisma.user.update({
+    data: {
+      lastActiveAt: new Date(),
+    },
+    where: {
+      id,
+    },
+  });
 }
 
 export async function verifyLogin(
