@@ -31,19 +31,21 @@ export default function SidebarLayout({
           <List className="h-7 w-7 text-white" weight="bold" />
         </Drawer.Trigger>
 
-        <Drawer.Content>
+        <Drawer.Content
+          closeComponent={
+            <>
+              <span className="sr-only">Close sidebar</span>
+
+              <X className="h-7 w-7 text-white" weight="bold" />
+            </>
+          }
+        >
           <SidebarNavigation
             channels={channels}
             inboxCount={inboxCount}
             readLaterCount={readLaterCount}
             user={user}
           />
-
-          <Drawer.Close>
-            <span className="sr-only">Close sidebar</span>
-
-            <X className="h-7 w-7 text-white" weight="bold" />
-          </Drawer.Close>
         </Drawer.Content>
       </Drawer>
 
