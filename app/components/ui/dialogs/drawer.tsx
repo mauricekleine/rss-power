@@ -32,25 +32,30 @@ type DrawerCloseProps = {
 
 function DrawerClose({ children }: DrawerCloseProps) {
   return (
-    <div className="absolute top-0 right-0 -mr-12 pt-2">
-      <DialogPrimitive.Close className="fixed right-2 bottom-2 z-10 rounded-full bg-slate-400 p-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-        {children}
-      </DialogPrimitive.Close>
-    </div>
+    <DialogPrimitive.Close className="absolute right-2 bottom-2 z-10 animate-fade-in rounded-full bg-slate-400 p-2">
+      {children}
+    </DialogPrimitive.Close>
   );
 }
 
 type DrawerContentProps = {
   children: ReactNode | ReactNode[];
+  closeComponent: ReactNode;
 };
 
-function DrawerContent({ children }: DrawerContentProps) {
+function DrawerContent({ children, closeComponent }: DrawerContentProps) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="motion-safe:e-fade-in fixed inset-0 bg-gray-600/75" />
+      <DialogPrimitive.Overlay className="absolute inset-0 bg-gray-600/75 motion-safe:animate-fade-in" />
 
-      <DialogPrimitive.Content className="fixed bottom-0 top-0 left-0 z-40 flex w-full max-w-xs flex-1 flex-col bg-white motion-safe:animate-slide-from-left">
-        {children}
+      <DialogPrimitive.Content
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
+        <div className="absolute bottom-0 top-0 left-0 z-40 flex w-full max-w-xs flex-1 flex-col bg-white motion-safe:animate-slide-from-left">
+          {children}
+        </div>
+
+        <DrawerClose>{closeComponent}</DrawerClose>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
   );
@@ -62,7 +67,7 @@ type DrawerTriggerProps = {
 
 function DrawerTrigger({ children }: DrawerTriggerProps) {
   return (
-    <DialogPrimitive.Trigger className="fixed right-2 bottom-2 z-10 rounded-full bg-slate-400/75 p-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white md:hidden">
+    <DialogPrimitive.Trigger className="absolute right-2 bottom-2 z-10 rounded-full bg-slate-400/75 p-2 md:hidden">
       {children}
     </DialogPrimitive.Trigger>
   );

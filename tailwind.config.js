@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        "fade-in": "fade-in 150ms ease-in-out",
+        "fade-in": "fade-in 150ms ease-in",
         "slide-from-left": "slide-from-left 150ms ease-in",
       },
       fontFamily: {
