@@ -155,7 +155,6 @@ export function updateFeed(
           }
         : undefined,
       link,
-      origin,
       title,
     },
     where: {
