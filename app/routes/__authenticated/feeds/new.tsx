@@ -5,16 +5,19 @@ import { Bell, Rss } from "phosphor-react";
 import * as React from "react";
 import RssParser from "rss-parser";
 
-import ChannelCard from "~/components/channels/channel-card";
+import FeedCard from "~/components/feeds/feed-card";
 import Card from "~/components/ui/cards/card";
 import SectionHeader from "~/components/ui/typography/section-header";
 
+import { createFeedResource } from "~/models/feed-resource.server";
+import type { FeedSuggestions } from "~/models/feed.server";
 import {
-  addUserToChannel,
-  createChannel,
-  getChannelForOrigin,
-  getUnsubscribedChannelsForUserId,
-} from "~/models/channel.server";
+  createFeed,
+  getFeedForOrigin,
+  getSuggestedFeedsForUserId,
+} from "~/models/feed.server";
+import { createResource } from "~/models/resource.server";
+import { createUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
 import { requireUserId } from "~/session.server";
 
 const parser = new RssParser();
@@ -38,20 +41,12 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const existingChannel = await getChannelForOrigin({ origin });
+  const feed = await getFeedForOrigin({ origin });
 
-  if (existingChannel) {
-    try {
-      await addUserToChannel({ id: existingChannel.id, userId });
-      return redirect(`/feeds/${existingChannel.id}`);
-    } catch (e) {
-      console.log(e);
+  if (feed) {
+    await createUserFeedForFeedIdAndUserId({ feedId: feed.id, userId });
 
-      return json<ActionData>(
-        { errors: { origin: "Origin is invalid" } },
-        { status: 400 }
-      );
-    }
+    return redirect(`/feeds/${feed.id}`);
   }
 
   try {
@@ -64,14 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
       );
     }
 
-    /*
-      Assuming that items are returned in the order the author intended,
-      we want to give the last element returned the lowest `order`.
-      Since we rely on auto-increment, reversing the array should be sufficient.
-    */
-    const ascendingItems = parsed.items.reverse();
-
-    const channel = await createChannel({
+    const feed = await createFeed({
       description: parsed.description ?? "",
       image: parsed.image?.url
         ? {
@@ -80,20 +68,41 @@ export const action: ActionFunction = async ({ request }) => {
             url: parsed.image.url,
           }
         : undefined,
-      items: ascendingItems.map((item) => ({
-        description: item.summary ?? item.content ?? "",
-        guid: item.guid ?? null,
-        link: item.link ?? "",
-        pubDate: item.pubDate ? new Date(item.pubDate) : null,
-        title: item.title ?? "",
-      })),
       link: parsed.link,
       origin,
       title: parsed.title,
       userId,
     });
 
-    return redirect(`/feeds/${channel.id}`);
+    /*
+      Assuming that items are returned in the order the author intended,
+      we want to give the last element returned the lowest `order`.
+      Since we rely on auto-increment, reversing the array should be sufficient.
+    */
+    const sortedItems = parsed.items.reverse();
+
+    const input = sortedItems.map(async (item) => {
+      const resourceInput = {
+        description: item.summary ?? item.content ?? "",
+        link: item.link ?? "",
+        publishedAt: item.pubDate ? new Date(item.pubDate) : null,
+        title: item.title ?? "",
+      };
+
+      const resource = await createResource(resourceInput);
+
+      const feedResourceInput = {
+        feedId: feed.id,
+        guid: item.guid ?? null,
+        resourceId: resource.id,
+      };
+
+      return createFeedResource(feedResourceInput);
+    });
+
+    await Promise.allSettled(input);
+
+    return redirect(`/feeds/${feed.id}`);
   } catch (e) {
     console.log(e);
 
@@ -105,16 +114,16 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 type LoaderData = {
-  channels: Awaited<ReturnType<typeof getUnsubscribedChannelsForUserId>>;
+  feeds: FeedSuggestions;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
   try {
-    const channels = await getUnsubscribedChannelsForUserId({ userId });
+    const feeds = await getSuggestedFeedsForUserId({ userId });
 
-    return json<LoaderData>({ channels });
+    return json<LoaderData>({ feeds });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
@@ -140,7 +149,7 @@ export default function NewFeedPage() {
 
         <Form method="post">
           <Card>
-            <Card.CardBody>
+            <Card.Body>
               <div>
                 <label
                   className="block text-sm font-medium text-gray-700"
@@ -175,9 +184,9 @@ export default function NewFeedPage() {
                   )}
                 </div>
               </div>
-            </Card.CardBody>
+            </Card.Body>
 
-            <Card.CardFooter>
+            <Card.Footer>
               <div className="flex justify-end">
                 <button
                   className="flex items-center space-x-2 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
@@ -188,25 +197,27 @@ export default function NewFeedPage() {
                   <span>Save</span>
                 </button>
               </div>
-            </Card.CardFooter>
+            </Card.Footer>
           </Card>
         </Form>
       </div>
 
-      <div className="space-y-4">
-        <SectionHeader>Subscribe to trending feeds</SectionHeader>
+      {data.feeds.length > 0 ? (
+        <div className="space-y-4">
+          <SectionHeader>Subscribe to trending feeds</SectionHeader>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.channels
-            .sort(
-              (channelA, channelB) =>
-                channelB.users.length - channelA.users.length
-            )
-            .map((channel) => (
-              <ChannelCard channel={channel} key={channel.id} />
-            ))}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {data.feeds
+              .sort(
+                (feedA, feedB) =>
+                  feedB._count.userFeeds - feedA._count.userFeeds
+              )
+              .map((feed) => (
+                <FeedCard feed={feed} key={feed.id} />
+              ))}
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }

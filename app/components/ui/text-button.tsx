@@ -2,7 +2,7 @@ import classNames from "classnames";
 import type { ComponentProps, ReactNode } from "react";
 
 type Props = {
-  children: ReactNode[];
+  children: ReactNode | ReactNode[];
   disabled?: ComponentProps<"button">["disabled"];
   isLoading?: boolean;
   name?: ComponentProps<"button">["name"];

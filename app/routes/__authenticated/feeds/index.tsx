@@ -5,7 +5,7 @@ export default function FeedsIndexPage() {
     <p>
       <span>No feed selected. Select a feed on the left, or </span>
 
-      <Link to="new" className="text-blue-500 underline">
+      <Link to="/feeds/new" className="text-blue-500 underline">
         add a new feed.
       </Link>
     </p>

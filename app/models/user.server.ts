@@ -38,19 +38,26 @@ export async function getUsers() {
       lastActiveAt: "desc",
     },
     select: {
-      _count: {},
+      _count: {
+        select: {
+          userFeeds: true,
+        },
+      },
       createdAt: true,
       id: true,
       lastActiveAt: true,
-      userChannelItems: {
+      userResources: {
         select: {
-          isReadLater: true,
           hasRead: true,
+          isBookmarked: true,
+          isSnoozed: true,
         },
       },
     },
   });
 }
+
+export type Users = Awaited<ReturnType<typeof getUsers>>;
 
 export async function updateLastActiveAtById(id: User["id"]) {
   return prisma.user.update({

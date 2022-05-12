@@ -4,22 +4,24 @@ import type { ReactNode } from "react";
 import SidebarNavigation from "~/components/sidebar/sidebar-navigation";
 import Drawer from "~/components/ui/dialogs/drawer";
 
-import type { getChannelsForUserId } from "~/models/channel.server";
+import type { FeedsForUserId } from "~/models/feed.server";
 import type { User } from "~/models/user.server";
 
 type Props = {
-  channels: Awaited<ReturnType<typeof getChannelsForUserId>>;
+  bookmarkedResourcesCount: number;
   children: ReactNode;
-  inboxCount: number;
-  readLaterCount: number;
+  feeds: FeedsForUserId;
+  snoozedResourcesCount: number;
+  unreadResourcesCount: number;
   user: User;
 };
 
 export default function SidebarLayout({
-  channels,
+  bookmarkedResourcesCount,
   children,
-  inboxCount,
-  readLaterCount,
+  feeds,
+  snoozedResourcesCount,
+  unreadResourcesCount,
   user,
 }: Props) {
   return (
@@ -41,9 +43,10 @@ export default function SidebarLayout({
           }
         >
           <SidebarNavigation
-            channels={channels}
-            inboxCount={inboxCount}
-            readLaterCount={readLaterCount}
+            bookmarkedResourcesCount={bookmarkedResourcesCount}
+            feeds={feeds}
+            snoozedResourcesCount={snoozedResourcesCount}
+            unreadResourcesCount={unreadResourcesCount}
             user={user}
           />
         </Drawer.Content>
@@ -53,9 +56,10 @@ export default function SidebarLayout({
 
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <SidebarNavigation
-          channels={channels}
-          inboxCount={inboxCount}
-          readLaterCount={readLaterCount}
+          bookmarkedResourcesCount={bookmarkedResourcesCount}
+          feeds={feeds}
+          snoozedResourcesCount={snoozedResourcesCount}
+          unreadResourcesCount={unreadResourcesCount}
           user={user}
         />
       </div>

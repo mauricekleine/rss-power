@@ -6,13 +6,15 @@ import { format } from "date-fns";
 
 import SectionHeader from "~/components/ui/typography/section-header";
 
-import { getChannels } from "~/models/channel.server";
+import type { Feeds } from "~/models/feed.server";
+import { getFeeds } from "~/models/feed.server";
+import type { Users } from "~/models/user.server";
 import { getUsers } from "~/models/user.server";
 import { requireUser } from "~/session.server";
 
 type LoaderData = {
-  channels: Awaited<ReturnType<typeof getChannels>>;
-  users: Awaited<ReturnType<typeof getUsers>>;
+  feeds: Feeds;
+  users: Users;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -22,9 +24,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/feeds");
   }
 
-  const [channels, users] = await Promise.all([getChannels(), getUsers()]);
+  const [feeds, users] = await Promise.all([getFeeds(), getUsers()]);
 
-  return json<LoaderData>({ channels, users });
+  return json<LoaderData>({ feeds, users });
 };
 
 export default function AdminPage() {
@@ -35,7 +37,7 @@ export default function AdminPage() {
       <div className="py-6">
         <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 md:px-8">
           <div>
-            <SectionHeader>{`Channels (${data.channels.length})`}</SectionHeader>
+            <SectionHeader>{`Feeds (${data.feeds.length})`}</SectionHeader>
 
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
@@ -64,19 +66,19 @@ export default function AdminPage() {
               </thead>
 
               <tbody className="divide-y divide-gray-200">
-                {data.channels.map((channel) => {
+                {data.feeds.map((feed) => {
                   return (
-                    <tr key={channel.id}>
+                    <tr key={feed.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 md:pl-0">
-                        {channel.title}
+                        {feed.title}
                       </td>
 
                       <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                        {channel._count.items}
+                        {feed._count.feedResources}
                       </td>
 
                       <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                        {channel._count.users}
+                        {feed._count.userFeeds}
                       </td>
                     </tr>
                   );
@@ -123,25 +125,35 @@ export default function AdminPage() {
                     scope="col"
                     className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
                   >
-                    Has read
+                    Bookmarked
                   </th>
 
                   <th
                     scope="col"
                     className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
                   >
-                    Read later
+                    Read
+                  </th>
+
+                  <th
+                    scope="col"
+                    className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Snoozed
                   </th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-gray-200">
                 {data.users.map((user) => {
-                  const hasRead = user.userChannelItems.filter(
-                    (item) => item.hasRead
+                  const bookmarkedResources = user.userResources.filter(
+                    (item) => item.isBookmarked
                   );
-                  const readLater = user.userChannelItems.filter(
-                    (item) => item.isReadLater
+                  const snoozedResources = user.userResources.filter(
+                    (item) => item.isSnoozed
+                  );
+                  const readResources = user.userResources.filter(
+                    (item) => item.hasRead
                   );
 
                   return (
@@ -167,15 +179,19 @@ export default function AdminPage() {
                       </td>
 
                       <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                        {user._count.feeds}
+                        {user._count.userFeeds}
                       </td>
 
                       <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                        {hasRead.length}
+                        {bookmarkedResources.length}
                       </td>
 
                       <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                        {readLater.length}
+                        {readResources.length}
+                      </td>
+
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        {snoozedResources.length}
                       </td>
                     </tr>
                   );

@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import invariant from "tiny-invariant";
 
-
 let prisma: PrismaClient;
 
 declare global {

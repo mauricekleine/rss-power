@@ -45,7 +45,7 @@ export default function InfiniteScroller<T extends { id: string }>({
       clearTimeout(debounce);
 
       debounce = setTimeout(() => {
-        if (isDisabled || !ref.current) {
+        if (isDisabled || count === items.length || !ref.current) {
           return;
         }
 
@@ -64,7 +64,7 @@ export default function InfiniteScroller<T extends { id: string }>({
       clearTimeout(debounce);
       window.removeEventListener("scroll", scrollHandler);
     };
-  }, [loadMoreItems, isDisabled, items]);
+  }, [count, loadMoreItems, isDisabled, items]);
 
   useEffect(() => {
     setItems(initialItems);
