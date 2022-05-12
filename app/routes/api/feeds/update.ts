@@ -32,7 +32,7 @@ export const action: ActionFunction = async ({ request }) => {
           feed.image &&
           feed.image.url !== parsed.image.url
         ) {
-          deleteImageForFeedId({ feedId: feed.id });
+          await deleteImageForFeedId({ feedId: feed.id });
         }
 
         await updateFeed(feed.id, {
@@ -57,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
         const sortedItems = parsed.items.reverse();
 
         const filteredItems = sortedItems.filter((item) => {
-          return !feed.feedResources.find((feedResource) => {
+          const duplicateResource = feed.feedResources.find((feedResource) => {
             const hasSameGuid = item.guid === feedResource.guid;
             const hasSameLink = item.link === feedResource.resource.link;
             const hasSamePubDate =
@@ -67,7 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
                 new Date(item.pubDate),
                 new Date(feedResource.resource.publishedAt)
               ) === 0;
-            const hasSameTitle = item.title === feedResource.resource.link;
+            const hasSameTitle = item.title === feedResource.resource.title;
 
             // TODO: is this enough to guarantee uniqueness?
             return (
@@ -76,6 +76,8 @@ export const action: ActionFunction = async ({ request }) => {
               (hasSameLink && hasSameTitle)
             );
           });
+
+          return typeof duplicateResource === "undefined" ? true : false;
         });
 
         const input = filteredItems.map(async (item) => {
