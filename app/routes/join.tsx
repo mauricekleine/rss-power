@@ -164,7 +164,6 @@ export default function Join() {
           <div className="flex items-center justify-center">
             <div className="text-center text-sm text-gray-500">
               Already have an account?{" "}
-
               <Link
                 className="text-blue-500 underline"
                 to={{

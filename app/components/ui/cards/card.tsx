@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext } from "react";
 
 const CardContext = createContext({ isInactive: false });
@@ -43,6 +43,31 @@ function CardBody({ children }: CardBodyProps) {
   return <div className="flex-1 px-4 py-5 sm:p-6">{children}</div>;
 }
 
+type CardLinkableBodyProps = CardBodyProps & {
+  disabled?: boolean;
+  href: ComponentProps<"a">["href"];
+  onClick?: ComponentProps<"a">["onClick"];
+};
+
+function CardLinkableBody({ children, href, onClick }: CardLinkableBodyProps) {
+  const { isInactive } = useContext(CardContext);
+
+  return (
+    <a
+      className={classNames({
+        "bg-gray-100": isInactive,
+        "bg-white hover:bg-gray-50": !isInactive,
+      })}
+      href={href}
+      onClick={onClick}
+      rel="noreferrer"
+      target="_blank"
+    >
+      <CardBody>{children}</CardBody>
+    </a>
+  );
+}
+
 type CardFooterProps = {
   children: ReactNode | ReactNode[];
 };
@@ -62,8 +87,9 @@ function CardFooter({ children }: CardFooterProps) {
   );
 }
 
-Card.CardBody = CardBody;
-Card.CardFooter = CardFooter;
-Card.CardHeader = CardHeader;
+Card.Body = CardBody;
+Card.Footer = CardFooter;
+Card.Header = CardHeader;
+Card.LinkableBody = CardLinkableBody;
 
 export default Card;

@@ -3,6 +3,8 @@ import { useMemo } from "react";
 
 import type { User } from "~/models/user.server";
 
+export type Nullable<T> = T | null | undefined;
+
 const DEFAULT_REDIRECT = "/";
 
 /**

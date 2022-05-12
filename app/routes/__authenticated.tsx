@@ -5,35 +5,38 @@ import { useEffect, useState } from "react";
 
 import SidebarLayout from "~/components/sidebar/sidebar-layout";
 
-import {
-  getChannelItemsSavedForLaterCount,
-  getUnreadChannelItemsCountForUserId,
-} from "~/models/channel-item.server";
-import { getChannelsForUserId } from "~/models/channel.server";
+import type { FeedsForUserId } from "~/models/feed.server";
+import { getFeedsForUserId } from "~/models/feed.server";
+import { getUnreadResourcesCountForUserId } from "~/models/resource.server";
+import { getUserResourceCountForUserId } from "~/models/user-resource.server";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 
 const POLLING_INTERVAL = 30 * 1000; // 30s
 
 type LoaderData = {
-  channels: Awaited<ReturnType<typeof getChannelsForUserId>>;
-  inboxCount: number;
-  readLaterCount: number;
+  bookmarkedResourcesCount: number;
+  feeds: FeedsForUserId;
+  unreadResourcesCount: number;
+  snoozedResourcesCount: number;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
-  const [channels, inbox, readLater] = await Promise.all([
-    getChannelsForUserId({ userId }),
-    getUnreadChannelItemsCountForUserId({ userId }),
-    getChannelItemsSavedForLaterCount({ userId }),
-  ]);
+  const [bookmarkedResources, feeds, snoozedResources, unreadResources] =
+    await Promise.all([
+      getUserResourceCountForUserId({ filter: { isBookmarked: true }, userId }),
+      getFeedsForUserId({ userId }),
+      getUserResourceCountForUserId({ filter: { isSnoozed: true }, userId }),
+      getUnreadResourcesCountForUserId({ userId }),
+    ]);
 
   return json<LoaderData>({
-    channels,
-    inboxCount: inbox._all,
-    readLaterCount: readLater._all,
+    bookmarkedResourcesCount: bookmarkedResources._all,
+    feeds,
+    snoozedResourcesCount: snoozedResources._all,
+    unreadResourcesCount: unreadResources[0].count,
   });
 };
 
@@ -63,9 +66,10 @@ export default function FeedsPage() {
   return (
     <div className="flex h-full min-h-screen flex-col">
       <SidebarLayout
-        channels={data.channels}
-        inboxCount={data.inboxCount}
-        readLaterCount={data.readLaterCount}
+        bookmarkedResourcesCount={data.bookmarkedResourcesCount}
+        feeds={data.feeds}
+        snoozedResourcesCount={data.snoozedResourcesCount}
+        unreadResourcesCount={data.unreadResourcesCount}
         user={user}
       >
         <Outlet />

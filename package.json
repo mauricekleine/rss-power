@@ -40,7 +40,7 @@
     "/public/build"
   ],
   "dependencies": {
-    "@prisma/client": "^3.11.1",
+    "@prisma/client": "^3.14.0",
     "@radix-ui/react-dialog": "^0.1.7",
     "@radix-ui/react-tooltip": "^0.1.7",
     "@remix-run/express": "^1.4.1",
@@ -76,7 +76,6 @@
     "@testing-library/user-event": "^14.0.4",
     "@types/bcryptjs": "^2.4.2",
     "@types/compression": "^1.7.2",
-    "@types/dompurify": "^2.3.3",
     "@types/eslint": "^8.4.1",
     "@types/express": "^4.17.13",
     "@types/morgan": "^1.9.3",
@@ -99,7 +98,7 @@
     "postcss": "^8.4.12",
     "prettier": "^2.6.1",
     "prettier-plugin-tailwindcss": "^0.1.10",
-    "prisma": "^3.11.1",
+    "prisma": "^3.14.0",
     "start-server-and-test": "^1.14.0",
     "tailwindcss": "^3.0.23",
     "ts-node": "^10.7.0",

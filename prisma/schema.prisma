@@ -7,43 +7,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id String @id @default(cuid())
-
-  email String @unique
-
-  createdAt    DateTime  @default(now())
-  lastActiveAt DateTime?
-  updatedAt    DateTime  @updatedAt
-
-  feeds            Channel[]
-  password         Password?
-  userChannelItems UserChannelItem[]
-}
-
-model UserChannelItem {
-  id String @id @default(cuid())
-
-  hasRead     Boolean   @default(false)
-  isReadLater Boolean   @default(false)
-  readAt      DateTime?
-
-  channelItem   ChannelItem @relation(fields: [channelItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  channelItemId String
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId        String
-
-  @@unique([channelItemId, userId])
-}
-
-model Password {
-  hash String
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
-}
-
-model Channel {
+model Feed {
   id String @id @default(cuid())
 
   description String
@@ -54,31 +18,21 @@ model Channel {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  imageId String?
-  image   Image?        @relation(fields: [imageId], references: [id])
-  items   ChannelItem[]
-  users   User[]
-
+  feedResources FeedResource[]
+  image         Image?
+  userFeeds     UserFeed[]
 }
 
-model ChannelItem {
+model FeedResource {
   id String @id @default(cuid())
 
-  description String
-  guid        String?
-  link        String
-  order       Int       @default(autoincrement())
-  pubDate     DateTime?
-  title       String
+  guid  String?
+  order Int     @default(autoincrement())
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  channel          Channel           @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  channelId        String
-  image            Image?            @relation(fields: [imageId], references: [id])
-  imageId          String?
-  userChannelItems UserChannelItem[]
+  feed       Feed     @relation(fields: [feedId], references: [id])
+  feedId     String
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId String   @unique
 }
 
 model Image {
@@ -88,6 +42,84 @@ model Image {
   title String?
   url   String  @unique
 
-  channels Channel[]
-  items    ChannelItem[]
+  feed       Feed?     @relation(fields: [feedId], references: [id])
+  feedId     String?   @unique
+  resource   Resource? @relation(fields: [resourceId], references: [id])
+  resourceId String?   @unique
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model Resource {
+  id String @id @default(cuid())
+
+  description String
+  link        String
+  publishedAt DateTime?
+  title       String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  feedResource  FeedResource?
+  image         Image?
+  userResources UserResource[]
+}
+
+model User {
+  id String @id @default(cuid())
+
+  email String @unique
+
+  createdAt    DateTime  @default(now())
+  lastActiveAt DateTime?
+  updatedAt    DateTime  @updatedAt
+
+  password      Password?
+  userFeeds     UserFeed[]
+  userResources UserResource[]
+}
+
+model UserFeed {
+  id String @id @default(cuid())
+
+  subscribedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  feed   Feed   @relation(fields: [feedId], references: [id])
+  feedId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([feedId, userId])
+}
+
+model UserResource {
+  id String @id @default(cuid())
+
+  hasRead Boolean   @default(false)
+  readAt  DateTime?
+
+  isBookmarked Boolean   @default(false)
+  bookmarkedAt DateTime?
+
+  isSnoozed Boolean   @default(false)
+  snoozedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+
+  @@unique([resourceId, userId])
 }

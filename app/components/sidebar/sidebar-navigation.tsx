@@ -1,6 +1,7 @@
 import { Form, Link } from "@remix-run/react";
 import {
-  BookmarkSimple,
+  BookmarksSimple,
+  ClockAfternoon,
   PlusCircle,
   Rss,
   Tray,
@@ -10,20 +11,22 @@ import {
 import SidebarLink from "~/components/sidebar/sidebar-link";
 import SectionHeader from "~/components/ui/typography/section-header";
 
-import type { getChannelsForUserId } from "~/models/channel.server";
+import type { FeedsForUserId } from "~/models/feed.server";
 import type { User } from "~/models/user.server";
 
 type Props = {
-  channels: Awaited<ReturnType<typeof getChannelsForUserId>>;
-  inboxCount: number;
-  readLaterCount: number;
+  bookmarkedResourcesCount: number;
+  feeds: FeedsForUserId;
+  unreadResourcesCount: number;
+  snoozedResourcesCount: number;
   user: User;
 };
 
 export default function SidebarNavigation({
-  channels,
-  inboxCount,
-  readLaterCount,
+  bookmarkedResourcesCount,
+  feeds,
+  snoozedResourcesCount,
+  unreadResourcesCount,
   user,
 }: Props) {
   return (
@@ -42,14 +45,20 @@ export default function SidebarNavigation({
             </div>
 
             <div className="mt-1">
-              <SidebarLink itemCount={inboxCount} to="inbox">
+              <SidebarLink itemCount={bookmarkedResourcesCount} to="bookmarks">
+                <BookmarksSimple className="text-black" weight="bold" />
+
+                <span>Bookmarks</span>
+              </SidebarLink>
+
+              <SidebarLink itemCount={unreadResourcesCount} to="inbox">
                 <Tray className="text-black" weight="bold" />
 
                 <span>Inbox</span>
               </SidebarLink>
 
-              <SidebarLink itemCount={readLaterCount} to="read-later">
-                <BookmarkSimple className="text-black" weight="bold" />
+              <SidebarLink itemCount={snoozedResourcesCount} to="read-later">
+                <ClockAfternoon className="text-black" weight="bold" />
 
                 <span>Read later</span>
               </SidebarLink>
@@ -58,20 +67,20 @@ export default function SidebarNavigation({
 
           <div className="px-2">
             <div className="px-2">
-              <SectionHeader>Channels</SectionHeader>
+              <SectionHeader>Feeds</SectionHeader>
             </div>
 
             <div className="mt-1">
-              {channels.length === 0 ? (
-                <p className="p-4">No channels yet</p>
+              {feeds.length === 0 ? (
+                <p className="p-4">No feeds yet</p>
               ) : (
-                channels.map((channel) => (
+                feeds.map((feed) => (
                   <SidebarLink
-                    itemCount={channel._count.items}
-                    key={channel.id}
-                    to={channel.id}
+                    itemCount={feed._count.feedResources}
+                    key={feed.id}
+                    to={`/feeds/${feed.id}`}
                   >
-                    {channel.title}
+                    {feed.title}
                   </SidebarLink>
                 ))
               )}
@@ -81,12 +90,12 @@ export default function SidebarNavigation({
 
         <div className="px-2">
           <Link
-            to="new"
+            to="/feeds/new"
             className="flex items-center space-x-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
           >
             <PlusCircle size={16} weight="bold" />
 
-            <span>New channel</span>
+            <span>New feed</span>
           </Link>
         </div>
       </div>

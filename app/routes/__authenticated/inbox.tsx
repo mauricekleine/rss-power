@@ -3,24 +3,22 @@ import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import { Tray } from "phosphor-react";
 
-import ChannelItemCard from "~/components/channels/channel-item-card";
 import InfiniteScroller from "~/components/infinite-scroller";
+import ResourceCard from "~/components/resources/resource-card";
 import PageHeader from "~/components/ui/typography/page-header";
 
-import {
-  getUnreadChannelItemsCountForUserId,
-  getUnreadChannelItemsForUserId,
-} from "~/models/channel-item.server";
+import type { ResourcesForUserId } from "~/models/resource.server";
+import { getPaginatedUnreadResourcesForUserId } from "~/models/resource.server";
+import { getUnreadResourcesCountForUserId } from "~/models/resource.server";
 import { requireUserId } from "~/session.server";
 
 type LoaderData = {
-  count: Awaited<ReturnType<typeof getUnreadChannelItemsCountForUserId>>;
-  items: Awaited<ReturnType<typeof getUnreadChannelItemsForUserId>>;
+  count: number;
+  resources: ResourcesForUserId;
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-
   const url = new URL(request.url);
 
   const startString = url.searchParams.get("start");
@@ -31,15 +29,15 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     : undefined;
 
   try {
-    const [count, items] = await Promise.all([
-      getUnreadChannelItemsCountForUserId({ userId }),
-      getUnreadChannelItemsForUserId({
+    const [count, resources] = await Promise.all([
+      getUnreadResourcesCountForUserId({ userId }),
+      getPaginatedUnreadResourcesForUserId({
         start,
         userId,
       }),
     ]);
 
-    return json<LoaderData>({ count, items });
+    return json<LoaderData>({ count: count[0].count, resources });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
@@ -66,17 +64,21 @@ export default function InboxPage() {
         </p>
       </div>
 
-      <InfiniteScroller<typeof data.items[0]>
-        count={data.count._all}
+      <InfiniteScroller<typeof data.resources[0]>
+        count={data.count}
         isDisabled={fetcher.state !== "idle"}
         isLoading={fetcher.state === "loading"}
-        initialItems={data.items}
-        items={fetcher.data?.items}
+        initialItems={data.resources}
+        items={fetcher.data?.resources}
         loadMoreItems={(count) => {
-          fetcher.load(`/feeds/inbox?start=${count}`);
+          fetcher.load(`/inbox?start=${count}`);
         }}
         renderItem={(item) => (
-          <ChannelItemCard item={item} showChannelInformation />
+          <ResourceCard
+            showFeedInformation
+            resource={item}
+            userResource={item.userResources[0]}
+          />
         )}
       />
     </div>

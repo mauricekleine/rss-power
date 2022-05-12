@@ -10,24 +10,28 @@ import {
 import { BellSimpleSlash } from "phosphor-react";
 import invariant from "tiny-invariant";
 
-import ChannelItemCard from "~/components/channels/channel-item-card";
 import InfiniteScroller from "~/components/infinite-scroller";
+import ResourceCard from "~/components/resources/resource-card";
 import TextButton from "~/components/ui/text-button";
 import PageHeader from "~/components/ui/typography/page-header";
 
-import { getChannelItemsForChannelIdAndUserId } from "~/models/channel-item.server";
-import { getChannel, removeUserFromChannel } from "~/models/channel.server";
+import type { Feed } from "~/models/feed.server";
+import { getFeed } from "~/models/feed.server";
+import type { ResourcesForFeedIdAndUserId } from "~/models/resource.server";
+import { getResourceCountForFeedId } from "~/models/resource.server";
+import { getPaginatedResourcesForFeedIdAndUserId } from "~/models/resource.server";
+import { deleteUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
 import { requireUserId } from "~/session.server";
 
 type LoaderData = {
-  channel: NonNullable<Awaited<ReturnType<typeof getChannel>>>;
-  items: Awaited<ReturnType<typeof getChannelItemsForChannelIdAndUserId>>;
+  count: number;
+  feed: Feed;
+  resources: ResourcesForFeedIdAndUserId;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);
-
-  invariant(params.channelId, "channelId not found");
+  invariant(params.feedId, "feedId not found");
 
   const url = new URL(request.url);
 
@@ -39,20 +43,21 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     : undefined;
 
   try {
-    const [channel, items] = await Promise.all([
-      getChannel({ id: params.channelId }),
-      getChannelItemsForChannelIdAndUserId({
-        channelId: params.channelId,
+    const [count, feed, resources] = await Promise.all([
+      getResourceCountForFeedId({ feedId: params.feedId }),
+      getFeed(params.feedId),
+      getPaginatedResourcesForFeedIdAndUserId({
+        feedId: params.feedId,
         start,
         userId,
       }),
     ]);
 
-    if (!channel) {
+    if (!feed) {
       throw new Response("Not Found", { status: 404 });
     }
 
-    return json<LoaderData>({ channel, items });
+    return json<LoaderData>({ count: count._all, feed, resources });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
@@ -61,14 +66,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);
-  invariant(params.channelId, "channelId not found");
+  invariant(params.feedId, "feedId not found");
 
-  await removeUserFromChannel({ id: params.channelId, userId });
+  await deleteUserFeedForFeedIdAndUserId({ feedId: params.feedId, userId });
 
   return redirect("/feeds");
 };
 
-export default function ChannelDetailsPage() {
+export default function FeedPage() {
   const fetcher = useFetcher<LoaderData>();
   const data = useLoaderData() as LoaderData;
   const transition = useTransition();
@@ -78,24 +83,24 @@ export default function ChannelDetailsPage() {
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-start">
           <div className="flex items-center space-x-2">
-            {data.channel.image ? (
+            {data.feed.image ? (
               <img
-                alt={data.channel.image.title ?? data.channel.title}
+                alt={data.feed.image.title ?? data.feed.title}
                 className="h-12 w-12 rounded-lg object-cover"
-                src={data.channel?.image?.url}
+                src={data.feed?.image?.url}
               />
             ) : null}
 
             <div>
-              <PageHeader>{data.channel.title}</PageHeader>
+              <PageHeader>{data.feed.title}</PageHeader>
 
               <a
                 className="text-sm font-medium text-blue-500 hover:text-blue-700"
-                href={data.channel.link}
+                href={data.feed.link}
                 rel="noreferrer"
                 target="_blank"
               >
-                {data.channel.link}
+                {data.feed.link}
               </a>
             </div>
           </div>
@@ -116,20 +121,22 @@ export default function ChannelDetailsPage() {
         </div>
 
         <p className="mt-2 max-w-4xl text-sm text-gray-600">
-          {data.channel.description}
+          {data.feed.description}
         </p>
       </div>
 
-      <InfiniteScroller<typeof data.items[0]>
-        count={data.channel._count.items}
+      <InfiniteScroller<typeof data.resources[0]>
+        count={data.count}
         isDisabled={fetcher.state !== "idle"}
         isLoading={fetcher.state === "loading"}
-        initialItems={data.items}
-        items={fetcher.data?.items}
+        initialItems={data.resources}
+        items={fetcher.data?.resources}
         loadMoreItems={(count) => {
-          fetcher.load(`/feeds/${data.channel.id}?start=${count}`);
+          fetcher.load(`/feeds/${data.feed.id}?start=${count}`);
         }}
-        renderItem={(item) => <ChannelItemCard item={item} />}
+        renderItem={(item) => (
+          <ResourceCard resource={item} userResource={item.userResources[0]} />
+        )}
       />
     </div>
   );
@@ -145,7 +152,7 @@ export function CatchBoundary() {
   const caught = useCatch();
 
   if (caught.status === 404) {
-    return <div>Channel not found</div>;
+    return <div>Feed not found</div>;
   }
 
   throw new Error(`Unexpected caught response with status: ${caught.status}`);

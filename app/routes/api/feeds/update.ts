@@ -2,11 +2,10 @@ import type { ActionFunction } from "@remix-run/server-runtime";
 import { compareAsc } from "date-fns";
 import RssParser from "rss-parser";
 
-import {
-  deleteChannelImage,
-  getChannelsToUpdate,
-  updateChannel,
-} from "~/models/channel.server";
+import { createFeedResource } from "~/models/feed-resource.server";
+import { getFeedsToUpdate, updateFeed } from "~/models/feed.server";
+import { deleteImageForFeedId } from "~/models/image.server";
+import { createResource } from "~/models/resource.server";
 
 const parser = new RssParser();
 
@@ -19,74 +18,86 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   try {
-    const channels = await getChannelsToUpdate();
+    const feeds = await getFeedsToUpdate();
 
-    const promises = channels
-      .filter((channel) => channel._count.users > 0)
-      .map(async (channel) => {
-        const parsed = await parser.parseURL(channel.origin);
+    const promises = feeds
+      .filter((feed) => feed._count.userFeeds > 0)
+      .map(async (feed) => {
+        console.log(`Updating feed ${feed.title} from ${feed.origin}`);
 
-        const newItems = parsed.items.filter(
-          (newItem) =>
-            !channel.items.find((item) => {
-              const hasSameGuid = item.guid === newItem.guid;
-              const hasSameLink = item.link === newItem.link;
-              const hasSamePubDate =
-                item.pubDate !== null &&
-                typeof newItem.pubDate === "string" &&
-                compareAsc(item.pubDate, new Date(newItem.pubDate)) === 0;
-              const hasSameTitle = item.title === newItem.title;
+        const parsed = await parser.parseURL(feed.origin);
 
-              // TODO: is this enough to guarantee uniqueness?
-              return (
-                hasSameGuid ||
-                (hasSamePubDate && hasSameTitle) ||
-                (hasSameLink && hasSameTitle)
-              );
-            })
-        );
+        if (
+          parsed.image?.url &&
+          feed.image &&
+          feed.image.url !== parsed.image.url
+        ) {
+          deleteImageForFeedId({ feedId: feed.id });
+        }
+
+        await updateFeed(feed.id, {
+          description: parsed.description ?? undefined,
+          image:
+            parsed.image?.url && feed.image?.url !== parsed.image.url
+              ? {
+                  link: parsed.image?.link || (parsed.link ?? feed.link),
+                  title: parsed.image?.title || (parsed.title ?? feed.title),
+                  url: parsed.image.url,
+                }
+              : undefined,
+          link: parsed.link ?? undefined,
+          title: parsed.title ?? undefined,
+        });
 
         /*
           Assuming that items are returned in the order the author intended,
           we want to give the last element returned the lowest `order`.
           Since we rely on auto-increment, reversing the array should be sufficient.
         */
-        const ascendingItems = newItems.reverse();
+        const sortedItems = parsed.items.reverse();
 
-        console.log(`Updating channel ${channel.title} from ${channel.origin}`);
+        const filteredItems = sortedItems.filter((item) => {
+          return !feed.feedResources.find((feedResource) => {
+            const hasSameGuid = item.guid === feedResource.guid;
+            const hasSameLink = item.link === feedResource.resource.link;
+            const hasSamePubDate =
+              typeof item.pubDate === "string" &&
+              typeof feedResource.resource.publishedAt === "string" &&
+              compareAsc(
+                new Date(item.pubDate),
+                new Date(feedResource.resource.publishedAt)
+              ) === 0;
+            const hasSameTitle = item.title === feedResource.resource.link;
 
-        if (
-          parsed.image?.url &&
-          channel.image &&
-          channel.image.url !== parsed.image.url
-        ) {
-          deleteChannelImage({ id: channel.image.id });
-        }
-
-        await updateChannel({
-          data: {
-            description: parsed.description ?? channel.description,
-            image:
-              parsed.image?.url && channel.image?.url !== parsed.image.url
-                ? {
-                    link: parsed.image?.link || (parsed.link ?? channel.link),
-                    title:
-                      parsed.image?.title || (parsed.title ?? channel.title),
-                    url: parsed.image.url,
-                  }
-                : undefined,
-            items: ascendingItems.map((item) => ({
-              description: item.summary ?? item.content ?? "",
-              guid: item.guid ?? null,
-              link: item.link ?? "",
-              pubDate: item.pubDate ? new Date(item.pubDate) : null,
-              title: item.title ?? "",
-            })),
-            link: parsed.link ?? channel.title,
-            title: parsed.title ?? channel.title,
-          },
-          id: channel.id,
+            // TODO: is this enough to guarantee uniqueness?
+            return (
+              hasSameGuid ||
+              (hasSamePubDate && hasSameTitle) ||
+              (hasSameLink && hasSameTitle)
+            );
+          });
         });
+
+        const input = filteredItems.map(async (item) => {
+          const resourceInput = {
+            description: item.summary ?? item.content ?? "",
+            link: item.link ?? "",
+            publishedAt: item.pubDate ? new Date(item.pubDate) : null,
+            title: item.title ?? "",
+          };
+
+          const resource = await createResource(resourceInput);
+
+          const feedResourceInput = {
+            feedId: feed.id,
+            guid: item.guid ?? null,
+            resourceId: resource.id,
+          };
+
+          return createFeedResource(feedResourceInput);
+        });
+
+        return Promise.allSettled(input);
       });
 
     await Promise.allSettled(promises);
