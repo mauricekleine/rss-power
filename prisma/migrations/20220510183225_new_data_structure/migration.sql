@@ -94,7 +94,7 @@ CREATE TABLE "UserFeed" (
     "id" TEXT NOT NULL,
     "subscribedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "feedId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
 
@@ -109,6 +109,9 @@ FROM "_ChannelToUser";
 -- DropTable
 DROP TABLE "_ChannelToUser";
 
+-- AlterTable
+ALTER TABLE "UserFeed" ALTER COLUMN "updatedAt" DROP DEFAULT;
+
 ---------------------------------------- UserResource ----------------------------------------
 
 -- AlterTable
@@ -120,7 +123,10 @@ ALTER TABLE "UserResource" RENAME COLUMN "isReadLater" TO "isSnoozed";
 ALTER TABLE "UserResource" ADD COLUMN "snoozedAt" TIMESTAMP(3);
 ALTER TABLE "UserResource" RENAME COLUMN "channelItemId" TO "resourceId";
 ALTER TABLE "UserResource" ADD COLUMN "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE "UserResource" ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL;
+ALTER TABLE "UserResource" ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "UserResource" ALTER COLUMN "updatedAt" DROP DEFAULT;
 
 ---------------------------------------- Indices & Constraints ----------------------------------------
 
@@ -165,3 +171,4 @@ ALTER TABLE "UserResource" ADD CONSTRAINT "UserResource_resourceId_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "UserResource" ADD CONSTRAINT "UserResource_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
