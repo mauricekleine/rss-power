@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Fragment } from "react";
 import { useEffect, useRef, useState } from "react";
 
-import TextButton from "./ui/text-button";
+import TextButton from "~/components/ui/buttons/text-button";
 
 const SCROLL_OFFSET = 750;
 

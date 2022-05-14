@@ -18,15 +18,41 @@ export function createFeed({
       description,
       image: image?.url
         ? {
-            create: {
-              link: image.link,
-              title: image.title,
-              url: image.url,
+            connectOrCreate: {
+              create: {
+                link: image.link,
+                title: image.title,
+                url: image.url,
+              },
+              where: {
+                url: image.url,
+              },
             },
           }
         : undefined,
       link,
       origin,
+      publisher: {
+        create: {
+          description,
+          image: image?.url
+            ? {
+                connectOrCreate: {
+                  create: {
+                    link: image.link,
+                    title: image.title,
+                    url: image.url,
+                  },
+                  where: {
+                    url: image.url,
+                  },
+                },
+              }
+            : undefined,
+          link,
+          title,
+        },
+      },
       title,
       userFeeds: {
         create: {
@@ -147,10 +173,15 @@ export function updateFeed(
       description,
       image: image?.url
         ? {
-            create: {
-              link: image.link,
-              title: image.title,
-              url: image.url,
+            connectOrCreate: {
+              create: {
+                link: image.link,
+                title: image.title,
+                url: image.url,
+              },
+              where: {
+                url: image.url,
+              },
             },
           }
         : undefined,

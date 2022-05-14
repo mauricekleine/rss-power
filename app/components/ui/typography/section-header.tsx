@@ -4,7 +4,7 @@ type Props = {
 
 export default function SectionHeader({ children }: Props) {
   return (
-    <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+    <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">
       {children}
     </p>
   );

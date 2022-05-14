@@ -3,8 +3,8 @@ import { Bell, User, Users, UsersFour, UsersThree } from "phosphor-react";
 
 import Avatar from "../ui/avatars/avatar";
 
+import TextButton from "~/components/ui/buttons/text-button";
 import Card from "~/components/ui/cards/card";
-import TextButton from "~/components/ui/text-button";
 
 import type { FeedSuggestions } from "~/models/feed.server";
 

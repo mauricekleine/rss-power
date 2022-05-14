@@ -44,16 +44,22 @@ export function updateUserResourceForResourceIdAndUserId({
 }) {
   return prisma.userResource.upsert({
     create: {
+      bookmarkedAt: isBookmarked ? new Date() : undefined,
       isBookmarked,
       isSnoozed,
       hasRead,
+      readAt: hasRead ? new Date() : undefined,
       resourceId,
+      snoozedAt: isSnoozed ? new Date() : undefined,
       userId,
     },
     update: {
+      bookmarkedAt: isBookmarked ? new Date() : undefined,
       isBookmarked,
       isSnoozed,
       hasRead,
+      readAt: hasRead ? new Date() : undefined,
+      snoozedAt: isSnoozed ? new Date() : undefined,
     },
     where: {
       resourceId_userId: {

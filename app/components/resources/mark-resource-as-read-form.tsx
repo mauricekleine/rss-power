@@ -1,4 +1,4 @@
-import { BookOpen, Check } from "phosphor-react";
+import { CheckSquareOffset } from "phosphor-react";
 
 import UserResourceActionForm from "~/components/resources/resource-action-form";
 
@@ -15,10 +15,13 @@ export default function MarkResourceAsReadForm({ hasRead, resourceId }: Props) {
       action={ResourceActions.MARK_AS_READ}
       disabled={hasRead}
       resourceId={resourceId}
+      tooltipContent={hasRead ? "Read" : "Mark as read"}
     >
-      {hasRead ? <Check weight="bold" /> : <BookOpen weight="bold" />}
-
-      <span>{hasRead ? "Read" : "Mark as read"}</span>
+      <CheckSquareOffset
+        className="text-gray-900"
+        size={18}
+        weight={hasRead ? "duotone" : "regular"}
+      />
     </UserResourceActionForm>
   );
 }

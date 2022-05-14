@@ -12,8 +12,8 @@ import invariant from "tiny-invariant";
 
 import InfiniteScroller from "~/components/infinite-scroller";
 import ResourceCard from "~/components/resources/resource-card";
-import TextButton from "~/components/ui/text-button";
-import PageHeader from "~/components/ui/typography/page-header";
+import Avatar from "~/components/ui/avatars/avatar";
+import TextButton from "~/components/ui/buttons/text-button";
 
 import type { Feed } from "~/models/feed.server";
 import { getFeed } from "~/models/feed.server";
@@ -83,17 +83,11 @@ export default function FeedPage() {
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-start">
           <div className="flex items-center space-x-2">
-            {data.feed.image ? (
-              <img
-                alt={data.feed.image.title ?? data.feed.title}
-                className="h-12 w-12 rounded-lg object-cover"
-                src={data.feed?.image?.url}
-              />
-            ) : null}
-
-            <div>
-              <PageHeader>{data.feed.title}</PageHeader>
-
+            <Avatar
+              image={data.feed.image ?? undefined}
+              pageHeader
+              title={data.feed.title}
+            >
               <a
                 className="text-sm font-medium text-blue-500 hover:text-blue-700"
                 href={data.feed.link}
@@ -102,10 +96,10 @@ export default function FeedPage() {
               >
                 {data.feed.link}
               </a>
-            </div>
+            </Avatar>
           </div>
 
-          <Form className="-mt-1.5 flex justify-end" method="post">
+          <Form className="-mt-1.5 -mr-2 flex justify-end" method="post">
             <TextButton
               isLoading={
                 transition.state === "submitting" &&
