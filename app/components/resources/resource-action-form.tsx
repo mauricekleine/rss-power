@@ -1,7 +1,8 @@
 import { Form, useTransition } from "@remix-run/react";
 import type { ReactNode } from "react";
 
-import TextButton from "../ui/text-button";
+import TextButton from "~/components/ui/buttons/text-button";
+import Tooltip from "~/components/ui/tooltips/tooltip";
 
 import type { ResourceActions } from "~/routes/__authenticated/resources/$resourceId";
 
@@ -10,6 +11,7 @@ type Props = {
   children: ReactNode;
   disabled?: boolean;
   resourceId: string;
+  tooltipContent: string;
 };
 
 export default function ResourceActionForm({
@@ -17,6 +19,7 @@ export default function ResourceActionForm({
   children,
   disabled,
   resourceId,
+  tooltipContent,
 }: Props) {
   const transition = useTransition();
 
@@ -30,19 +33,23 @@ export default function ResourceActionForm({
         }
       />
 
-      <TextButton
-        disabled={disabled}
-        isLoading={
-          transition.state === "submitting" &&
-          transition.submission.formData.get("action") === action &&
-          transition.location.pathname.includes(resourceId)
-        }
-        name="action"
-        value={action}
-        type="submit"
-      >
-        {children}
-      </TextButton>
+      <Tooltip content={tooltipContent} delayDuration={100} disabled={disabled}>
+        <span tabIndex={0}>
+          <TextButton
+            disabled={disabled}
+            isLoading={
+              transition.state === "submitting" &&
+              transition.submission.formData.get("action") === action &&
+              transition.location.pathname.includes(resourceId)
+            }
+            name="action"
+            value={action}
+            type="submit"
+          >
+            {children}
+          </TextButton>
+        </span>
+      </Tooltip>
     </Form>
   );
 }

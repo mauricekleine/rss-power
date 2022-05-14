@@ -4,7 +4,6 @@ import RssParser from "rss-parser";
 
 import { createFeedResource } from "~/models/feed-resource.server";
 import { getFeedsToUpdate, updateFeed } from "~/models/feed.server";
-import { deleteImageForFeedId } from "~/models/image.server";
 import { createResource } from "~/models/resource.server";
 
 const parser = new RssParser();
@@ -26,14 +25,6 @@ export const action: ActionFunction = async ({ request }) => {
         console.log(`Updating feed ${feed.title} from ${feed.origin}`);
 
         const parsed = await parser.parseURL(feed.origin);
-
-        if (
-          parsed.image?.url &&
-          feed.image &&
-          feed.image.url !== parsed.image.url
-        ) {
-          await deleteImageForFeedId({ feedId: feed.id });
-        }
 
         await updateFeed(feed.id, {
           description: parsed.description ?? undefined,
@@ -81,22 +72,19 @@ export const action: ActionFunction = async ({ request }) => {
         });
 
         const input = filteredItems.map(async (item) => {
-          const resourceInput = {
+          const resource = await createResource({
             description: item.summary ?? item.content ?? "",
             link: item.link ?? "",
-            publishedAt: item.pubDate ? new Date(item.pubDate) : null,
+            publishedAt: item.pubDate ? new Date(item.pubDate) : undefined,
+            publisherId: feed.publisherId,
             title: item.title ?? "",
-          };
+          });
 
-          const resource = await createResource(resourceInput);
-
-          const feedResourceInput = {
+          return createFeedResource({
             feedId: feed.id,
             guid: item.guid ?? null,
             resourceId: resource.id,
-          };
-
-          return createFeedResource(feedResourceInput);
+          });
         });
 
         return Promise.allSettled(input);

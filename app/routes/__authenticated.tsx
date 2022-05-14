@@ -3,7 +3,8 @@ import { json } from "@remix-run/node";
 import { Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
-import SidebarLayout from "~/components/sidebar/sidebar-layout";
+import SidebarLayout from "~/components/nav/sidebar-layout";
+import TopbarNavigation from "~/components/nav/topbar-navigation";
 
 import type { FeedsForUserId } from "~/models/feed.server";
 import { getFeedsForUserId } from "~/models/feed.server";
@@ -65,6 +66,8 @@ export default function FeedsPage() {
 
   return (
     <div className="flex h-full min-h-screen flex-col">
+      <TopbarNavigation user={user} />
+
       <SidebarLayout
         bookmarkedResourcesCount={data.bookmarkedResourcesCount}
         feeds={data.feeds}

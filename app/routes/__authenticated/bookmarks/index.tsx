@@ -79,7 +79,11 @@ export default function BookmarksPage() {
           fetcher.load(`/bookmarks?start=${count}`);
         }}
         renderItem={(item) => (
-          <ResourceCard resource={item} userResource={item.userResources[0]} />
+          <ResourceCard
+            resource={item}
+            showPublisherInformation
+            userResource={item.userResources[0]}
+          />
         )}
       />
     </div>

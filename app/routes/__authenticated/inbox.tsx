@@ -75,7 +75,7 @@ export default function InboxPage() {
         }}
         renderItem={(item) => (
           <ResourceCard
-            showFeedInformation
+            showPublisherInformation
             resource={item}
             userResource={item.userResources[0]}
           />

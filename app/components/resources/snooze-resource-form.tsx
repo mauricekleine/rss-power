@@ -1,4 +1,4 @@
-import { CheckCircle, ClockAfternoon } from "phosphor-react";
+import { ClockAfternoon } from "phosphor-react";
 
 import ResourceActionForm from "~/components/resources/resource-action-form";
 
@@ -15,14 +15,13 @@ export default function SnoozeResourceForm({ isSnoozed, resourceId }: Props) {
       action={ResourceActions.SNOOZE}
       disabled={isSnoozed}
       resourceId={resourceId}
+      tooltipContent={isSnoozed ? "Snoozed" : "Snooze"}
     >
-      {isSnoozed ? (
-        <CheckCircle weight="bold" />
-      ) : (
-        <ClockAfternoon weight="bold" />
-      )}
-
-      <span>{isSnoozed ? "Added to read later" : "Read later"}</span>
+      <ClockAfternoon
+        className="text-gray-900"
+        size={18}
+        weight={isSnoozed ? "duotone" : "regular"}
+      />
     </ResourceActionForm>
   );
 }

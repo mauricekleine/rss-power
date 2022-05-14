@@ -1,8 +1,13 @@
+const colors = require("tailwindcss/colors");
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   content: ["./app/**/*.{ts,tsx,jsx,js}"],
   theme: {
+    colors: {
+      ...colors,
+      gray: colors.stone,
+    },
     extend: {
       animation: {
         "fade-in": "fade-in 150ms ease-in",
