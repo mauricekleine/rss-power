@@ -30,7 +30,10 @@ export default function TopbarNavigation({ user }: Props) {
           <div className="flex max-w-xs items-center rounded-full bg-white text-sm">
             <DropdownMenu>
               <DropdownMenu.Trigger>
-                <button className="group rounded-full bg-gray-200 p-1.5 hover:bg-gray-300">
+                <button
+                  className="group rounded-full bg-gray-200 p-1.5 hover:bg-gray-300"
+                  data-testid="user-menu"
+                >
                   <UserIcon
                     className="text-gray-500 group-hover:text-gray-600"
                     size={24}
