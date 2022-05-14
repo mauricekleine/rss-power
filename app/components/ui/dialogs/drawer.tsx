@@ -32,7 +32,7 @@ type DrawerCloseProps = {
 
 function DrawerClose({ children }: DrawerCloseProps) {
   return (
-    <DialogPrimitive.Close className="fixed right-2 bottom-2 z-10 animate-fade-in rounded-full bg-slate-400 p-2">
+    <DialogPrimitive.Close className="fixed right-5 bottom-5 z-10 animate-fade-in">
       {children}
     </DialogPrimitive.Close>
   );
@@ -51,7 +51,7 @@ function DrawerContent({ children, closeComponent }: DrawerContentProps) {
       <DialogPrimitive.Content
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
-        <div className="fixed bottom-0 top-0 left-0 z-40 flex w-full max-w-xs flex-1 flex-col bg-white motion-safe:animate-slide-from-left">
+        <div className="fixed bottom-0 top-0 left-0 z-40 flex w-full max-w-xs flex-1 flex-col bg-gray-100 motion-safe:animate-slide-from-left">
           {children}
         </div>
 
@@ -67,7 +67,7 @@ type DrawerTriggerProps = {
 
 function DrawerTrigger({ children }: DrawerTriggerProps) {
   return (
-    <DialogPrimitive.Trigger className="fixed right-2 bottom-2 z-10 rounded-full bg-slate-400/75 p-2 md:hidden">
+    <DialogPrimitive.Trigger className="fixed right-5 bottom-5 z-10 md:hidden">
       {children}
     </DialogPrimitive.Trigger>
   );

@@ -15,12 +15,12 @@ import { ResourceActions } from "~/routes/__authenticated/resources/$resourceId"
 
 type Props = {
   resource: ResourcesForFeedIdAndUserId[0];
-  showFeedInformation?: boolean;
+  showPublisherInformation?: boolean;
   userResource?: UserResource;
 };
 
 export default function ResourceCard({
-  showFeedInformation,
+  showPublisherInformation,
   resource,
   userResource,
 }: Props) {
@@ -42,11 +42,11 @@ export default function ResourceCard({
 
   return (
     <Card isInactive={userResource?.hasRead}>
-      {showFeedInformation ? (
+      {showPublisherInformation ? (
         <Card.Header>
           <Avatar
-            image={resource.feedResource?.feed.image}
-            title={resource.feedResource!.feed.title}
+            image={resource.publisher?.image ?? resource.image}
+            title={resource.publisher?.title ?? resource.title}
           >
             {resource.publishedAt ? (
               <RelativeDate date={resource.publishedAt} />
@@ -66,7 +66,7 @@ export default function ResourceCard({
             {resource.title}
           </p>
 
-          {resource.publishedAt && !showFeedInformation ? (
+          {resource.publishedAt && !showPublisherInformation ? (
             <>
               <p className="hidden text-sm text-gray-500 sm:block">·</p>
 
@@ -86,7 +86,7 @@ export default function ResourceCard({
       </Card.LinkableBody>
 
       <Card.Footer>
-        <div className="-mr-4 flex justify-end">
+        <div className="-mr-4 flex justify-end space-x-2">
           {userResource?.hasRead ? null : (
             <SnoozeResourceForm
               isSnoozed={userResource?.isSnoozed ?? false}

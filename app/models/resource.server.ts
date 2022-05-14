@@ -1,15 +1,47 @@
-import type { Feed, Resource, User } from "@prisma/client";
+import type { Feed, Image, Resource, User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 import type { UserResourceFilter } from "~/models/user-resource.server";
 
 export type { Resource } from "@prisma/client";
 
-export function createResource(
-  data: Pick<Resource, "description" | "link" | "publishedAt" | "title">
-) {
+export function createResource({
+  description,
+  image,
+  link,
+  publishedAt,
+  publisherId,
+  title,
+}: Pick<Resource, "description" | "link" | "publisherId" | "title"> & {
+  image?: Pick<Image, "link" | "title" | "url">;
+  publishedAt?: Date;
+}) {
   return prisma.resource.create({
-    data,
+    data: {
+      description,
+      image: image?.url
+        ? {
+            connectOrCreate: {
+              create: {
+                link: image.link,
+                title: image.title,
+                url: image.url,
+              },
+              where: {
+                url: image.url,
+              },
+            },
+          }
+        : undefined,
+      link,
+      publishedAt,
+      publisher: {
+        connect: {
+          id: publisherId,
+        },
+      },
+      title,
+    },
   });
 }
 
@@ -34,6 +66,11 @@ export function getPaginatedResourcesForUserId({
         },
       },
       image: true,
+      publisher: {
+        include: {
+          image: true,
+        },
+      },
       userResources: {
         take: 1,
         where: {
@@ -81,6 +118,11 @@ export function getPaginatedResourcesForFeedIdAndUserId({
         },
       },
       image: true,
+      publisher: {
+        include: {
+          image: true,
+        },
+      },
       userResources: {
         take: 1,
         where: {
@@ -102,19 +144,6 @@ export function getPaginatedResourcesForFeedIdAndUserId({
 export type ResourcesForFeedIdAndUserId = Awaited<
   ReturnType<typeof getPaginatedResourcesForFeedIdAndUserId>
 >;
-
-export function getResourceCountForFeedId({ feedId }: { feedId: Feed["id"] }) {
-  return prisma.resource.count({
-    select: {
-      _all: true,
-    },
-    where: {
-      feedResource: {
-        feedId,
-      },
-    },
-  });
-}
 
 export async function getPaginatedUnreadResourcesForUserId({
   start,
@@ -147,6 +176,11 @@ export async function getPaginatedUnreadResourcesForUserId({
           },
         },
       },
+      publisher: {
+        include: {
+          image: true,
+        },
+      },
       image: true,
       userResources: {
         take: 1,
@@ -162,6 +196,27 @@ export async function getPaginatedUnreadResourcesForUserId({
       id: {
         in: ids.map(({ id }) => id),
       },
+    },
+  });
+}
+
+export function getResourceCountForFeedId({ feedId }: { feedId: Feed["id"] }) {
+  return prisma.resource.count({
+    select: {
+      _all: true,
+    },
+    where: {
+      feedResource: {
+        feedId,
+      },
+    },
+  });
+}
+
+export function getResourceForLink({ link }: Pick<Resource, "link">) {
+  return prisma.resource.findFirst({
+    where: {
+      link,
     },
   });
 }

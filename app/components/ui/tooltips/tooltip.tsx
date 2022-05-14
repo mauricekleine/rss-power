@@ -1,18 +1,29 @@
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 type TooltipProps = {
   children: ReactNode | ReactNode[];
   content: string;
+  disabled?: ComponentProps<typeof TooltipPrimitive.Trigger>["disabled"];
+  delayDuration?: ComponentProps<
+    typeof TooltipPrimitive.Provider
+  >["delayDuration"];
 };
 
-function Tooltip({ children, content }: TooltipProps) {
+function Tooltip({
+  children,
+  content,
+  delayDuration = 700,
+  disabled = false,
+}: TooltipProps) {
   return (
-    <TooltipPrimitive.Provider>
+    <TooltipPrimitive.Provider delayDuration={delayDuration}>
       <TooltipPrimitive.Root>
-        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Trigger asChild disabled={disabled}>
+          {children}
+        </TooltipPrimitive.Trigger>
 
-        <TooltipPrimitive.Content className="rounded-lg bg-slate-900/90 px-2 py-1 text-xs text-slate-50">
+        <TooltipPrimitive.Content className="rounded-lg bg-gray-900/90 px-2 py-1 text-xs text-gray-50">
           {content}
         </TooltipPrimitive.Content>
       </TooltipPrimitive.Root>

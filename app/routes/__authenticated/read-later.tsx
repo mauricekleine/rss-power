@@ -80,7 +80,7 @@ export default function ReadLaterPage() {
         }}
         renderItem={(item) => (
           <ResourceCard
-            showFeedInformation
+            showPublisherInformation
             resource={item}
             userResource={item.userResources[0]}
           />

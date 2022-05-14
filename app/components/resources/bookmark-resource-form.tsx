@@ -1,4 +1,4 @@
-import { BookmarkSimple, CheckCircle } from "phosphor-react";
+import { BookmarkSimple } from "phosphor-react";
 
 import ResourceActionForm from "~/components/resources/resource-action-form";
 
@@ -18,14 +18,13 @@ export default function BookmarkResourceForm({
       action={ResourceActions.BOOKMARK}
       disabled={isBookmarked}
       resourceId={resourceId}
+      tooltipContent={isBookmarked ? "Bookmarked" : "Bookmark"}
     >
-      {isBookmarked ? (
-        <CheckCircle weight="bold" />
-      ) : (
-        <BookmarkSimple weight="bold" />
-      )}
-
-      <span>{isBookmarked ? "Added to bookmarks" : "Bookmark"}</span>
+      <BookmarkSimple
+        className="text-gray-900"
+        size={18}
+        weight={isBookmarked ? "duotone" : "regular"}
+      />
     </ResourceActionForm>
   );
 }
