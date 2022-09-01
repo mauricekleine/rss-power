@@ -1,6 +1,4 @@
-import PageHeader from "./page-header";
-import RelativeDate from "./relative-date";
-import SanitizedText from "./sanitized-text";
-import SectionHeader from "./section-header";
-
-export { PageHeader, RelativeDate, SanitizedText, SectionHeader };
+export { default as PageHeader } from "./page-header";
+export { default as RelativeDate } from "./relative-date";
+export { default as SanitizedText } from "./sanitized-text";
+export { default as SectionHeader } from "./section-header";
