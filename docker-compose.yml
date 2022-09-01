@@ -1,13 +1,5 @@
 version: "3.7"
 services:
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=user@domain.com
-      - PGADMIN_DEFAULT_PASSWORD=secret
-    ports:
-      - 8000:80
-
   postgres:
     image: postgres:latest
     restart: always

@@ -16,13 +16,30 @@ module.exports = {
         alphabetize: {
           order: "asc",
         },
-        groups: ["builtin", "external", "parent", "sibling", "index"],
+        groups: [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+        ],
         "newlines-between": "always",
         pathGroups: [
           {
-            pattern: "~/components/**",
+            pattern: "~/features/**",
             group: "internal",
             position: "before",
+          },
+          {
+            pattern: "~/models/**",
+            group: "internal",
+            position: "before",
+          },
+          {
+            pattern: "~/styles/**",
+            group: "internal",
+            position: "after",
           },
         ],
         pathGroupsExcludedImportTypes: [],

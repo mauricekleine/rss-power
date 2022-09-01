@@ -1,4 +1,5 @@
 import type { Password, User } from "@prisma/client";
+import type { SerializeFrom } from "@remix-run/node";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
@@ -57,7 +58,7 @@ export async function getUsers() {
   });
 }
 
-export type Users = Awaited<ReturnType<typeof getUsers>>;
+export type Users = SerializeFrom<typeof getUsers>;
 
 export async function updateLastActiveAtById(id: User["id"]) {
   return prisma.user.update({

@@ -1,16 +1,16 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { Bell, Rss } from "phosphor-react";
 import * as React from "react";
 import RssParser from "rss-parser";
 
-import FeedCard from "~/components/feeds/feed-card";
-import Card from "~/components/ui/cards/card";
-import SectionHeader from "~/components/ui/typography/section-header";
+import { FeedCard } from "~/features/feeds";
+import { TextButton } from "~/features/ui/button";
+import { Card } from "~/features/ui/card";
+import { Bell, Rss } from "~/features/ui/icon";
+import { SectionHeader } from "~/features/ui/typography";
 
 import { createFeedResource } from "~/models/feed-resource.server";
-import type { FeedSuggestions } from "~/models/feed.server";
 import {
   createFeed,
   getFeedForOrigin,
@@ -18,25 +18,17 @@ import {
 } from "~/models/feed.server";
 import { createResource } from "~/models/resource.server";
 import { createUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
+
 import { requireUserId } from "~/session.server";
 
-type ActionData = {
-  errors?: {
-    origin?: string;
-  };
-};
-
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
   const origin = formData.get("origin");
 
   if (typeof origin !== "string" || origin.length === 0) {
-    return json<ActionData>(
-      { errors: { origin: "Origin is required" } },
-      { status: 400 }
-    );
+    return json({ errors: { origin: "Origin is required" } }, { status: 400 });
   }
 
   const feed = await getFeedForOrigin({ origin });
@@ -52,10 +44,7 @@ export const action: ActionFunction = async ({ request }) => {
     const parsed = await parser.parseURL(origin);
 
     if (!parsed || !parsed.link || !parsed.title) {
-      return json<ActionData>(
-        { errors: { origin: "Origin is invalid" } },
-        { status: 400 }
-      );
+      return json({ errors: { origin: "Origin is invalid" } }, { status: 400 });
     }
 
     const feed = await createFeed({
@@ -102,33 +91,26 @@ export const action: ActionFunction = async ({ request }) => {
   } catch (e) {
     console.log(e);
 
-    return json<ActionData>(
-      { errors: { origin: "Origin is invalid" } },
-      { status: 400 }
-    );
+    return json({ errors: { origin: "Origin is invalid" } }, { status: 400 });
   }
-};
+}
 
-type LoaderData = {
-  feeds: FeedSuggestions;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
 
   try {
     const feeds = await getSuggestedFeedsForUserId({ userId });
 
-    return json<LoaderData>({ feeds });
+    return json({ feeds });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
   }
-};
+}
 
 export default function NewFeedPage() {
-  const actionData = useActionData() as ActionData;
-  const data = useLoaderData() as LoaderData;
+  const actionData = useActionData<typeof action>();
+  const data = useLoaderData<typeof loader>();
 
   const titleRef = React.useRef<HTMLInputElement>(null);
 
@@ -184,14 +166,11 @@ export default function NewFeedPage() {
 
             <Card.Footer>
               <div className="flex justify-end">
-                <button
-                  className="flex items-center space-x-2 rounded bg-gray-700 py-2 px-4 text-white hover:bg-gray-800"
-                  type="submit"
-                >
+                <TextButton type="submit">
                   <Bell weight="bold" />
 
                   <span>Save</span>
-                </button>
+                </TextButton>
               </div>
             </Card.Footer>
           </Card>

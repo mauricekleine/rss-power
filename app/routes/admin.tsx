@@ -1,23 +1,17 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { format } from "date-fns";
 
-import SectionHeader from "~/components/ui/typography/section-header";
+import { SectionHeader } from "~/features/ui/typography";
 
-import type { Feeds } from "~/models/feed.server";
 import { getFeeds } from "~/models/feed.server";
-import type { Users } from "~/models/user.server";
 import { getUsers } from "~/models/user.server";
+
 import { requireUser } from "~/session.server";
 
-type LoaderData = {
-  feeds: Feeds;
-  users: Users;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
 
   if (user.email !== "test@rsspower.com") {
@@ -26,11 +20,11 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const [feeds, users] = await Promise.all([getFeeds(), getUsers()]);
 
-  return json<LoaderData>({ feeds, users });
-};
+  return json({ feeds, users });
+}
 
 export default function AdminPage() {
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<typeof loader>();
 
   return (
     <main className="flex-1">

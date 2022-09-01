@@ -1,4 +1,4 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -7,29 +7,22 @@ import {
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
-import { BellSimpleSlash } from "phosphor-react";
 import invariant from "tiny-invariant";
 
-import InfiniteScroller from "~/components/infinite-scroller";
-import ResourceCard from "~/components/resources/resource-card";
-import Avatar from "~/components/ui/avatars/avatar";
-import TextButton from "~/components/ui/buttons/text-button";
+import { ResourceCard } from "~/features/resources";
+import { Avatar } from "~/features/ui/avatar";
+import { TextButton } from "~/features/ui/button";
+import { BellSimpleSlash } from "~/features/ui/icon";
+import { LazyList } from "~/features/ui/lists";
 
-import type { Feed } from "~/models/feed.server";
 import { getFeed } from "~/models/feed.server";
-import type { ResourcesForFeedIdAndUserId } from "~/models/resource.server";
 import { getResourceCountForFeedId } from "~/models/resource.server";
 import { getPaginatedResourcesForFeedIdAndUserId } from "~/models/resource.server";
 import { deleteUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
+
 import { requireUserId } from "~/session.server";
 
-type LoaderData = {
-  count: number;
-  feed: Feed;
-  resources: ResourcesForFeedIdAndUserId;
-};
-
-export const loader: LoaderFunction = async ({ request, params }) => {
+export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
   invariant(params.feedId, "feedId not found");
 
@@ -57,25 +50,25 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       throw new Response("Not Found", { status: 404 });
     }
 
-    return json<LoaderData>({ count: count._all, feed, resources });
+    return json({ count: count._all, feed, resources });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
   }
-};
+}
 
-export const action: ActionFunction = async ({ request, params }) => {
+export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
   invariant(params.feedId, "feedId not found");
 
   await deleteUserFeedForFeedIdAndUserId({ feedId: params.feedId, userId });
 
   return redirect("/feeds");
-};
+}
 
 export default function FeedPage() {
-  const fetcher = useFetcher<LoaderData>();
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<typeof loader>();
+  const fetcher = useFetcher<typeof data>();
   const transition = useTransition();
 
   return (
@@ -119,7 +112,7 @@ export default function FeedPage() {
         </p>
       </div>
 
-      <InfiniteScroller<typeof data.resources[0]>
+      <LazyList<typeof data.resources[0]>
         count={data.count}
         isDisabled={fetcher.state !== "idle"}
         isLoading={fetcher.state === "loading"}
