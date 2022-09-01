@@ -1,4 +1,5 @@
 import type { Image, Feed as PrismaFeed, User } from "@prisma/client";
+import type { SerializeFrom } from "@remix-run/node";
 
 import { prisma } from "~/db.server";
 
@@ -67,7 +68,7 @@ export function getFeed(id: PrismaFeed["id"]) {
   return prisma.feed.findUnique({ include: { image: true }, where: { id } });
 }
 
-export type Feed = NonNullable<Awaited<ReturnType<typeof getFeed>>>;
+export type Feed = NonNullable<SerializeFrom<typeof getFeed>>;
 
 export function getFeedForOrigin({ origin }: Pick<PrismaFeed, "origin">) {
   return prisma.feed.findUnique({
@@ -84,7 +85,7 @@ export function getFeeds() {
   });
 }
 
-export type Feeds = Awaited<ReturnType<typeof getFeeds>>;
+export type Feeds = SerializeFrom<typeof getFeeds>;
 
 export function getFeedsForUserId({ userId }: { userId: User["id"] }) {
   return prisma.feed.findMany({
@@ -106,7 +107,7 @@ export function getFeedsForUserId({ userId }: { userId: User["id"] }) {
   });
 }
 
-export type FeedsForUserId = Awaited<ReturnType<typeof getFeedsForUserId>>;
+export type FeedsForUserId = SerializeFrom<typeof getFeedsForUserId>;
 
 export function getFeedsToUpdate() {
   return prisma.feed.findMany({
@@ -146,9 +147,7 @@ export function getSuggestedFeedsForUserId({ userId }: { userId: User["id"] }) {
   });
 }
 
-export type FeedSuggestions = Awaited<
-  ReturnType<typeof getSuggestedFeedsForUserId>
->;
+export type FeedSuggestions = SerializeFrom<typeof getSuggestedFeedsForUserId>;
 
 export function updateFeed(
   id: PrismaFeed["id"],

@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
@@ -8,7 +8,7 @@ import { updateUserResourceForResourceIdAndUserId } from "~/models/user-resource
 
 import { requireUserId } from "~/session.server";
 
-export const action: ActionFunction = async ({ request, params }) => {
+export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
   invariant(params.resourceId, "resourceId not found");
 
@@ -44,4 +44,4 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   return redirect(redirectTo.toString());
-};
+}

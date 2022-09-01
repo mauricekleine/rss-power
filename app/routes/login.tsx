@@ -1,8 +1,4 @@
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
@@ -12,11 +8,11 @@ import { verifyLogin } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (userId) return redirect("/");
   return json({});
-};
+}
 
 interface ActionData {
   errors?: {
@@ -25,7 +21,7 @@ interface ActionData {
   };
 }
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
@@ -68,7 +64,7 @@ export const action: ActionFunction = async ({ request }) => {
     remember: remember === "on" ? true : false,
     redirectTo,
   });
-};
+}
 
 export const meta: MetaFunction = () => {
   return {
@@ -180,7 +176,7 @@ export default function LoginPage() {
             </div>
 
             <div className="text-center text-sm text-gray-500">
-              Don't have an account?{" "}
+              <span>Don't have an account? </span>
 
               <Link
                 className="text-blue-500 underline"

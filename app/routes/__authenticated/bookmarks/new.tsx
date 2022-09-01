@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import type { Metadata, Scraper } from "metascraper";
@@ -21,7 +21,7 @@ type ActionData = {
   };
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
@@ -118,7 +118,7 @@ export const action: ActionFunction = async ({ request }) => {
       { status: 400 }
     );
   }
-};
+}
 
 export default function NewBookmarkPage() {
   const actionData = useActionData() as ActionData;

@@ -1,4 +1,5 @@
 import type { Feed, Image, Resource, User } from "@prisma/client";
+import type { SerializeFrom } from "@remix-run/node";
 
 import type { UserResourceFilter } from "~/models/user-resource.server";
 
@@ -142,8 +143,8 @@ export function getPaginatedResourcesForFeedIdAndUserId({
   });
 }
 
-export type ResourcesForFeedIdAndUserId = Awaited<
-  ReturnType<typeof getPaginatedResourcesForFeedIdAndUserId>
+export type ResourcesForFeedIdAndUserId = SerializeFrom<
+  typeof getPaginatedResourcesForFeedIdAndUserId
 >;
 
 export async function getPaginatedUnreadResourcesForUserId({

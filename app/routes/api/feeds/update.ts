@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/server-runtime";
+import type { ActionArgs } from "@remix-run/server-runtime";
 import { compareAsc } from "date-fns";
 import RssParser from "rss-parser";
 
@@ -8,7 +8,7 @@ import { createResource } from "~/models/resource.server";
 
 const parser = new RssParser();
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const headers = request.headers;
   const authorization = headers.get("Authorization");
 
@@ -96,4 +96,4 @@ export const action: ActionFunction = async ({ request }) => {
   } catch (e) {
     return new Response("ERROR", { status: 500 });
   }
-};
+}

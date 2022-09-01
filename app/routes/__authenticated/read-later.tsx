@@ -1,4 +1,4 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useCatch, useFetcher, useLoaderData } from "@remix-run/react";
 
@@ -7,19 +7,13 @@ import { BookmarkSimple } from "~/features/ui/icon";
 import { LazyList } from "~/features/ui/lists";
 import { PageHeader } from "~/features/ui/typography";
 
-import type { ResourcesForUserId } from "~/models/resource.server";
 import { getPaginatedResourcesForUserId } from "~/models/resource.server";
 import type { UserResourceFilter } from "~/models/user-resource.server";
 import { getUserResourceCountForUserId } from "~/models/user-resource.server";
 
 import { requireUserId } from "~/session.server";
 
-type LoaderData = {
-  count: number;
-  resources: ResourcesForUserId;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
 
   const url = new URL(request.url);
@@ -43,16 +37,16 @@ export const loader: LoaderFunction = async ({ request }) => {
       }),
     ]);
 
-    return json<LoaderData>({ count: count._all, resources });
+    return json({ count: count._all, resources });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
   }
-};
+}
 
 export default function ReadLaterPage() {
-  const fetcher = useFetcher<LoaderData>();
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<typeof loader>();
+  const fetcher = useFetcher<typeof data>();
 
   return (
     <div>

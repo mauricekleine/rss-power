@@ -1,3 +1,4 @@
+import type { SerializeFrom } from "@remix-run/node";
 import { useSubmit } from "@remix-run/react";
 import classNames from "classnames";
 
@@ -18,7 +19,7 @@ import { ResourceActions } from "./types";
 type Props = {
   resource: ResourcesForFeedIdAndUserId[0];
   showPublisherInformation?: boolean;
-  userResource?: UserResource;
+  userResource?: SerializeFrom<UserResource>;
 };
 
 export default function ResourceCard({

@@ -1,4 +1,4 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
@@ -11,7 +11,6 @@ import { Bell, Rss } from "~/features/ui/icon";
 import { SectionHeader } from "~/features/ui/typography";
 
 import { createFeedResource } from "~/models/feed-resource.server";
-import type { FeedSuggestions } from "~/models/feed.server";
 import {
   createFeed,
   getFeedForOrigin,
@@ -28,7 +27,7 @@ type ActionData = {
   };
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
@@ -109,28 +108,24 @@ export const action: ActionFunction = async ({ request }) => {
       { status: 400 }
     );
   }
-};
+}
 
-type LoaderData = {
-  feeds: FeedSuggestions;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
 
   try {
     const feeds = await getSuggestedFeedsForUserId({ userId });
 
-    return json<LoaderData>({ feeds });
+    return json({ feeds });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
   }
-};
+}
 
 export default function NewFeedPage() {
   const actionData = useActionData() as ActionData;
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<typeof loader>();
 
   const titleRef = React.useRef<HTMLInputElement>(null);
 
