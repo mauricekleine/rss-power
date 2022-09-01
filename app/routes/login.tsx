@@ -14,13 +14,6 @@ export async function loader({ request }: LoaderArgs) {
   return json({});
 }
 
-interface ActionData {
-  errors?: {
-    email?: string;
-    password?: string;
-  };
-}
-
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
@@ -29,22 +22,22 @@ export async function action({ request }: ActionArgs) {
   const remember = formData.get("remember");
 
   if (!validateEmail(email)) {
-    return json<ActionData>(
-      { errors: { email: "Email is invalid" } },
+    return json(
+      { errors: { email: "Email is invalid", password: null } },
       { status: 400 }
     );
   }
 
   if (typeof password !== "string") {
-    return json<ActionData>(
-      { errors: { password: "Password is required" } },
+    return json(
+      { errors: { email: null, password: "Password is required" } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
-    return json<ActionData>(
-      { errors: { password: "Password is too short" } },
+    return json(
+      { errors: { email: null, password: "Password is too short" } },
       { status: 400 }
     );
   }
@@ -52,8 +45,8 @@ export async function action({ request }: ActionArgs) {
   const user = await verifyLogin(email, password);
 
   if (!user) {
-    return json<ActionData>(
-      { errors: { email: "Invalid email or password" } },
+    return json(
+      { errors: { email: "Invalid email or password", password: null } },
       { status: 400 }
     );
   }
@@ -75,7 +68,7 @@ export const meta: MetaFunction = () => {
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/feeds";
-  const actionData = useActionData() as ActionData;
+  const actionData = useActionData<typeof action>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
 

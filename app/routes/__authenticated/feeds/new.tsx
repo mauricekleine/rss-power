@@ -21,12 +21,6 @@ import { createUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
 
 import { requireUserId } from "~/session.server";
 
-type ActionData = {
-  errors?: {
-    origin?: string;
-  };
-};
-
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
 
@@ -34,10 +28,7 @@ export async function action({ request }: ActionArgs) {
   const origin = formData.get("origin");
 
   if (typeof origin !== "string" || origin.length === 0) {
-    return json<ActionData>(
-      { errors: { origin: "Origin is required" } },
-      { status: 400 }
-    );
+    return json({ errors: { origin: "Origin is required" } }, { status: 400 });
   }
 
   const feed = await getFeedForOrigin({ origin });
@@ -53,10 +44,7 @@ export async function action({ request }: ActionArgs) {
     const parsed = await parser.parseURL(origin);
 
     if (!parsed || !parsed.link || !parsed.title) {
-      return json<ActionData>(
-        { errors: { origin: "Origin is invalid" } },
-        { status: 400 }
-      );
+      return json({ errors: { origin: "Origin is invalid" } }, { status: 400 });
     }
 
     const feed = await createFeed({
@@ -103,10 +91,7 @@ export async function action({ request }: ActionArgs) {
   } catch (e) {
     console.log(e);
 
-    return json<ActionData>(
-      { errors: { origin: "Origin is invalid" } },
-      { status: 400 }
-    );
+    return json({ errors: { origin: "Origin is invalid" } }, { status: 400 });
   }
 }
 
@@ -124,7 +109,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function NewFeedPage() {
-  const actionData = useActionData() as ActionData;
+  const actionData = useActionData<typeof action>();
   const data = useLoaderData<typeof loader>();
 
   const titleRef = React.useRef<HTMLInputElement>(null);

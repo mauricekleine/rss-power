@@ -15,12 +15,6 @@ import { updateUserResourceForResourceIdAndUserId } from "~/models/user-resource
 
 import { requireUserId } from "~/session.server";
 
-type ActionData = {
-  errors?: {
-    link?: string;
-  };
-};
-
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
 
@@ -28,10 +22,7 @@ export async function action({ request }: ActionArgs) {
   const link = formData.get("link");
 
   if (typeof link !== "string" || link.length === 0) {
-    return json<ActionData>(
-      { errors: { link: "Link is required" } },
-      { status: 400 }
-    );
+    return json({ errors: { link: "Link is required" } }, { status: 400 });
   }
 
   const resource = await getResourceForLink({ link });
@@ -65,10 +56,7 @@ export async function action({ request }: ActionArgs) {
     };
 
     if (!scraped || !scraped.title) {
-      return json<ActionData>(
-        { errors: { link: "Link is invalid" } },
-        { status: 400 }
-      );
+      return json({ errors: { link: "Link is invalid" } }, { status: 400 });
     }
 
     const url = new URL(link);
@@ -113,15 +101,12 @@ export async function action({ request }: ActionArgs) {
   } catch (e) {
     console.log(e);
 
-    return json<ActionData>(
-      { errors: { link: "Origin is invalid" } },
-      { status: 400 }
-    );
+    return json({ errors: { link: "Origin is invalid" } }, { status: 400 });
   }
 }
 
 export default function NewBookmarkPage() {
-  const actionData = useActionData() as ActionData;
+  const actionData = useActionData<typeof action>();
 
   const titleRef = React.useRef<HTMLInputElement>(null);
 
