@@ -2,15 +2,17 @@ import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import type { Metadata, Scraper } from "metascraper";
-import { BookmarkSimple, Link } from "phosphor-react";
 import * as React from "react";
 
-import Card from "~/components/ui/cards/card";
-import SectionHeader from "~/components/ui/typography/section-header";
+import { TextButton } from "~/features/ui/button";
+import { Card } from "~/features/ui/card";
+import { BookmarkSimple, Link } from "~/features/ui/icon";
+import { SectionHeader } from "~/features/ui/typography";
 
 import { createPublisher } from "~/models/publisher.server";
 import { createResource, getResourceForLink } from "~/models/resource.server";
 import { updateUserResourceForResourceIdAndUserId } from "~/models/user-resource.server";
+
 import { requireUserId } from "~/session.server";
 
 type ActionData = {
@@ -175,14 +177,11 @@ export default function NewBookmarkPage() {
 
             <Card.Footer>
               <div className="flex justify-end">
-                <button
-                  className="flex items-center space-x-2 rounded bg-gray-700 py-2 px-4 text-white hover:bg-gray-800"
-                  type="submit"
-                >
+                <TextButton type="submit">
                   <BookmarkSimple weight="bold" />
 
                   <span>Save</span>
-                </button>
+                </TextButton>
               </div>
             </Card.Footer>
           </Card>

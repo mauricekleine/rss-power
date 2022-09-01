@@ -1,16 +1,17 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useCatch, useFetcher, useLoaderData } from "@remix-run/react";
-import { BookmarkSimple } from "phosphor-react";
 
-import InfiniteScroller from "~/components/infinite-scroller";
-import ResourceCard from "~/components/resources/resource-card";
-import PageHeader from "~/components/ui/typography/page-header";
+import { ResourceCard } from "~/features/resources";
+import { BookmarkSimple } from "~/features/ui/icon";
+import { LazyList } from "~/features/ui/lists";
+import { PageHeader } from "~/features/ui/typography";
 
 import type { ResourcesForUserId } from "~/models/resource.server";
 import { getPaginatedResourcesForUserId } from "~/models/resource.server";
 import type { UserResourceFilter } from "~/models/user-resource.server";
 import { getUserResourceCountForUserId } from "~/models/user-resource.server";
+
 import { requireUserId } from "~/session.server";
 
 type LoaderData = {
@@ -69,7 +70,7 @@ export default function ReadLaterPage() {
         </p>
       </div>
 
-      <InfiniteScroller<typeof data.resources[0]>
+      <LazyList<typeof data.resources[0]>
         count={data.count}
         isDisabled={fetcher.state !== "idle"}
         isLoading={fetcher.state === "loading"}

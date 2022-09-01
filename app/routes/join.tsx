@@ -8,6 +8,7 @@ import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
+
 import { createUserSession, getUserId } from "~/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
 
@@ -164,6 +165,7 @@ export default function Join() {
           <div className="flex items-center justify-center">
             <div className="text-center text-sm text-gray-500">
               Already have an account?{" "}
+
               <Link
                 className="text-blue-500 underline"
                 to={{

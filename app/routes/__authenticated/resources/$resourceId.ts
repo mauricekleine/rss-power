@@ -2,14 +2,11 @@ import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
-import { updateUserResourceForResourceIdAndUserId } from "~/models/user-resource.server";
-import { requireUserId } from "~/session.server";
+import { ResourceActions } from "~/features/resources/types";
 
-export const ResourceActions = {
-  BOOKMARK: "BOOKMARK",
-  MARK_AS_READ: "MARK_AS_READ",
-  SNOOZE: "SNOOZE",
-} as const;
+import { updateUserResourceForResourceIdAndUserId } from "~/models/user-resource.server";
+
+import { requireUserId } from "~/session.server";
 
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);

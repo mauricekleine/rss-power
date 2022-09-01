@@ -3,13 +3,13 @@ import { json } from "@remix-run/node";
 import { Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
-import SidebarLayout from "~/components/nav/sidebar-layout";
-import TopbarNavigation from "~/components/nav/topbar-navigation";
+import { SidebarLayout, TopbarNavigation } from "~/features/navigation";
 
 import type { FeedsForUserId } from "~/models/feed.server";
 import { getFeedsForUserId } from "~/models/feed.server";
 import { getUnreadResourcesCountForUserId } from "~/models/resource.server";
 import { getUserResourceCountForUserId } from "~/models/user-resource.server";
+
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 

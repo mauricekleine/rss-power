@@ -1,13 +1,14 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { Bell, Rss } from "phosphor-react";
 import * as React from "react";
 import RssParser from "rss-parser";
 
-import FeedCard from "~/components/feeds/feed-card";
-import Card from "~/components/ui/cards/card";
-import SectionHeader from "~/components/ui/typography/section-header";
+import { FeedCard } from "~/features/feeds";
+import { TextButton } from "~/features/ui/button";
+import { Card } from "~/features/ui/card";
+import { Bell, Rss } from "~/features/ui/icon";
+import { SectionHeader } from "~/features/ui/typography";
 
 import { createFeedResource } from "~/models/feed-resource.server";
 import type { FeedSuggestions } from "~/models/feed.server";
@@ -18,6 +19,7 @@ import {
 } from "~/models/feed.server";
 import { createResource } from "~/models/resource.server";
 import { createUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
+
 import { requireUserId } from "~/session.server";
 
 type ActionData = {
@@ -184,14 +186,11 @@ export default function NewFeedPage() {
 
             <Card.Footer>
               <div className="flex justify-end">
-                <button
-                  className="flex items-center space-x-2 rounded bg-gray-700 py-2 px-4 text-white hover:bg-gray-800"
-                  type="submit"
-                >
+                <TextButton type="submit">
                   <Bell weight="bold" />
 
                   <span>Save</span>
-                </button>
+                </TextButton>
               </div>
             </Card.Footer>
           </Card>

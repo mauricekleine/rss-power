@@ -7,13 +7,13 @@ import {
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
-import { BellSimpleSlash } from "phosphor-react";
 import invariant from "tiny-invariant";
 
-import InfiniteScroller from "~/components/infinite-scroller";
-import ResourceCard from "~/components/resources/resource-card";
-import Avatar from "~/components/ui/avatars/avatar";
-import TextButton from "~/components/ui/buttons/text-button";
+import { ResourceCard } from "~/features/resources";
+import { Avatar } from "~/features/ui/avatar";
+import { TextButton } from "~/features/ui/button";
+import { BellSimpleSlash } from "~/features/ui/icon";
+import { LazyList } from "~/features/ui/lists";
 
 import type { Feed } from "~/models/feed.server";
 import { getFeed } from "~/models/feed.server";
@@ -21,6 +21,7 @@ import type { ResourcesForFeedIdAndUserId } from "~/models/resource.server";
 import { getResourceCountForFeedId } from "~/models/resource.server";
 import { getPaginatedResourcesForFeedIdAndUserId } from "~/models/resource.server";
 import { deleteUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
+
 import { requireUserId } from "~/session.server";
 
 type LoaderData = {
@@ -119,7 +120,7 @@ export default function FeedPage() {
         </p>
       </div>
 
-      <InfiniteScroller<typeof data.resources[0]>
+      <LazyList<typeof data.resources[0]>
         count={data.count}
         isDisabled={fetcher.state !== "idle"}
         isLoading={fetcher.state === "loading"}

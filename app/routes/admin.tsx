@@ -4,12 +4,13 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { format } from "date-fns";
 
-import SectionHeader from "~/components/ui/typography/section-header";
+import { SectionHeader } from "~/features/ui/typography";
 
 import type { Feeds } from "~/models/feed.server";
 import { getFeeds } from "~/models/feed.server";
 import type { Users } from "~/models/user.server";
 import { getUsers } from "~/models/user.server";
+
 import { requireUser } from "~/session.server";
 
 type LoaderData = {
