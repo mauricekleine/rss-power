@@ -36,6 +36,11 @@ module.exports = {
             group: "internal",
             position: "before",
           },
+          {
+            pattern: "~/styles/**",
+            group: "internal",
+            position: "after",
+          },
         ],
         pathGroupsExcludedImportTypes: [],
       },
