@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderArgs) {
       }),
     ]);
 
-    return json({ count: count[0].count, resources });
+    return json({ count: parseInt(count[0].count.toString()), resources });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });
