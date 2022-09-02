@@ -10,10 +10,11 @@ import {
 import invariant from "tiny-invariant";
 
 import { ResourceCard } from "~/features/resources";
-import { Avatar } from "~/features/ui/avatar";
+import { Avatar, AvatarSize } from "~/features/ui/avatar";
 import { TextButton } from "~/features/ui/button";
 import { BellSimpleSlash } from "~/features/ui/icon";
 import { LazyList } from "~/features/ui/lists";
+import { PageHeader } from "~/features/ui/typography";
 
 import { getFeed } from "~/models/feed.server";
 import { getResourceCountForFeedId } from "~/models/resource.server";
@@ -77,10 +78,14 @@ export default function FeedPage() {
         <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-start">
           <div className="flex items-center space-x-2">
             <Avatar
-              image={data.feed.image ?? undefined}
-              pageHeader
+              size={AvatarSize.LARGE}
+              src={data.feed.image?.url ?? undefined}
               title={data.feed.title}
-            >
+            />
+
+            <div className="flex flex-col">
+              <PageHeader>{data.feed.title}</PageHeader>
+
               <a
                 className="text-sm font-medium text-blue-500 hover:text-blue-700"
                 href={data.feed.link}
@@ -89,7 +94,7 @@ export default function FeedPage() {
               >
                 {data.feed.link}
               </a>
-            </Avatar>
+            </div>
           </div>
 
           <Form className="-mt-1.5 -mr-2 flex justify-end" method="post">

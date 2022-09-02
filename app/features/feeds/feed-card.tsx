@@ -17,7 +17,16 @@ export default function FeedCard({ feed }: Props) {
   return (
     <Card>
       <Card.Header>
-        <Avatar image={feed.image ?? undefined} title={feed.title} />
+        <div className="flex items-center space-x-2">
+          <Avatar
+            src={feed.image?.url}
+            title={feed.image?.title ?? feed.title}
+          />
+
+          <span className="truncate text-sm font-medium text-gray-900">
+            {feed.title}
+          </span>
+        </div>
       </Card.Header>
 
       <Card.Body>

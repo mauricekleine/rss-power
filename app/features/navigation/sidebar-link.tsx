@@ -1,7 +1,7 @@
 import { NavLink } from "@remix-run/react";
 import classNames from "classnames";
 import type { ComponentProps, ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   children: ReactNode | ReactNode[];
@@ -9,20 +9,14 @@ type Props = {
   to: ComponentProps<typeof NavLink>["to"];
 };
 
-export default function SidebarLink({
-  children,
-  itemCount: itemCountProp,
-  to,
-}: Props) {
+export default function SidebarLink({ children, itemCount, to }: Props) {
   const [hasUpdates, setHasUpdates] = useState(false);
-  const [itemCount, setItemCount] = useState(itemCountProp);
+  const [prevItemCount, setPrevItemCount] = useState(itemCount);
 
-  useEffect(() => {
-    if (itemCountProp !== itemCount) {
-      setItemCount(itemCountProp);
-      setHasUpdates(true);
-    }
-  }, [itemCount, itemCountProp]);
+  if (prevItemCount !== itemCount) {
+    setPrevItemCount(itemCount);
+    setHasUpdates(true);
+  }
 
   return (
     <NavLink

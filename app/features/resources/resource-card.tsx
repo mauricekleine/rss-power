@@ -47,14 +47,22 @@ export default function ResourceCard({
     <Card isInactive={userResource?.hasRead}>
       {showPublisherInformation ? (
         <Card.Header>
-          <Avatar
-            image={resource.publisher?.image ?? resource.image}
-            title={resource.publisher?.title ?? resource.title}
-          >
-            {resource.publishedAt ? (
-              <RelativeDate date={resource.publishedAt} />
-            ) : null}
-          </Avatar>
+          <div className="flex items-center space-x-2">
+            <Avatar
+              src={resource.publisher?.image?.url ?? resource.image?.url}
+              title={resource.publisher?.title ?? resource.title}
+            />
+
+            <div className="flex flex-col">
+              <span className="truncate text-sm font-medium text-gray-900">
+                {resource.publisher?.title ?? resource.title}
+              </span>
+
+              {resource.publishedAt ? (
+                <RelativeDate date={resource.publishedAt} />
+              ) : null}
+            </div>
+          </div>
         </Card.Header>
       ) : null}
 
