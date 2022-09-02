@@ -44,7 +44,7 @@ export default function FeedCard({ feed }: Props) {
             ) : null}
           </div>
 
-          <Form className="-mr-4" method="post">
+          <Form method="post">
             <input name="origin" type="hidden" value={feed.origin} />
 
             <TextButton

@@ -89,7 +89,7 @@ export default function ResourceCard({
       </Card.LinkableBody>
 
       <Card.Footer>
-        <div className="-mr-4 flex justify-end space-x-2">
+        <div className="flex justify-end space-x-2">
           {userResource?.hasRead ? null : (
             <SnoozeResourceForm
               isSnoozed={userResource?.isSnoozed ?? false}
