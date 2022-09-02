@@ -4,6 +4,7 @@ import { useFetcher, useLoaderData } from "@remix-run/react";
 
 import { ResourceCard } from "~/features/resources";
 import { BookmarksSimple } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 import { LazyList } from "~/features/ui/lists";
 import { PageHeader } from "~/features/ui/typography";
 
@@ -51,13 +52,11 @@ export default function BookmarksPage() {
   return (
     <div>
       <div className="mb-5 border-b border-gray-200 pb-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-1">
-            <BookmarksSimple className="h-6 w-6 text-black" weight="bold" />
+        <Stack alignItems="center" gap="gap-1">
+          <BookmarksSimple className="h-6 w-6 text-black" weight="bold" />
 
-            <PageHeader>Bookmarks</PageHeader>
-          </div>
-        </div>
+          <PageHeader>Bookmarks</PageHeader>
+        </Stack>
 
         <p className="mt-2 max-w-4xl text-sm text-gray-600">
           Everything you've bookmarked

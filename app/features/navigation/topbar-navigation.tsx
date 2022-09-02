@@ -2,6 +2,7 @@ import { useSubmit } from "@remix-run/react";
 
 import { DropdownMenu } from "~/features/ui/dropdown-menu";
 import { Rss, User as UserIcon } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 
 import type { User } from "~/models/user.server";
 
@@ -19,13 +20,11 @@ export default function TopbarNavigation({ user }: Props) {
     <nav className="border-b border-gray-200 bg-white">
       <div className="mx-auto max-w-3xl px-6 md:max-w-6xl lg:px-8">
         <div className="flex h-16 justify-between">
-          <div className="flex">
-            <div className="flex flex-shrink-0 items-center space-x-2">
-              <Rss size={20} weight="bold" />
+          <Stack alignItems="center" gap="gap-2">
+            <Rss size={20} weight="bold" />
 
-              <span className="font-bold uppercase">Rss power</span>
-            </div>
-          </div>
+            <span className="font-bold uppercase">Rss power</span>
+          </Stack>
 
           <div className="flex max-w-xs items-center rounded-full bg-white text-sm">
             <DropdownMenu>

@@ -9,6 +9,7 @@ import {
 } from "~/features/resources";
 import { Avatar } from "~/features/ui/avatar";
 import { Card } from "~/features/ui/card";
+import { Stack } from "~/features/ui/layout";
 import { RelativeDate, SanitizedText } from "~/features/ui/typography";
 
 import type { ResourcesForFeedIdAndUserId } from "~/models/resource.server";
@@ -47,13 +48,13 @@ export default function ResourceCard({
     <Card isInactive={userResource?.hasRead}>
       {showPublisherInformation ? (
         <Card.Header>
-          <div className="flex items-center space-x-2">
+          <Stack alignItems="center" gap="gap-2">
             <Avatar
               src={resource.publisher?.image?.url ?? resource.image?.url}
               title={resource.publisher?.title ?? resource.title}
             />
 
-            <div className="flex flex-col">
+            <Stack direction="vertical">
               <span className="truncate text-sm font-medium text-gray-900">
                 {resource.publisher?.title ?? resource.title}
               </span>
@@ -61,8 +62,8 @@ export default function ResourceCard({
               {resource.publishedAt ? (
                 <RelativeDate date={resource.publishedAt} />
               ) : null}
-            </div>
-          </div>
+            </Stack>
+          </Stack>
         </Card.Header>
       ) : null}
 
@@ -97,7 +98,7 @@ export default function ResourceCard({
       </Card.LinkableBody>
 
       <Card.Footer>
-        <div className="flex justify-end space-x-2">
+        <Stack gap="gap-2" justifyContent="end">
           {userResource?.hasRead ? null : (
             <SnoozeResourceForm
               isSnoozed={userResource?.isSnoozed ?? false}
@@ -114,7 +115,7 @@ export default function ResourceCard({
             hasRead={userResource?.hasRead ?? false}
             resourceId={resource.id}
           />
-        </div>
+        </Stack>
       </Card.Footer>
     </Card>
   );

@@ -13,6 +13,7 @@ import { ResourceCard } from "~/features/resources";
 import { Avatar, AvatarSize } from "~/features/ui/avatar";
 import { TextButton } from "~/features/ui/button";
 import { BellSimpleSlash } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 import { LazyList } from "~/features/ui/lists";
 import { PageHeader } from "~/features/ui/typography";
 
@@ -76,14 +77,14 @@ export default function FeedPage() {
     <div>
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-start">
-          <div className="flex items-center space-x-2">
+          <Stack alignItems="center" gap="gap-2">
             <Avatar
               size={AvatarSize.LARGE}
               src={data.feed.image?.url ?? undefined}
               title={data.feed.title}
             />
 
-            <div className="flex flex-col">
+            <Stack direction="vertical">
               <PageHeader>{data.feed.title}</PageHeader>
 
               <a
@@ -94,8 +95,8 @@ export default function FeedPage() {
               >
                 {data.feed.link}
               </a>
-            </div>
-          </div>
+            </Stack>
+          </Stack>
 
           <Form className="-mt-1.5 -mr-2 flex justify-end" method="post">
             <TextButton

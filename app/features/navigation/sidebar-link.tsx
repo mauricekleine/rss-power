@@ -3,6 +3,8 @@ import classNames from "classnames";
 import type { ComponentProps, ReactNode } from "react";
 import { useState } from "react";
 
+import { Stack } from "~/features/ui/layout";
+
 type Props = {
   children: ReactNode | ReactNode[];
   itemCount: number;
@@ -32,7 +34,7 @@ export default function SidebarLink({ children, itemCount, to }: Props) {
       to={to}
     >
       {({ isActive }) => (
-        <div className="flex items-center space-x-2">
+        <Stack gap="gap-2">
           <p className="flex flex-1 items-center space-x-2 truncate text-sm tracking-tight">
             {children}
           </p>
@@ -53,7 +55,7 @@ export default function SidebarLink({ children, itemCount, to }: Props) {
               {itemCount > 99 ? "99+" : itemCount}
             </span>
           ) : null}
-        </div>
+        </Stack>
       )}
     </NavLink>
   );

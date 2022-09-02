@@ -3,6 +3,8 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
 
+import { Stack } from "~/features/ui/layout";
+
 import { verifyLogin } from "~/models/user.server";
 
 import { createUserSession, getUserId } from "~/session.server";
@@ -151,8 +153,8 @@ export default function LoginPage() {
             Log in
           </button>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <Stack alignItems="center" justifyContent="between">
+            <Stack alignItems="center">
               <input
                 id="remember"
                 name="remember"
@@ -166,7 +168,7 @@ export default function LoginPage() {
               >
                 Remember me
               </label>
-            </div>
+            </Stack>
 
             <div className="text-center text-sm text-gray-500">
               <span>Don't have an account? </span>
@@ -181,7 +183,7 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </div>
-          </div>
+          </Stack>
         </Form>
       </div>
     </div>
