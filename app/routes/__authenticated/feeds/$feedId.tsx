@@ -10,7 +10,7 @@ import {
 import invariant from "tiny-invariant";
 
 import { ResourceCard } from "~/features/resources";
-import { Avatar, AvatarSize } from "~/features/ui/avatar";
+import { Avatar } from "~/features/ui/avatar";
 import { TextButton } from "~/features/ui/button";
 import { BellSimpleSlash } from "~/features/ui/icon";
 import { Stack } from "~/features/ui/layout";
@@ -79,7 +79,7 @@ export default function FeedPage() {
         <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-start">
           <Stack alignItems="center" gap="gap-2">
             <Avatar
-              size={AvatarSize.LARGE}
+              size="lg"
               src={data.feed.image?.url ?? undefined}
               title={data.feed.title}
             />

@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 
-import { Avatar, AvatarSize } from "~/features/ui/avatar";
+import { Avatar } from "~/features/ui/avatar";
 import { DropdownMenu } from "~/features/ui/dropdown-menu";
 import {
   BookmarksSimple,
@@ -97,7 +97,7 @@ export default function SidebarNavigation({
                     to={`/feeds/${feed.id}`}
                   >
                     <Avatar
-                      size={AvatarSize.EXTRA_SMALL}
+                      size="sm"
                       src={feed.image?.url}
                       title={feed.image?.title ?? feed.title}
                     />

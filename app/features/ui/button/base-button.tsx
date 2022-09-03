@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 type Props = {
   children: ReactNode | ReactNode[];
   className: string;
-  disabled?: ComponentProps<"button">["disabled"];
+  isDisabled?: ComponentProps<"button">["disabled"];
   isLoading?: boolean;
   name?: ComponentProps<"button">["name"];
   onClick?: ComponentProps<"button">["onClick"];
@@ -18,7 +18,7 @@ const BaseButton = forwardRef<HTMLButtonElement, Props>(
     {
       children,
       className,
-      disabled = false,
+      isDisabled = false,
       isLoading = false,
       name,
       onClick,
@@ -34,15 +34,15 @@ const BaseButton = forwardRef<HTMLButtonElement, Props>(
           "flex items-center border text-sm font-normal text-gray-600",
           {
             "border-gray-300 bg-white hover:bg-gray-100 hover:text-gray-800":
-              !disabled && !isLoading,
+              !isDisabled && !isLoading,
             "animate-pulse": isLoading,
-            "border-gray-200 bg-gray-100": disabled,
+            "border-gray-200 bg-gray-100": isDisabled,
           }
         )}
-        disabled={disabled || isLoading}
+        disabled={isDisabled || isLoading}
         name={name}
         onClick={onClick}
-        style={disabled ? { pointerEvents: "none" } : undefined}
+        style={isDisabled ? { pointerEvents: "none" } : undefined}
         type={type}
         value={value}
       >

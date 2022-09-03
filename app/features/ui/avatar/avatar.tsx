@@ -1,11 +1,12 @@
 import classNames from "classnames";
 import type { ValueOf } from "type-fest";
 
+import { Sizes } from "../tokens";
+
 export const AvatarSize = {
-  EXTRA_SMALL: "xs",
-  SMALL: "s",
-  MEDIUM: "m",
-  LARGE: "l",
+  ...Sizes.SM,
+  ...Sizes.MD,
+  ...Sizes.LG,
 } as const;
 
 type Props = {
@@ -14,20 +15,15 @@ type Props = {
   title: string;
 };
 
-export default function Avatar({
-  size = AvatarSize.MEDIUM,
-  src,
-  title,
-}: Props) {
+export default function Avatar({ size = AvatarSize.MD, src, title }: Props) {
   if (typeof src === "string") {
     return (
       <img
         alt={title}
         className={classNames("rounded-full object-cover", {
-          "h-6 w-6": size === AvatarSize.EXTRA_SMALL,
-          "h-8 w-8": size === AvatarSize.SMALL,
-          "h-10 w-10": size === AvatarSize.MEDIUM,
-          "h-12 w-12": size === AvatarSize.LARGE,
+          "h-6 w-6": size === AvatarSize.SM,
+          "h-10 w-10": size === AvatarSize.MD,
+          "h-12 w-12": size === AvatarSize.LG,
         })}
         src={src}
       />
@@ -35,20 +31,17 @@ export default function Avatar({
   }
 
   return (
-    <div className={classNames("rounded-full bg-gray-500")}>
-      <span
-        className={classNames(
-          "flex items-center justify-center capitalize text-white",
-          {
-            "h-6 w-6 text-xs font-light": size === AvatarSize.EXTRA_SMALL,
-            "h-8 w-8": size === AvatarSize.SMALL,
-            "h-10 w-10": size === AvatarSize.MEDIUM,
-            "h-12 w-12 text-2xl font-semibold": size === AvatarSize.LARGE,
-          }
-        )}
-      >
-        {title.replace(/http(s)?:\/\//, "").charAt(0)}
-      </span>
-    </div>
+    <p
+      className={classNames(
+        "flex shrink-0 items-center justify-center rounded-full bg-gray-500 capitalize text-white",
+        {
+          "h-6 w-6 text-xs font-light": size === AvatarSize.SM,
+          "h-10 w-10": size === AvatarSize.MD,
+          "h-12 w-12 text-2xl font-medium": size === AvatarSize.LG,
+        }
+      )}
+    >
+      {title.replace(/http(s)?:\/\//, "").charAt(0)}
+    </p>
   );
 }

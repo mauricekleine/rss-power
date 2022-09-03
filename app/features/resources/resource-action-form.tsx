@@ -9,7 +9,7 @@ import type { ResourceActions } from "./types";
 type Props = {
   action: keyof typeof ResourceActions;
   children: ReactNode;
-  disabled?: boolean;
+  isDisabled?: boolean;
   resourceId: string;
   tooltipContent: string;
 };
@@ -17,7 +17,7 @@ type Props = {
 export default function ResourceActionForm({
   action,
   children,
-  disabled,
+  isDisabled,
   resourceId,
   tooltipContent,
 }: Props) {
@@ -33,10 +33,10 @@ export default function ResourceActionForm({
         }
       />
 
-      <Tooltip content={tooltipContent} delayDuration={100} disabled={disabled}>
+      <Tooltip content={tooltipContent} delayDuration={100}>
         <span tabIndex={0}>
           <IconButton
-            disabled={disabled}
+            isDisabled={isDisabled}
             isLoading={
               transition.state === "submitting" &&
               transition.submission.formData.get("action") === action &&

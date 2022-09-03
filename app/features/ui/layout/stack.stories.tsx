@@ -27,9 +27,6 @@ export default {
         type: "radio",
       },
     },
-    hasDivider: {
-      control: { type: "boolean" },
-    },
     justifyContent: {
       control: {
         options: Object.values(StackJustifyContent),
@@ -38,7 +35,7 @@ export default {
     },
   },
   component: Stack,
-  title: "Layout/Stack",
+  title: "UI/Stack",
 } as ComponentMeta<typeof Stack>;
 
 const Template: ComponentStory<typeof Stack> = (args) => (
@@ -51,8 +48,16 @@ const Template: ComponentStory<typeof Stack> = (args) => (
   </Stack>
 );
 
-export const Default = Template.bind({});
-Default.args = {
+export const Horizontal = Template.bind({});
+Horizontal.args = {
   direction: StackDirection.HORIZONTAL,
+  gap: "gap-2",
+  hasDivider: false,
+};
+
+export const Vertical = Template.bind({});
+Vertical.args = {
+  direction: StackDirection.VERTICAL,
+  gap: "gap-2",
   hasDivider: false,
 };

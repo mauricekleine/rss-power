@@ -15,7 +15,7 @@ export default function BookmarkResourceForm({
   return (
     <ResourceActionForm
       action={ResourceActions.BOOKMARK}
-      disabled={isBookmarked}
+      isDisabled={isBookmarked}
       resourceId={resourceId}
       tooltipContent={isBookmarked ? "Bookmarked" : "Bookmark"}
     >

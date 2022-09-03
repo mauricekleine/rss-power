@@ -12,7 +12,7 @@ export default function MarkResourceAsReadForm({ hasRead, resourceId }: Props) {
   return (
     <ResourceActionForm
       action={ResourceActions.MARK_AS_READ}
-      disabled={hasRead}
+      isDisabled={hasRead}
       resourceId={resourceId}
       tooltipContent={hasRead ? "Read" : "Mark as read"}
     >
