@@ -84,11 +84,11 @@ export default function FeedPage() {
               title={data.feed.title}
             />
 
-            <Stack direction="vertical">
+            <Stack direction="vertical" gap="gap-0">
               <PageHeader>{data.feed.title}</PageHeader>
 
               <a
-                className="text-sm font-medium text-blue-500 hover:text-blue-700"
+                className="text-xs font-medium tracking-tighter text-gray-500 hover:text-gray-400"
                 href={data.feed.link}
                 rel="noreferrer"
                 target="_blank"

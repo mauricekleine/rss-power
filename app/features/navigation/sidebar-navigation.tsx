@@ -97,7 +97,7 @@ export default function SidebarNavigation({
                     to={`/feeds/${feed.id}`}
                   >
                     <Avatar
-                      size="sm"
+                      size="xs"
                       src={feed.image?.url}
                       title={feed.image?.title ?? feed.title}
                     />

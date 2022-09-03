@@ -1,5 +1,4 @@
 import type { SerializeFrom } from "@remix-run/node";
-import { useSubmit } from "@remix-run/react";
 import classNames from "classnames";
 
 import {
@@ -7,7 +6,6 @@ import {
   MarkResourceAsReadForm,
   SnoozeResourceForm,
 } from "~/features/resources";
-import { Avatar } from "~/features/ui/avatar";
 import { Card } from "~/features/ui/card";
 import { Stack } from "~/features/ui/layout";
 import { RelativeDate, SanitizedText } from "~/features/ui/typography";
@@ -15,7 +13,7 @@ import { RelativeDate, SanitizedText } from "~/features/ui/typography";
 import type { ResourcesForFeedIdAndUserId } from "~/models/resource.server";
 import type { UserResource } from "~/models/user-resource.server";
 
-import { ResourceActions } from "./types";
+import ResourceCardHeader from "./resource-card-header";
 
 type Props = {
   resource: ResourcesForFeedIdAndUserId[0];
@@ -28,95 +26,70 @@ export default function ResourceCard({
   resource,
   userResource,
 }: Props) {
-  const submit = useSubmit();
-
-  const handleClick = () => {
-    submit(
-      {
-        action: ResourceActions.MARK_AS_READ,
-        redirectTo:
-          typeof document !== "undefined" ? new URL(document.URL).pathname : "",
-      },
-      {
-        action: `/resources/${resource.id}`,
-        method: "post",
-      }
-    );
-  };
-
   return (
     <Card isInactive={userResource?.hasRead}>
       {showPublisherInformation ? (
         <Card.Header>
-          <Stack alignItems="center" gap="gap-2">
-            <Avatar
-              src={resource.publisher?.image?.url ?? resource.image?.url}
-              title={resource.publisher?.title ?? resource.title}
-            />
-
-            <Stack direction="vertical">
-              <span className="truncate text-sm font-medium text-gray-900">
-                {resource.publisher?.title ?? resource.title}
-              </span>
-
-              {resource.publishedAt ? (
-                <RelativeDate date={resource.publishedAt} />
-              ) : null}
-            </Stack>
-          </Stack>
+          <ResourceCardHeader
+            imageUrl={resource.publisher?.image?.url ?? resource.image?.url}
+            linkToFeed={
+              resource.feedResource?.feedId
+                ? `/feeds/${resource.feedResource.feedId}`
+                : undefined
+            }
+            title={resource.publisher?.title ?? resource.title}
+          />
         </Card.Header>
       ) : null}
 
-      <Card.LinkableBody href={resource.link} onClick={handleClick}>
-        <div className="flex flex-row justify-between space-x-2 sm:justify-start">
-          <p
-            className={classNames("text-sm font-medium", {
-              "text-gray-600": userResource?.hasRead,
-              "text-gray-900": !userResource?.hasRead,
-            })}
-          >
-            {resource.title}
-          </p>
+      <Card.LinkableBody href={resource.link}>
+        <div className="flex flex-col gap-y-4 sm:flex-row sm:justify-between sm:gap-x-4">
+          <Stack direction="vertical" gap="gap-1">
+            <Stack gap="gap-2">
+              {resource.publishedAt ? (
+                <RelativeDate date={resource.publishedAt} />
+              ) : null}
 
-          {resource.publishedAt && !showPublisherInformation ? (
-            <>
-              <p className="hidden text-sm text-gray-500 sm:block">·</p>
+              <p
+                className={classNames("text-sm font-medium line-clamp-1", {
+                  "text-gray-600": userResource?.hasRead,
+                  "text-gray-900": !userResource?.hasRead,
+                })}
+              >
+                {resource.title}
+              </p>
+            </Stack>
 
-              <RelativeDate date={resource.publishedAt} />
-            </>
-          ) : null}
-        </div>
+            <div
+              className={classNames("text-sm line-clamp-3", {
+                "text-gray-500": userResource?.hasRead,
+                "text-gray-600": !userResource?.hasRead,
+              })}
+            >
+              <SanitizedText text={resource.description} />
+            </div>
+          </Stack>
 
-        <div
-          className={classNames("mt-1 text-sm line-clamp-5", {
-            "text-gray-500": userResource?.hasRead,
-            "text-gray-600": !userResource?.hasRead,
-          })}
-        >
-          <SanitizedText text={resource.description} />
-        </div>
-      </Card.LinkableBody>
+          <div className="flex flex-row items-center justify-end gap-x-4 sm:justify-start">
+            {userResource?.hasRead ? null : (
+              <SnoozeResourceForm
+                isSnoozed={userResource?.isSnoozed ?? false}
+                resourceId={resource.id}
+              />
+            )}
 
-      <Card.Footer>
-        <Stack gap="gap-2" justifyContent="end">
-          {userResource?.hasRead ? null : (
-            <SnoozeResourceForm
-              isSnoozed={userResource?.isSnoozed ?? false}
+            <BookmarkResourceForm
+              isBookmarked={userResource?.isBookmarked ?? false}
               resourceId={resource.id}
             />
-          )}
 
-          <BookmarkResourceForm
-            isBookmarked={userResource?.isBookmarked ?? false}
-            resourceId={resource.id}
-          />
-
-          <MarkResourceAsReadForm
-            hasRead={userResource?.hasRead ?? false}
-            resourceId={resource.id}
-          />
-        </Stack>
-      </Card.Footer>
+            <MarkResourceAsReadForm
+              hasRead={userResource?.hasRead ?? false}
+              resourceId={resource.id}
+            />
+          </div>
+        </div>
+      </Card.LinkableBody>
     </Card>
   );
 }

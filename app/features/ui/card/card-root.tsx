@@ -15,7 +15,7 @@ export default function Card({ children, isInactive = false }: Props) {
         className={classNames(
           "flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg shadow",
           {
-            "bg-gray-100": isInactive,
+            "bg-gray-50": isInactive,
             "bg-white ": !isInactive,
           }
         )}

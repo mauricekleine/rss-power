@@ -23,13 +23,11 @@ export default function SidebarLink({ children, itemCount, to }: Props) {
   return (
     <NavLink
       className={({ isActive }) =>
-        classNames(
-          "group flex flex-col rounded-md px-2 py-2 text-sm font-medium",
-          {
-            "bg-gray-200 font-bold text-gray-900": isActive,
-            "text-gray-700 hover:bg-gray-200/50 hover:text-gray-900": !isActive,
-          }
-        )
+        classNames("group flex flex-col rounded-md px-2 py-2 text-sm", {
+          "bg-gray-200 font-medium text-gray-900": isActive,
+          "text-gray-700 hover:bg-gray-200/50 hover:font-medium hover:text-gray-900":
+            !isActive,
+        })
       }
       to={to}
     >

@@ -4,6 +4,7 @@ import type { ValueOf } from "type-fest";
 import { Sizes } from "../tokens";
 
 export const AvatarSize = {
+  ...Sizes.XS,
   ...Sizes.SM,
   ...Sizes.MD,
   ...Sizes.LG,
@@ -21,7 +22,8 @@ export default function Avatar({ size = AvatarSize.MD, src, title }: Props) {
       <img
         alt={title}
         className={classNames("rounded-full object-cover", {
-          "h-6 w-6": size === AvatarSize.SM,
+          "h-6 w-6": size === AvatarSize.XS,
+          "h-8 w-8": size === AvatarSize.SM,
           "h-10 w-10": size === AvatarSize.MD,
           "h-12 w-12": size === AvatarSize.LG,
         })}
@@ -35,7 +37,8 @@ export default function Avatar({ size = AvatarSize.MD, src, title }: Props) {
       className={classNames(
         "flex shrink-0 items-center justify-center rounded-full bg-gray-500 capitalize text-white",
         {
-          "h-6 w-6 text-xs font-light": size === AvatarSize.SM,
+          "h-6 w-6 text-xs font-light": size === AvatarSize.XS,
+          "h-8 w-8 text-sm": size === AvatarSize.SM,
           "h-10 w-10": size === AvatarSize.MD,
           "h-12 w-12 text-2xl font-medium": size === AvatarSize.LG,
         }
