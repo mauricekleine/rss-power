@@ -12,7 +12,7 @@ export default function SnoozeResourceForm({ isSnoozed, resourceId }: Props) {
   return (
     <ResourceActionForm
       action={ResourceActions.SNOOZE}
-      disabled={isSnoozed}
+      isDisabled={isSnoozed}
       resourceId={resourceId}
       tooltipContent={isSnoozed ? "Snoozed" : "Snooze"}
     >

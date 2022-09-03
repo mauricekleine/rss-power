@@ -95,6 +95,12 @@ export function getFeedsForUserId({ userId }: { userId: User["id"] }) {
           feedResources: true,
         },
       },
+      image: {
+        select: {
+          title: true,
+          url: true,
+        },
+      },
     },
     orderBy: [{ title: "asc" }],
     where: {

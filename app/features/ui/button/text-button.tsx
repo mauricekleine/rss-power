@@ -10,7 +10,7 @@ const TextButton = forwardRef<
   (
     {
       children,
-      disabled = false,
+      isDisabled = false,
       isLoading = false,
       name,
       onClick,
@@ -22,7 +22,7 @@ const TextButton = forwardRef<
     return (
       <BaseButton
         className="space-x-2 rounded-md py-2 px-4"
-        disabled={disabled || isLoading}
+        isDisabled={isDisabled || isLoading}
         name={name}
         onClick={onClick}
         ref={ref}

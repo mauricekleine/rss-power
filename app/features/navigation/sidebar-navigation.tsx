@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react";
 
+import { Avatar } from "~/features/ui/avatar";
 import { DropdownMenu } from "~/features/ui/dropdown-menu";
 import {
   BookmarksSimple,
@@ -7,6 +8,7 @@ import {
   Plus,
   Tray,
 } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 import { SectionHeader } from "~/features/ui/typography";
 
 import type { FeedsForUserId } from "~/models/feed.server";
@@ -56,51 +58,57 @@ export default function SidebarNavigation({
           </DropdownMenu.Content>
         </DropdownMenu>
 
-        <div className="space-y-2">
-          <SectionHeader>Folders</SectionHeader>
+        <Stack direction="vertical" gap="gap-4" hasDivider>
+          <Stack direction="vertical" gap="gap-2">
+            <SectionHeader>Folders</SectionHeader>
 
-          <div>
-            <SidebarLink itemCount={bookmarkedResourcesCount} to="bookmarks">
-              <BookmarksSimple className="text-black" size={18} />
+            <div>
+              <SidebarLink itemCount={bookmarkedResourcesCount} to="bookmarks">
+                <BookmarksSimple className="text-black" size={18} />
 
-              <span>Bookmarks</span>
-            </SidebarLink>
+                <span>Bookmarks</span>
+              </SidebarLink>
 
-            <SidebarLink itemCount={unreadResourcesCount} to="inbox">
-              <Tray className="text-black" size={18} />
+              <SidebarLink itemCount={unreadResourcesCount} to="inbox">
+                <Tray className="text-black" size={18} />
 
-              <span>Inbox</span>
-            </SidebarLink>
+                <span>Inbox</span>
+              </SidebarLink>
 
-            <SidebarLink itemCount={snoozedResourcesCount} to="read-later">
-              <ClockAfternoon className="text-black" size={18} />
+              <SidebarLink itemCount={snoozedResourcesCount} to="read-later">
+                <ClockAfternoon className="text-black" size={18} />
 
-              <span>Snoozed</span>
-            </SidebarLink>
-          </div>
-        </div>
+                <span>Snoozed</span>
+              </SidebarLink>
+            </div>
+          </Stack>
 
-        <hr className="border-gray-200" />
+          <Stack direction="vertical" gap="gap-2">
+            <SectionHeader>Feeds</SectionHeader>
 
-        <div className="space-y-2">
-          <SectionHeader>Feeds</SectionHeader>
+            <div>
+              {feeds.length === 0 ? (
+                <p className="p-4">No feeds yet</p>
+              ) : (
+                feeds.map((feed) => (
+                  <SidebarLink
+                    itemCount={feed._count.feedResources}
+                    key={feed.id}
+                    to={`/feeds/${feed.id}`}
+                  >
+                    <Avatar
+                      size="xs"
+                      src={feed.image?.url}
+                      title={feed.image?.title ?? feed.title}
+                    />
 
-          <div>
-            {feeds.length === 0 ? (
-              <p className="p-4">No feeds yet</p>
-            ) : (
-              feeds.map((feed) => (
-                <SidebarLink
-                  itemCount={feed._count.feedResources}
-                  key={feed.id}
-                  to={`/feeds/${feed.id}`}
-                >
-                  {feed.title}
-                </SidebarLink>
-              ))
-            )}
-          </div>
-        </div>
+                    <span className="truncate">{feed.title}</span>
+                  </SidebarLink>
+                ))
+              )}
+            </div>
+          </Stack>
+        </Stack>
       </nav>
     </div>
   );

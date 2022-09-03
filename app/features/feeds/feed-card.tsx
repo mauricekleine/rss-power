@@ -4,6 +4,7 @@ import { Avatar } from "~/features/ui/avatar";
 import { TextButton } from "~/features/ui/button";
 import { Card } from "~/features/ui/card";
 import { Bell, User, Users, UsersFour, UsersThree } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 
 import type { FeedSuggestions } from "~/models/feed.server";
 
@@ -17,34 +18,53 @@ export default function FeedCard({ feed }: Props) {
   return (
     <Card>
       <Card.Header>
-        <Avatar image={feed.image ?? undefined} title={feed.title} />
+        <Stack gap="gap-2">
+          <Avatar
+            src={feed.image?.url}
+            title={feed.image?.title ?? feed.title}
+          />
+
+          <span className="truncate text-sm font-medium text-gray-900">
+            {feed.title}
+          </span>
+        </Stack>
       </Card.Header>
 
       <Card.Body>
-        <div className="flex justify-between space-x-3">
-          <div className="mt-1 text-sm text-gray-600 line-clamp-4">
-            {feed.description}
-          </div>
+        <div className="text-sm text-gray-600 line-clamp-4">
+          {feed.description && feed.description !== "" ? (
+            feed.description
+          ) : (
+            <span className="italic text-gray-400">
+              No description provided
+            </span>
+          )}
         </div>
       </Card.Body>
 
       <Card.Footer>
-        <div className="flex justify-between">
-          <div className="flex items-center space-x-2 text-gray-700">
-            {feed._count.userFeeds === 1 ? <User weight="bold" /> : null}
+        <Stack gap="gap-2" justifyContent="between">
+          <Stack gap="gap-2">
+            <span className="text-gray-700">
+              {feed._count.userFeeds === 1 ? <User weight="bold" /> : null}
 
-            {feed._count.userFeeds === 2 ? <Users weight="bold" /> : null}
+              {feed._count.userFeeds === 2 ? <Users weight="bold" /> : null}
 
-            {feed._count.userFeeds === 3 ? <UsersThree weight="bold" /> : null}
+              {feed._count.userFeeds === 3 ? (
+                <UsersThree weight="bold" />
+              ) : null}
 
-            {feed._count.userFeeds >= 4 ? <UsersFour weight="bold" /> : null}
+              {feed._count.userFeeds >= 4 ? <UsersFour weight="bold" /> : null}
+            </span>
 
             {feed._count.userFeeds > 0 ? (
-              <span className="text-sm">{feed._count.userFeeds}</span>
+              <span className="text-sm text-gray-700">
+                {feed._count.userFeeds}
+              </span>
             ) : null}
-          </div>
+          </Stack>
 
-          <Form className="-mr-4" method="post">
+          <Form method="post">
             <input name="origin" type="hidden" value={feed.origin} />
 
             <TextButton
@@ -59,7 +79,7 @@ export default function FeedCard({ feed }: Props) {
               <span>Subscribe</span>
             </TextButton>
           </Form>
-        </div>
+        </Stack>
       </Card.Footer>
     </Card>
   );

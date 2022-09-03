@@ -1,56 +1,50 @@
 import classNames from "classnames";
-import type { ReactNode } from "react";
+import type { ValueOf } from "type-fest";
 
-import { PageHeader } from "~/features/ui/typography";
+import { Sizes } from "../tokens";
 
-import type { Image } from "~/models/image.server";
-
-import type { Nullable } from "~/utils";
+export const AvatarSize = {
+  ...Sizes.XS,
+  ...Sizes.SM,
+  ...Sizes.MD,
+  ...Sizes.LG,
+} as const;
 
 type Props = {
-  children?: ReactNode;
-  image?: Nullable<Image>;
-  pageHeader?: boolean;
+  size?: ValueOf<typeof AvatarSize>;
+  src?: string;
   title: string;
 };
 
-export default function Avatar({ children, image, pageHeader, title }: Props) {
+export default function Avatar({ size = AvatarSize.MD, src, title }: Props) {
+  if (typeof src === "string") {
+    return (
+      <img
+        alt={title}
+        className={classNames("rounded-full object-cover", {
+          "h-6 w-6": size === AvatarSize.XS,
+          "h-8 w-8": size === AvatarSize.SM,
+          "h-10 w-10": size === AvatarSize.MD,
+          "h-12 w-12": size === AvatarSize.LG,
+        })}
+        src={src}
+      />
+    );
+  }
+
   return (
-    <div className="flex items-center space-x-2 leading-none">
-      <div className="flex-shrink-0">
-        {image ? (
-          <img
-            alt={image.title ?? title}
-            className={classNames("rounded-full object-cover", {
-              "h-10 w-10": !pageHeader,
-              "h-12 w-12": pageHeader,
-            })}
-            src={image.url}
-          />
-        ) : (
-          <span
-            className={classNames(
-              "flex items-center justify-center rounded-full bg-gray-500 capitalize text-white",
-              {
-                "h-10 w-10": !pageHeader,
-                "h-12 w-12 text-2xl font-semibold": pageHeader,
-              }
-            )}
-          >
-            {title.replace(/http(s)?:\/\//, "").charAt(0)}
-          </span>
-        )}
-      </div>
-
-      <div className="min-w-0 flex-1">
-        {pageHeader ? (
-          <PageHeader>{title}</PageHeader>
-        ) : (
-          <p className="truncate text-sm font-medium text-gray-900">{title}</p>
-        )}
-
-        <div className="text-sm text-gray-500">{children}</div>
-      </div>
-    </div>
+    <p
+      className={classNames(
+        "flex shrink-0 items-center justify-center rounded-full bg-gray-500 capitalize text-white",
+        {
+          "h-6 w-6 text-xs font-light": size === AvatarSize.XS,
+          "h-8 w-8 text-sm": size === AvatarSize.SM,
+          "h-10 w-10": size === AvatarSize.MD,
+          "h-12 w-12 text-2xl font-medium": size === AvatarSize.LG,
+        }
+      )}
+    >
+      {title.replace(/http(s)?:\/\//, "").charAt(0)}
+    </p>
   );
 }

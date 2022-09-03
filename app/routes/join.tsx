@@ -161,20 +161,18 @@ export default function Join() {
             Create Account
           </button>
 
-          <div className="flex items-center justify-center">
-            <div className="text-center text-sm text-gray-500">
-              <span>Already have an account? </span>
+          <div className="text-center text-sm text-gray-500">
+            <span>Already have an account? </span>
 
-              <Link
-                className="text-blue-500 underline"
-                to={{
-                  pathname: "/login",
-                  search: searchParams.toString(),
-                }}
-              >
-                Log in
-              </Link>
-            </div>
+            <Link
+              className="text-blue-500 underline"
+              to={{
+                pathname: "/login",
+                search: searchParams.toString(),
+              }}
+            >
+              Log in
+            </Link>
           </div>
         </Form>
       </div>

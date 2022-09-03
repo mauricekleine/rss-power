@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 
 import { TextButton } from "~/features/ui/button";
 import { CircleNotch } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 
 const SCROLL_OFFSET = 750;
 
@@ -82,7 +83,7 @@ export default function LazyList<T extends { id: string }>({
       ))}
 
       {items.length < count ? (
-        <div className="flex justify-center">
+        <Stack justifyContent="center">
           <TextButton isLoading={isLoading} onClick={handleLoadMore}>
             <CircleNotch
               className={classNames({
@@ -93,7 +94,7 @@ export default function LazyList<T extends { id: string }>({
 
             <span>Load more</span>
           </TextButton>
-        </div>
+        </Stack>
       ) : null}
     </div>
   );

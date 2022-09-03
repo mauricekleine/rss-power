@@ -5,5 +5,5 @@ type Props = {
 };
 
 export default function CardHeader({ children }: Props) {
-  return <div className="px-4 py-5 sm:px-6">{children}</div>;
+  return <div className="px-4 py-4 sm:px-6">{children}</div>;
 }

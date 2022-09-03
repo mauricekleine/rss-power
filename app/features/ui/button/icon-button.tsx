@@ -10,7 +10,7 @@ const IconButton = forwardRef<
   (
     {
       children,
-      disabled = false,
+      isDisabled = false,
       isLoading = false,
       name,
       onClick,
@@ -22,7 +22,7 @@ const IconButton = forwardRef<
     return (
       <BaseButton
         className="rounded-full p-2"
-        disabled={disabled || isLoading}
+        isDisabled={isDisabled || isLoading}
         name={name}
         onClick={onClick}
         type={type}

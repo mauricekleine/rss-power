@@ -6,6 +6,7 @@ module.exports = {
     "@remix-run/eslint-config",
     "@remix-run/eslint-config/node",
     "@remix-run/eslint-config/jest-testing-library",
+    "plugin:storybook/recommended",
     "prettier",
   ],
   plugins: ["import", "unused-imports"],
@@ -45,7 +46,12 @@ module.exports = {
         pathGroupsExcludedImportTypes: [],
       },
     ],
-    "react/jsx-newline": [1, { prevent: false }],
+    "react/jsx-newline": [
+      1,
+      {
+        prevent: false,
+      },
+    ],
     "sort-imports": [
       "error",
       {

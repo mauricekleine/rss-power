@@ -13,7 +13,9 @@ import { ResourceCard } from "~/features/resources";
 import { Avatar } from "~/features/ui/avatar";
 import { TextButton } from "~/features/ui/button";
 import { BellSimpleSlash } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 import { LazyList } from "~/features/ui/lists";
+import { PageHeader } from "~/features/ui/typography";
 
 import { getFeed } from "~/models/feed.server";
 import { getResourceCountForFeedId } from "~/models/resource.server";
@@ -75,22 +77,26 @@ export default function FeedPage() {
     <div>
       <div className="mb-5 border-b border-gray-200 pb-5">
         <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-start">
-          <div className="flex items-center space-x-2">
+          <Stack alignItems="center" gap="gap-2">
             <Avatar
-              image={data.feed.image ?? undefined}
-              pageHeader
+              size="lg"
+              src={data.feed.image?.url ?? undefined}
               title={data.feed.title}
-            >
+            />
+
+            <Stack direction="vertical" gap="gap-0">
+              <PageHeader>{data.feed.title}</PageHeader>
+
               <a
-                className="text-sm font-medium text-blue-500 hover:text-blue-700"
+                className="text-xs font-medium tracking-tighter text-gray-500 hover:text-gray-400"
                 href={data.feed.link}
                 rel="noreferrer"
                 target="_blank"
               >
                 {data.feed.link}
               </a>
-            </Avatar>
-          </div>
+            </Stack>
+          </Stack>
 
           <Form className="-mt-1.5 -mr-2 flex justify-end" method="post">
             <TextButton

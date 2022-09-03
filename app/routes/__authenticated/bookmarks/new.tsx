@@ -7,6 +7,7 @@ import * as React from "react";
 import { TextButton } from "~/features/ui/button";
 import { Card } from "~/features/ui/card";
 import { BookmarkSimple, Link } from "~/features/ui/icon";
+import { Stack } from "~/features/ui/layout";
 import { SectionHeader } from "~/features/ui/typography";
 
 import { createPublisher } from "~/models/publisher.server";
@@ -161,13 +162,13 @@ export default function NewBookmarkPage() {
             </Card.Body>
 
             <Card.Footer>
-              <div className="flex justify-end">
+              <Stack justifyContent="end">
                 <TextButton type="submit">
                   <BookmarkSimple weight="bold" />
 
                   <span>Save</span>
                 </TextButton>
-              </div>
+              </Stack>
             </Card.Footer>
           </Card>
         </Form>
