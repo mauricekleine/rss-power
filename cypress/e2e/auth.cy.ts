@@ -1,11 +1,11 @@
 import { faker } from "@faker-js/faker";
 
-describe("auth", () => {
+describe("/join", () => {
   afterEach(() => {
     cy.cleanupUser();
   });
 
-  it("should allow you to register and login", () => {
+  it("should allow you to register", () => {
     const loginForm = {
       email: `${faker.internet.userName()}@example.com`,
       password: faker.internet.password(),
