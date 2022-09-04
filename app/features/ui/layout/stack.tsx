@@ -28,6 +28,39 @@ export const StackJustifyContent = {
   NONE: "none",
 } as const;
 
+function Divider({ direction }: Pick<Props, "direction">) {
+  return (
+    <div
+      aria-orientation={
+        direction === StackDirection.VERTICAL ? "horizontal" : "vertical"
+      }
+      className={classNames("border-gray-200", {
+        "w-full border-t": direction === StackDirection.VERTICAL,
+        "before:absolute before:top-0 before:h-full before:border-l after:absolute after:top-0 after:h-full after:border-l":
+          direction === StackDirection.HORIZONTAL,
+      })}
+      role="separator"
+    />
+  );
+}
+
+function joinChildren(
+  children: ReactNode[],
+  direction: ValueOf<typeof StackDirection>
+) {
+  const childrenArray = Children.toArray(children).filter(Boolean);
+
+  return childrenArray.reduce<ReactNode[]>((output, child, index) => {
+    output.push(child);
+
+    if (index < childrenArray.length - 1) {
+      output.push(<Divider direction={direction} key={`divider-${index}`} />);
+    }
+
+    return output;
+  }, []);
+}
+
 type Props = {
   alignItems?: ValueOf<typeof StackAlignItems>;
   children: ReactNode | ReactNode[];
@@ -74,28 +107,8 @@ export default function Stack({
           direction === StackDirection.VERTICAL && gap === StackGap.GAP6,
       })}
     >
-      {hasDivider
-        ? Children.toArray(children).map((child, index) => (
-            <>
-              {index !== 0 ? (
-                <div
-                  aria-orientation={
-                    direction === StackDirection.VERTICAL
-                      ? "horizontal"
-                      : "vertical"
-                  }
-                  className={classNames("border-gray-200", {
-                    "w-full border-t": direction === StackDirection.VERTICAL,
-                    "before:absolute before:top-0 before:h-full before:border-l after:absolute after:top-0 after:h-full after:border-l":
-                      direction === StackDirection.HORIZONTAL,
-                  })}
-                  role="separator"
-                />
-              ) : null}
-
-              {child}
-            </>
-          ))
+      {hasDivider && Array.isArray(children)
+        ? joinChildren(children, direction)
         : children}
     </div>
   );
