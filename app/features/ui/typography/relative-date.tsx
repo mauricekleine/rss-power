@@ -1,7 +1,8 @@
-import { format, formatDistanceStrict, isThisYear } from "date-fns";
 import { useMemo } from "react";
 
 import { Tooltip } from "~/features/ui/tooltip";
+
+import { formatDateToRelative } from "./utils";
 
 type Props = {
   date: Date | string;
@@ -13,28 +14,7 @@ export default function RelativeDate({ date: dateProp }: Props) {
   }, [dateProp]);
 
   const relativeDate = useMemo(() => {
-    const baseDate = new Date();
-
-    const distance = `${formatDistanceStrict(new Date(date), baseDate)}`;
-    const [number, unit] = distance.split(" ");
-
-    if (unit === "seconds") {
-      return `${number}s`;
-    }
-
-    if (unit === "minutes") {
-      return `${number}m`;
-    }
-
-    if (unit === "hours") {
-      return `${number}h`;
-    }
-
-    if (isThisYear(date)) {
-      return format(date, "MMM d");
-    }
-
-    return format(date, "MMM d, yyyy");
+    return formatDateToRelative(date);
   }, [date]);
 
   return (
