@@ -10,13 +10,13 @@ import { Card } from "~/features/ui/card";
 import { Bell, Rss } from "~/features/ui/icon";
 import { SectionHeader } from "~/features/ui/typography";
 
-import { createFeedResource } from "~/models/feed-resource.server";
+import { createOrUpdateFeedResource } from "~/models/feed-resource.server";
 import {
   createFeed,
   getFeedForOrigin,
   getSuggestedFeedsForUserId,
 } from "~/models/feed.server";
-import { createResource } from "~/models/resource.server";
+import { createOrUpdateResource } from "~/models/resource.server";
 import { createUserFeedForFeedIdAndUserId } from "~/models/user-feed.server";
 
 import { requireUserId } from "~/session.server";
@@ -70,7 +70,7 @@ export async function action({ request }: ActionArgs) {
     const sortedItems = parsed.items.reverse();
 
     const input = sortedItems.map(async (item) => {
-      const resource = await createResource({
+      const resource = await createOrUpdateResource({
         description: item.summary ?? item.content ?? "",
         link: item.link ?? "",
         publishedAt: item.pubDate ? new Date(item.pubDate) : undefined,
@@ -78,7 +78,7 @@ export async function action({ request }: ActionArgs) {
         title: item.title ?? "",
       });
 
-      return createFeedResource({
+      return createOrUpdateFeedResource({
         feedId: feed.id,
         guid: item.guid ?? null,
         resourceId: resource.id,

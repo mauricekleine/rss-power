@@ -7,7 +7,7 @@ import { prisma } from "~/db.server";
 
 export type { Resource } from "@prisma/client";
 
-export function createResource({
+export async function createOrUpdateResource({
   description,
   image,
   link,
@@ -18,6 +18,44 @@ export function createResource({
   image?: Pick<Image, "link" | "title" | "url">;
   publishedAt?: Date;
 }) {
+  const existingResource = await prisma.resource.findFirst({
+    where: {
+      link,
+    },
+  });
+
+  if (existingResource) {
+    return prisma.resource.update({
+      data: {
+        description,
+        image: image?.url
+          ? {
+              connectOrCreate: {
+                create: {
+                  link: image.link,
+                  title: image.title,
+                  url: image.url,
+                },
+                where: {
+                  url: image.url,
+                },
+              },
+            }
+          : undefined,
+        publishedAt,
+        publisher: {
+          connect: {
+            id: publisherId,
+          },
+        },
+        title,
+      },
+      where: {
+        id: existingResource.id,
+      },
+    });
+  }
+
   return prisma.resource.create({
     data: {
       description,
