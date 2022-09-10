@@ -11,7 +11,10 @@ import { Stack } from "~/features/ui/layout";
 import { SectionHeader } from "~/features/ui/typography";
 
 import { createPublisher } from "~/models/publisher.server";
-import { createResource, getResourceForLink } from "~/models/resource.server";
+import {
+  createOrUpdateResource,
+  getResourceForLink,
+} from "~/models/resource.server";
 import { updateUserResourceForResourceIdAndUserId } from "~/models/user-resource.server";
 
 import { requireUserId } from "~/session.server";
@@ -76,7 +79,7 @@ export async function action({ request }: ActionArgs) {
       title: scraped.publisher ?? scraped.author ?? website,
     });
 
-    const resource = await createResource({
+    const resource = await createOrUpdateResource({
       description: scraped.description ?? "",
       image: scraped.image
         ? {

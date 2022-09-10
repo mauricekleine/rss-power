@@ -124,9 +124,6 @@ export function getFeedsToUpdate() {
         },
       },
       image: true,
-      feedResources: {
-        include: { resource: true },
-      },
     },
   });
 }
