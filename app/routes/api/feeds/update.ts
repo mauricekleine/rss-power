@@ -94,6 +94,6 @@ export async function action({ request }: ActionArgs) {
 
     return new Response("OK");
   } catch (e) {
-    return new Response("ERROR", { status: 500 });
+    return new Response(`ERROR: ${e}`, { status: 500 });
   }
 }
