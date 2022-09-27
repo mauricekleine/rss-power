@@ -1,11 +1,11 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 import { ResourceCard } from "~/features/resources";
 import { BookmarksSimple } from "~/features/ui/icon";
 import { Stack } from "~/features/ui/layout";
-import { LazyList } from "~/features/ui/lists";
+import { LazyList, parsePaginatedSearchParams } from "~/features/ui/lists";
 import { PageHeader } from "~/features/ui/typography";
 
 import { getPaginatedResourcesForUserId } from "~/models/resource.server";
@@ -18,13 +18,7 @@ export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
 
   const url = new URL(request.url);
-
-  const startString = url.searchParams.get("start");
-  const start = !startString
-    ? undefined
-    : Number.isInteger(parseInt(startString))
-    ? parseInt(startString)
-    : undefined;
+  const { limit, offset } = parsePaginatedSearchParams(url.searchParams);
 
   const filter: UserResourceFilter = { isBookmarked: true };
 
@@ -33,7 +27,8 @@ export async function loader({ request }: LoaderArgs) {
       getUserResourceCountForUserId({ filter, userId }),
       getPaginatedResourcesForUserId({
         filter,
-        start,
+        limit,
+        offset,
         userId,
       }),
     ]);
@@ -47,7 +42,6 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function BookmarksPage() {
   const data = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof data>();
 
   return (
     <div>
@@ -63,15 +57,9 @@ export default function BookmarksPage() {
         </p>
       </div>
 
-      <LazyList<typeof data.resources[0]>
+      <LazyList
         count={data.count}
-        isDisabled={fetcher.state !== "idle"}
-        isLoading={fetcher.state === "loading"}
-        initialItems={data.resources}
-        items={fetcher.data?.resources}
-        loadMoreItems={(count) => {
-          fetcher.load(`/bookmarks?start=${count}`);
-        }}
+        items={data.resources}
         renderItem={(item) => (
           <ResourceCard
             resource={item}

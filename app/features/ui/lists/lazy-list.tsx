@@ -1,93 +1,118 @@
+import { useSearchParams, useTransition } from "@remix-run/react";
 import classNames from "classnames";
 import type { ReactNode } from "react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { TextButton } from "~/features/ui/button";
 import { CircleNotch } from "~/features/ui/icon";
 import { Stack } from "~/features/ui/layout";
 
+import { parsePaginatedSearchParams } from "./utils";
+
 const SCROLL_OFFSET = 750;
 
-type Props<T> = {
+type Props<T extends { id: string }[]> = {
   count: number;
-  isDisabled: boolean;
-  isLoading: boolean;
-  initialItems: T[];
-  items?: T[];
-  loadMoreItems: (count: number) => void;
-  renderItem: (item: T) => ReactNode;
+  items: T;
+  renderItem: (item: T[0]) => ReactNode;
 };
 
-export default function LazyList<T extends { id: string }>({
+export default function LazyList<T extends { id: string }[]>({
   count,
-  isDisabled,
-  isLoading,
-  initialItems,
-  items: moreItems,
-  loadMoreItems,
+  items: paginatedItems,
   renderItem,
 }: Props<T>) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [items, setItems] = useState<T[]>(initialItems);
+  const bottomElement = useRef<HTMLDivElement>(null);
 
-  const handleLoadMore = () => {
-    if (isDisabled) {
-      return;
-    }
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { limit, offset } = parsePaginatedSearchParams(searchParams);
 
-    loadMoreItems(items.length);
-  };
+  const [prevPaginatedItems, setPrevPaginatedItems] =
+    useState<T>(paginatedItems);
+
+  const [cache, setCache] = useState<{ [key: string]: T[0] }>(() => {
+    const cacheUpdate: { [key: string]: T[0] } = {};
+
+    paginatedItems.forEach((item) => {
+      cacheUpdate[item.id] = item;
+    });
+
+    return cacheUpdate;
+  });
+
+  const [sortedItemIds, setSortedItemIds] = useState<string[]>(() =>
+    paginatedItems.map((item) => item.id)
+  );
+
+  if (paginatedItems !== prevPaginatedItems) {
+    const cacheUpdate: { [key: string]: T[0] } = {};
+    const sortedItemIdsUpdate: string[] = [];
+
+    paginatedItems.forEach((item) => {
+      cacheUpdate[item.id] = item;
+
+      if (!sortedItemIds.includes(item.id)) {
+        sortedItemIdsUpdate.push(item.id);
+      }
+    });
+
+    setCache((cache) => ({ ...cache, ...cacheUpdate }));
+    setSortedItemIds((sortedItemIds) => [
+      ...sortedItemIds,
+      ...sortedItemIdsUpdate,
+    ]);
+    setPrevPaginatedItems(paginatedItems);
+  }
+
+  const transition = useTransition();
+  const bottomReached = offset + limit > count;
 
   useEffect(() => {
-    let debounce: NodeJS.Timer;
+    let bottomObserver: IntersectionObserver | null = null;
 
-    const scrollHandler = () => {
-      clearTimeout(debounce);
-
-      debounce = setTimeout(() => {
-        if (isDisabled || count === items.length || !ref.current) {
-          return;
+    if (!bottomReached && bottomElement.current && !bottomObserver) {
+      bottomObserver = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            setSearchParams(
+              { limit: (limit + 50).toString(), offset: "0" },
+              { replace: true, state: { scroll: false } }
+            );
+          }
+        },
+        {
+          root: null,
+          rootMargin: `${SCROLL_OFFSET}px`,
         }
+      );
 
-        if (
-          document.documentElement.scrollTop >
-          ref.current?.offsetHeight - SCROLL_OFFSET
-        ) {
-          loadMoreItems(items.length);
-        }
-      }, 100);
-    };
-
-    window.addEventListener("scroll", scrollHandler);
+      bottomObserver.observe(bottomElement.current);
+    }
 
     return () => {
-      clearTimeout(debounce);
-      window.removeEventListener("scroll", scrollHandler);
+      bottomObserver?.disconnect();
     };
-  }, [count, loadMoreItems, isDisabled, items]);
-
-  useEffect(() => {
-    setItems(initialItems);
-  }, [initialItems]);
-
-  useEffect(() => {
-    if (Array.isArray(moreItems)) {
-      setItems((items) => [...items, ...moreItems]);
-    }
-  }, [moreItems]);
+  }, [limit, offset, setSearchParams, bottomReached]);
 
   return (
-    <div className="space-y-4" ref={ref}>
-      {items.map((item) => (
-        <Fragment key={item.id}>{renderItem(item)}</Fragment>
-      ))}
+    <div className="space-y-4">
+      {sortedItemIds.map((id, index) => {
+        const isBottomElement = index === sortedItemIds.length - 1;
 
-      {items.length < count ? (
+        return (
+          <div key={id} ref={isBottomElement ? bottomElement : null}>
+            {renderItem(cache[id])}
+          </div>
+        );
+      })}
+
+      {sortedItemIds.length < count ? (
         <Stack justifyContent="center">
-          <TextButton isLoading={isLoading} onClick={handleLoadMore}>
+          <TextButton isLoading={transition.state === "loading"}>
             <CircleNotch
               className={classNames({
-                "animate-spin": isLoading,
+                "animate-spin": transition.state === "loading",
               })}
               weight="bold"
             />
