@@ -32,7 +32,7 @@ export default function SidebarNavigation({
   user,
 }: Props) {
   return (
-    <div className="flex min-h-0 md:sticky md:top-10">
+    <div className="min-h-0 md:sticky md:top-10">
       <nav className="flex-1 space-y-4">
         <DropdownMenu>
           <DropdownMenu.Trigger>

@@ -7,6 +7,9 @@ import { prisma } from "~/db.server";
 
 export type { Resource } from "@prisma/client";
 
+const DEFAULT_LIMIT = 50;
+const DEFAULT_OFFSET = 0;
+
 export async function createOrUpdateResource({
   description,
   image,
@@ -87,11 +90,13 @@ export async function createOrUpdateResource({
 
 export function getPaginatedResourcesForUserId({
   filter,
-  start,
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
   userId,
 }: {
   filter: UserResourceFilter;
-  start?: number;
+  limit?: number;
+  offset?: number;
   userId: User["id"];
 }) {
   return prisma.resource.findMany({
@@ -119,8 +124,8 @@ export function getPaginatedResourcesForUserId({
       },
     },
     orderBy: [{ publishedAt: "desc" }, { feedResource: { order: "desc" } }],
-    skip: start,
-    take: 50,
+    skip: offset,
+    take: limit,
     where: {
       userResources: {
         some: {
@@ -139,11 +144,13 @@ export type ResourcesForUserId = Awaited<
 
 export function getPaginatedResourcesForFeedIdAndUserId({
   feedId,
-  start,
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
   userId,
 }: {
   feedId: Feed["id"];
-  start?: number;
+  limit?: number;
+  offset?: number;
   userId: User["id"];
 }) {
   return prisma.resource.findMany({
@@ -171,8 +178,8 @@ export function getPaginatedResourcesForFeedIdAndUserId({
       },
     },
     orderBy: [{ publishedAt: "desc" }, { feedResource: { order: "desc" } }],
-    skip: start,
-    take: 50,
+    skip: offset,
+    take: limit,
     where: {
       feedResource: {
         feedId,
@@ -186,10 +193,12 @@ export type ResourcesForFeedIdAndUserId = SerializeFrom<
 >;
 
 export async function getPaginatedUnreadResourcesForUserId({
-  start,
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
   userId,
 }: {
-  start?: number;
+  limit?: number;
+  offset?: number;
   userId: User["id"];
 }) {
   const ids = await prisma.$queryRaw<{ id: Resource["id"] }[]>`
@@ -230,8 +239,8 @@ export async function getPaginatedUnreadResourcesForUserId({
       },
     },
     orderBy: [{ publishedAt: "desc" }, { feedResource: { order: "desc" } }],
-    skip: start,
-    take: 50,
+    skip: offset,
+    take: limit,
     where: {
       id: {
         in: ids.map(({ id }) => id),

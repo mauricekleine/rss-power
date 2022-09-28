@@ -1,98 +1,78 @@
-import classNames from "classnames";
+import { useSearchParams, useTransition } from "@remix-run/react";
 import type { ReactNode } from "react";
-import { Fragment, useEffect, useRef, useState } from "react";
 
 import { TextButton } from "~/features/ui/button";
-import { CircleNotch } from "~/features/ui/icon";
+import { CaretLeft, CaretRight, CircleNotch } from "~/features/ui/icon";
 import { Stack } from "~/features/ui/layout";
 
-const SCROLL_OFFSET = 750;
+import { parsePaginatedSearchParams } from "./utils";
 
-type Props<T> = {
+type Props<T extends { id: string }[]> = {
   count: number;
-  isDisabled: boolean;
-  isLoading: boolean;
-  initialItems: T[];
-  items?: T[];
-  loadMoreItems: (count: number) => void;
-  renderItem: (item: T) => ReactNode;
+  items: T;
+  renderItem: (item: T[0]) => ReactNode;
 };
 
-export default function LazyList<T extends { id: string }>({
+export default function LazyList<T extends { id: string }[]>({
   count,
-  isDisabled,
-  isLoading,
-  initialItems,
-  items: moreItems,
-  loadMoreItems,
+  items,
   renderItem,
 }: Props<T>) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [items, setItems] = useState<T[]>(initialItems);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { limit, offset } = parsePaginatedSearchParams(searchParams);
+  const transition = useTransition();
 
-  const handleLoadMore = () => {
-    if (isDisabled) {
-      return;
-    }
-
-    loadMoreItems(items.length);
-  };
-
-  useEffect(() => {
-    let debounce: NodeJS.Timer;
-
-    const scrollHandler = () => {
-      clearTimeout(debounce);
-
-      debounce = setTimeout(() => {
-        if (isDisabled || count === items.length || !ref.current) {
-          return;
-        }
-
-        if (
-          document.documentElement.scrollTop >
-          ref.current?.offsetHeight - SCROLL_OFFSET
-        ) {
-          loadMoreItems(items.length);
-        }
-      }, 100);
-    };
-
-    window.addEventListener("scroll", scrollHandler);
-
-    return () => {
-      clearTimeout(debounce);
-      window.removeEventListener("scroll", scrollHandler);
-    };
-  }, [count, loadMoreItems, isDisabled, items]);
-
-  useEffect(() => {
-    setItems(initialItems);
-  }, [initialItems]);
-
-  useEffect(() => {
-    if (Array.isArray(moreItems)) {
-      setItems((items) => [...items, ...moreItems]);
-    }
-  }, [moreItems]);
+  const hasNewerPages = offset > 0;
+  const hasOlderPages = count > offset + limit;
 
   return (
-    <div className="space-y-4" ref={ref}>
-      {items.map((item) => (
-        <Fragment key={item.id}>{renderItem(item)}</Fragment>
-      ))}
-
-      {items.length < count ? (
+    <div className="space-y-4">
+      {hasNewerPages ? (
         <Stack justifyContent="center">
-          <TextButton isLoading={isLoading} onClick={handleLoadMore}>
-            <CircleNotch
-              className={classNames({
-                "animate-spin": isLoading,
-              })}
-              weight="bold"
-            />
+          <TextButton
+            isLoading={transition.state === "loading"}
+            onClick={() => {
+              setSearchParams({
+                offset: (offset - limit).toString(),
+              });
+            }}
+          >
+            <div className="h-3 w-3">
+              {transition.state === "loading" ? (
+                <CircleNotch className="animate-spin" weight="bold" />
+              ) : (
+                <CaretLeft weight="bold" />
+              )}
+            </div>
 
-            <span>Load more</span>
+            <span> Newer</span>
+          </TextButton>
+        </Stack>
+      ) : null}
+
+      {items.map((item) => {
+        return <div key={item.id}>{renderItem(item)}</div>;
+      })}
+
+      {hasOlderPages ? (
+        <Stack justifyContent="center">
+          <TextButton
+            isLoading={transition.state === "loading"}
+            onClick={() => {
+              setSearchParams({
+                offset: (offset + limit).toString(),
+              });
+            }}
+          >
+            <span> Older</span>
+
+            <div className="h-3 w-3">
+              {transition.state === "loading" ? (
+                <CircleNotch className="animate-spin" weight="bold" />
+              ) : (
+                <CaretRight />
+              )}
+            </div>
           </TextButton>
         </Stack>
       ) : null}
