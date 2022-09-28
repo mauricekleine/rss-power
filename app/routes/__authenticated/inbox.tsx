@@ -1,11 +1,11 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 import { ResourceCard } from "~/features/resources";
 import { Tray } from "~/features/ui/icon";
 import { Stack } from "~/features/ui/layout";
-import { LazyList } from "~/features/ui/lists";
+import { LazyList, parsePaginatedSearchParams } from "~/features/ui/lists";
 import { PageHeader } from "~/features/ui/typography";
 
 import { getPaginatedUnreadResourcesForUserId } from "~/models/resource.server";
@@ -15,20 +15,16 @@ import { requireUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
-  const url = new URL(request.url);
 
-  const startString = url.searchParams.get("start");
-  const start = !startString
-    ? undefined
-    : Number.isInteger(parseInt(startString))
-    ? parseInt(startString)
-    : undefined;
+  const url = new URL(request.url);
+  const { limit, offset } = parsePaginatedSearchParams(url.searchParams);
 
   try {
     const [count, resources] = await Promise.all([
       getUnreadResourcesCountForUserId({ userId }),
       getPaginatedUnreadResourcesForUserId({
-        start,
+        limit,
+        offset,
         userId,
       }),
     ]);
@@ -42,7 +38,6 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function InboxPage() {
   const data = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof data>();
 
   return (
     <div>
@@ -58,19 +53,13 @@ export default function InboxPage() {
         </p>
       </div>
 
-      <LazyList<typeof data.resources[0]>
+      <LazyList
         count={data.count}
-        isDisabled={fetcher.state !== "idle"}
-        isLoading={fetcher.state === "loading"}
-        initialItems={data.resources}
-        items={fetcher.data?.resources}
-        loadMoreItems={(count) => {
-          fetcher.load(`/inbox?start=${count}`);
-        }}
+        items={data.resources}
         renderItem={(item) => (
           <ResourceCard
-            showPublisherInformation
             resource={item}
+            showPublisherInformation
             userResource={item.userResources[0]}
           />
         )}

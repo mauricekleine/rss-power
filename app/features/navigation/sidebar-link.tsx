@@ -33,9 +33,7 @@ export default function SidebarLink({ children, itemCount, to }: Props) {
     >
       {({ isActive }) => (
         <Stack gap="gap-2">
-          <div className="flex flex-1 items-center space-x-2 truncate text-sm tracking-tight">
-            {children}
-          </div>
+          {children}
 
           {itemCount > 0 ? (
             <span

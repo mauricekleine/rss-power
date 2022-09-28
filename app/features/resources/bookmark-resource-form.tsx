@@ -1,7 +1,9 @@
-import { BookmarkSimple } from "~/features/ui/icon";
+import type { UserResource } from "@prisma/client";
+import { useFetcher } from "@remix-run/react";
 
-import ResourceActionForm from "./resource-action-form";
-import { ResourceActions } from "./types";
+import { IconButton } from "~/features/ui/button";
+import { BookmarkSimple } from "~/features/ui/icon";
+import { Tooltip } from "~/features/ui/tooltip";
 
 type Props = {
   isBookmarked: boolean;
@@ -9,21 +11,42 @@ type Props = {
 };
 
 export default function BookmarkResourceForm({
-  isBookmarked,
+  isBookmarked: isBookmarkedProp,
   resourceId,
 }: Props) {
+  const fetcher = useFetcher<{ userResource: UserResource }>();
+
+  const isBookmarked =
+    isBookmarkedProp ||
+    fetcher.submission?.formData.get("isBookmarked") === "on";
+
   return (
-    <ResourceActionForm
-      action={ResourceActions.BOOKMARK}
-      isDisabled={isBookmarked}
-      resourceId={resourceId}
-      tooltipContent={isBookmarked ? "Bookmarked" : "Bookmark"}
-    >
-      <BookmarkSimple
-        className="text-gray-900"
-        size={18}
-        weight={isBookmarked ? "duotone" : "regular"}
+    <fetcher.Form action={`/resources/${resourceId}/bookmark`} method="post">
+      <input
+        className="hidden"
+        name="isBookmarked"
+        type="checkbox"
+        value="on"
       />
-    </ResourceActionForm>
+
+      <Tooltip
+        content={isBookmarked ? "Bookmarked" : "Bookmark"}
+        delayDuration={100}
+      >
+        <span tabIndex={0}>
+          <IconButton
+            isDisabled={isBookmarked}
+            isLoading={fetcher.state === "submitting"}
+            type="submit"
+          >
+            <BookmarkSimple
+              className="text-gray-900"
+              size={18}
+              weight={isBookmarked ? "duotone" : "regular"}
+            />
+          </IconButton>
+        </span>
+      </Tooltip>
+    </fetcher.Form>
   );
 }

@@ -1,26 +1,46 @@
-import ResourceActionForm from "~/features/resources/resource-action-form";
-import { CheckSquareOffset } from "~/features/ui/icon";
+import type { UserResource } from "@prisma/client";
+import { useFetcher } from "@remix-run/react";
 
-import { ResourceActions } from "./types";
+import { IconButton } from "~/features/ui/button";
+import { CheckSquareOffset } from "~/features/ui/icon";
+import { Tooltip } from "~/features/ui/tooltip";
 
 type Props = {
   hasRead: boolean;
   resourceId: string;
 };
 
-export default function MarkResourceAsReadForm({ hasRead, resourceId }: Props) {
+export default function MarkResourceAsReadForm({
+  hasRead: hasReadProp,
+  resourceId,
+}: Props) {
+  const fetcher = useFetcher<{ userResource: UserResource }>();
+
+  const hasRead =
+    hasReadProp || fetcher.submission?.formData.get("hasRead") === "on";
+
   return (
-    <ResourceActionForm
-      action={ResourceActions.MARK_AS_READ}
-      isDisabled={hasRead}
-      resourceId={resourceId}
-      tooltipContent={hasRead ? "Read" : "Mark as read"}
+    <fetcher.Form
+      action={`/resources/${resourceId}/mark-as-read`}
+      method="post"
     >
-      <CheckSquareOffset
-        className="text-gray-900"
-        size={18}
-        weight={hasRead ? "duotone" : "regular"}
-      />
-    </ResourceActionForm>
+      <input className="hidden" name="hasRead" type="checkbox" value="on" />
+
+      <Tooltip content={hasRead ? "Read" : "Mark as read"} delayDuration={100}>
+        <span tabIndex={0}>
+          <IconButton
+            isDisabled={hasRead}
+            isLoading={fetcher.state === "submitting"}
+            type="submit"
+          >
+            <CheckSquareOffset
+              className="text-gray-900"
+              size={18}
+              weight={hasRead ? "duotone" : "regular"}
+            />
+          </IconButton>
+        </span>
+      </Tooltip>
+    </fetcher.Form>
   );
 }

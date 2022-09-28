@@ -1,12 +1,6 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  useCatch,
-  useFetcher,
-  useLoaderData,
-  useTransition,
-} from "@remix-run/react";
+import { Form, useCatch, useLoaderData, useTransition } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { ResourceCard } from "~/features/resources";
@@ -14,7 +8,7 @@ import { Avatar } from "~/features/ui/avatar";
 import { TextButton } from "~/features/ui/button";
 import { BellSimpleSlash } from "~/features/ui/icon";
 import { Stack } from "~/features/ui/layout";
-import { LazyList } from "~/features/ui/lists";
+import { LazyList, parsePaginatedSearchParams } from "~/features/ui/lists";
 import { PageHeader } from "~/features/ui/typography";
 
 import { getFeed } from "~/models/feed.server";
@@ -29,13 +23,7 @@ export async function loader({ request, params }: LoaderArgs) {
   invariant(params.feedId, "feedId not found");
 
   const url = new URL(request.url);
-
-  const startString = url.searchParams.get("start");
-  const start = !startString
-    ? undefined
-    : Number.isInteger(parseInt(startString))
-    ? parseInt(startString)
-    : undefined;
+  const { limit, offset } = parsePaginatedSearchParams(url.searchParams);
 
   try {
     const [count, feed, resources] = await Promise.all([
@@ -43,7 +31,8 @@ export async function loader({ request, params }: LoaderArgs) {
       getFeed(params.feedId),
       getPaginatedResourcesForFeedIdAndUserId({
         feedId: params.feedId,
-        start,
+        limit,
+        offset,
         userId,
       }),
     ]);
@@ -70,7 +59,6 @@ export async function action({ request, params }: ActionArgs) {
 
 export default function FeedPage() {
   const data = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof data>();
   const transition = useTransition();
 
   return (
@@ -118,15 +106,10 @@ export default function FeedPage() {
         </p>
       </div>
 
-      <LazyList<typeof data.resources[0]>
+      <LazyList
         count={data.count}
-        isDisabled={fetcher.state !== "idle"}
-        isLoading={fetcher.state === "loading"}
-        initialItems={data.resources}
-        items={fetcher.data?.resources}
-        loadMoreItems={(count) => {
-          fetcher.load(`/feeds/${data.feed.id}?start=${count}`);
-        }}
+        items={data.resources}
+        key={data.feed.id}
         renderItem={(item) => (
           <ResourceCard resource={item} userResource={item.userResources[0]} />
         )}
