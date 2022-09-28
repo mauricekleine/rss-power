@@ -1,12 +1,17 @@
 import type { LinksFunction, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Links, LiveReload, Meta, Outlet, Scripts } from "@remix-run/react";
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 
 import { getUser } from "~/session.server";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
-
-import ConditionalScrollRestoration from "./features/conditional-scroll-restoration";
 
 export const links: LinksFunction = () => {
   return [
@@ -42,7 +47,7 @@ export default function App() {
       <body className="h-full">
         <Outlet />
 
-        <ConditionalScrollRestoration />
+        <ScrollRestoration />
 
         <Scripts />
 

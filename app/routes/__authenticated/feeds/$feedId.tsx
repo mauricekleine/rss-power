@@ -109,6 +109,7 @@ export default function FeedPage() {
       <LazyList
         count={data.count}
         items={data.resources}
+        key={data.feed.id}
         renderItem={(item) => (
           <ResourceCard resource={item} userResource={item.userResources[0]} />
         )}
