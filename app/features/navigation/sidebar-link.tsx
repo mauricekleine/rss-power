@@ -29,6 +29,7 @@ export default function SidebarLink({ children, itemCount, to }: Props) {
             !isActive,
         })
       }
+      end
       to={to}
     >
       {({ isActive }) => (

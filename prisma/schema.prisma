@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ResourceType {
+  ARTICLE
+  BOOK
+  OTHER
+  PODCAST
+  VIDEO
+}
+
 model Feed {
   id            String         @id @default(cuid())
   description   String
@@ -72,6 +80,7 @@ model Resource {
   updatedAt     DateTime       @updatedAt
   imageId       String?
   publisherId   String
+  type          ResourceType   @default(ARTICLE)
   image         Image?         @relation(fields: [imageId], references: [id])
   publisher     Publisher      @relation(fields: [publisherId], references: [id])
   feedResource  FeedResource?

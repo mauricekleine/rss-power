@@ -10,13 +10,13 @@ import { Card } from "~/features/ui/card";
 import { Stack } from "~/features/ui/layout";
 import { RelativeDate, SanitizedText } from "~/features/ui/typography";
 
-import type { ResourcesForFeedIdAndUserId } from "~/models/resource.server";
+import type { PaginatedResourcesForUserId } from "~/models/resource.server";
 import type { UserResource } from "~/models/user-resource.server";
 
 import ResourceCardHeader from "./resource-card-header";
 
 type Props = {
-  resource: ResourcesForFeedIdAndUserId[0];
+  resource: PaginatedResourcesForUserId[0];
   showPublisherInformation?: boolean;
   userResource?: SerializeFrom<UserResource>;
 };
@@ -37,7 +37,9 @@ export default function ResourceCard({
                 ? `/feeds/${resource.feedResource.feedId}`
                 : undefined
             }
-            title={resource.publisher?.title ?? resource.title}
+            title={`${resource.type}: ${
+              resource.publisher?.title ?? resource.title
+            }`}
           />
         </Card.Header>
       ) : null}

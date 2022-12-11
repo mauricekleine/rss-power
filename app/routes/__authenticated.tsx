@@ -1,4 +1,4 @@
-import type { LoaderArgs, SerializeFrom } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
@@ -6,8 +6,7 @@ import { useEffect, useState } from "react";
 import { SidebarLayout, TopbarNavigation } from "~/features/navigation";
 
 import { getFeedsForUserId } from "~/models/feed.server";
-import { getUnreadResourcesCountForUserId } from "~/models/resource.server";
-import { getUserResourceCountForUserId } from "~/models/user-resource.server";
+import { getResourceCountsByGroupForUserId } from "~/models/resource.server";
 
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
@@ -17,24 +16,19 @@ const POLLING_INTERVAL = 30 * 1000; // 30s
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
 
-  const [bookmarkedResources, feeds, snoozedResources, unreadResources] =
-    await Promise.all([
-      getUserResourceCountForUserId({ filter: { isBookmarked: true }, userId }),
-      getFeedsForUserId({ userId }),
-      getUserResourceCountForUserId({ filter: { isSnoozed: true }, userId }),
-      getUnreadResourcesCountForUserId({ userId }),
-    ]);
+  const [counts, feeds] = await Promise.all([
+    getResourceCountsByGroupForUserId({ userId }),
+    getFeedsForUserId({ userId }),
+  ]);
 
   return json({
-    bookmarkedResourcesCount: bookmarkedResources._all,
+    counts,
     feeds,
-    snoozedResourcesCount: snoozedResources._all,
-    unreadResourcesCount: parseInt(unreadResources[0].count.toString()), //BigInt
   });
 }
 
 export default function FeedsPage() {
-  const loaderData = useLoaderData<SerializeFrom<typeof loader>>();
+  const loaderData = useLoaderData<typeof loader>();
 
   const fetcher = useFetcher<typeof loaderData>();
   const [data, setData] = useState<typeof loaderData>(loaderData);
@@ -61,13 +55,7 @@ export default function FeedsPage() {
     <div className="flex h-full min-h-screen flex-col">
       <TopbarNavigation user={user} />
 
-      <SidebarLayout
-        bookmarkedResourcesCount={data.bookmarkedResourcesCount}
-        feeds={data.feeds}
-        snoozedResourcesCount={data.snoozedResourcesCount}
-        unreadResourcesCount={data.unreadResourcesCount}
-        user={user}
-      >
+      <SidebarLayout counts={data.counts} feeds={data.feeds}>
         <Outlet />
       </SidebarLayout>
     </div>

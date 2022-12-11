@@ -8,8 +8,7 @@ import { Stack } from "~/features/ui/layout";
 import { LazyList, parsePaginatedSearchParams } from "~/features/ui/lists";
 import { PageHeader } from "~/features/ui/typography";
 
-import { getPaginatedUnreadResourcesForUserId } from "~/models/resource.server";
-import { getUnreadResourcesCountForUserId } from "~/models/resource.server";
+import { getPaginatedResourcesForUserId } from "~/models/resource.server";
 
 import { requireUserId } from "~/session.server";
 
@@ -20,16 +19,13 @@ export async function loader({ request }: LoaderArgs) {
   const { limit, offset } = parsePaginatedSearchParams(url.searchParams);
 
   try {
-    const [count, resources] = await Promise.all([
-      getUnreadResourcesCountForUserId({ userId }),
-      getPaginatedUnreadResourcesForUserId({
-        limit,
-        offset,
-        userId,
-      }),
-    ]);
+    const [count, resources] = await getPaginatedResourcesForUserId({
+      limit,
+      offset,
+      userId,
+    });
 
-    return json({ count: parseInt(count[0].count.toString()), resources });
+    return json({ count, resources });
   } catch (e) {
     console.log(e);
     throw new Response("Not Found", { status: 404 });

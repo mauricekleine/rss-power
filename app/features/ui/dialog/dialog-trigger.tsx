@@ -6,5 +6,5 @@ type Props = {
 };
 
 export default function DialogTrigger({ children }: Props) {
-  return <Trigger>{children}</Trigger>;
+  return <Trigger asChild>{children}</Trigger>;
 }

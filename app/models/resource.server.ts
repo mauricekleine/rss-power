@@ -1,3 +1,4 @@
+import { ResourceType } from "@prisma/client";
 import type { Feed, Image, Resource, User } from "@prisma/client";
 import type { SerializeFrom } from "@remix-run/node";
 
@@ -6,6 +7,7 @@ import type { UserResourceFilter } from "~/models/user-resource.server";
 import { prisma } from "~/db.server";
 
 export type { Resource } from "@prisma/client";
+export { ResourceType };
 
 const DEFAULT_LIMIT = 50;
 const DEFAULT_OFFSET = 0;
@@ -88,59 +90,79 @@ export async function createOrUpdateResource({
   });
 }
 
+export type PaginatedResourcesForUserIdFilter = {
+  type?: ResourceType;
+} & UserResourceFilter;
+
 export function getPaginatedResourcesForUserId({
   filter,
   limit = DEFAULT_LIMIT,
   offset = DEFAULT_OFFSET,
   userId,
 }: {
-  filter: UserResourceFilter;
+  filter?: PaginatedResourcesForUserIdFilter;
   limit?: number;
   offset?: number;
   userId: User["id"];
 }) {
-  return prisma.resource.findMany({
-    include: {
-      feedResource: {
-        include: {
-          feed: {
-            include: {
-              image: true,
-            },
+  return prisma.$transaction([
+    prisma.resource.count({
+      where: {
+        type: filter?.type,
+        userResources: {
+          some: {
+            isBookmarked: filter?.isBookmarked,
+            isSnoozed: filter?.isSnoozed,
+            userId,
           },
         },
       },
-      image: true,
-      publisher: {
-        include: {
-          image: true,
+    }),
+    prisma.resource.findMany({
+      include: {
+        feedResource: {
+          include: {
+            feed: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        },
+        image: true,
+        publisher: {
+          include: {
+            image: true,
+          },
+        },
+        userResources: {
+          take: 1,
+          where: {
+            userId,
+          },
         },
       },
-      userResources: {
-        take: 1,
-        where: {
-          userId,
+      orderBy: [{ publishedAt: "desc" }, { feedResource: { order: "desc" } }],
+      skip: offset,
+      take: limit,
+      where: {
+        type: filter?.type,
+        userResources: {
+          some: {
+            hasRead: filter?.hasRead,
+            isBookmarked: filter?.isBookmarked,
+            isSnoozed: filter?.isSnoozed,
+            userId,
+          },
         },
       },
-    },
-    orderBy: [{ publishedAt: "desc" }, { feedResource: { order: "desc" } }],
-    skip: offset,
-    take: limit,
-    where: {
-      userResources: {
-        some: {
-          isBookmarked: filter.isBookmarked,
-          isSnoozed: filter.isSnoozed,
-          userId,
-        },
-      },
-    },
-  });
+    }),
+  ]);
 }
 
-export type ResourcesForUserId = Awaited<
-  ReturnType<typeof getPaginatedResourcesForUserId>
->;
+export type PaginatedResourcesForUserId = SerializeFrom<
+  typeof getPaginatedResourcesForUserId
+>[1];
 
 export function getPaginatedResourcesForFeedIdAndUserId({
   feedId,
@@ -192,63 +214,6 @@ export type ResourcesForFeedIdAndUserId = SerializeFrom<
   typeof getPaginatedResourcesForFeedIdAndUserId
 >;
 
-export async function getPaginatedUnreadResourcesForUserId({
-  limit = DEFAULT_LIMIT,
-  offset = DEFAULT_OFFSET,
-  userId,
-}: {
-  limit?: number;
-  offset?: number;
-  userId: User["id"];
-}) {
-  const ids = await prisma.$queryRaw<{ id: Resource["id"] }[]>`
-    SELECT "Resource".id FROM "Resource"
-    LEFT OUTER JOIN "FeedResource"
-      ON "FeedResource"."resourceId" = "Resource".id
-    LEFT OUTER JOIN "UserFeed"
-      ON "UserFeed"."feedId" = "FeedResource"."feedId"
-    LEFT OUTER JOIN "UserResource"
-      ON "UserResource"."resourceId" = "Resource".id AND "UserFeed"."userId" = "UserResource"."userId"
-    WHERE 
-      ("UserResource"."hasRead" = false OR "UserResource"."hasRead" IS NULL) AND
-      ("UserFeed"."userId" = ${userId} OR "UserResource"."userId" = ${userId})
-  `;
-
-  return prisma.resource.findMany({
-    include: {
-      feedResource: {
-        include: {
-          feed: {
-            include: {
-              image: true,
-            },
-          },
-        },
-      },
-      publisher: {
-        include: {
-          image: true,
-        },
-      },
-      image: true,
-      userResources: {
-        take: 1,
-        where: {
-          userId,
-        },
-      },
-    },
-    orderBy: [{ publishedAt: "desc" }, { feedResource: { order: "desc" } }],
-    skip: offset,
-    take: limit,
-    where: {
-      id: {
-        in: ids.map(({ id }) => id),
-      },
-    },
-  });
-}
-
 export function getResourceCountForFeedId({ feedId }: { feedId: Feed["id"] }) {
   return prisma.resource.count({
     select: {
@@ -270,21 +235,83 @@ export function getResourceForLink({ link }: Pick<Resource, "link">) {
   });
 }
 
-export function getUnreadResourcesCountForUserId({
+export async function getResourceCountsByGroupForUserId({
   userId,
 }: {
   userId: User["id"];
 }) {
-  return prisma.$queryRaw<{ count: number }[]>`
-    SELECT COUNT(*) FROM "Resource"
-    LEFT OUTER JOIN "FeedResource"
-      ON "FeedResource"."resourceId" = "Resource".id
-    LEFT OUTER JOIN "UserFeed"
-      ON "UserFeed"."feedId" = "FeedResource"."feedId"
-    LEFT OUTER JOIN "UserResource"
-      ON "UserResource"."resourceId" = "Resource".id AND "UserFeed"."userId" = "UserResource"."userId"
-    WHERE 
-      ("UserResource"."hasRead" = false OR "UserResource"."hasRead" IS NULL) AND
-      ("UserFeed"."userId" = ${userId} OR "UserResource"."userId" = ${userId})
-  `;
+  const [unreadCount, bookmarksCount, snoozedCount, groupedByTypeCounts] =
+    await prisma.$transaction([
+      prisma.resource.count({
+        where: {
+          userResources: {
+            some: {
+              hasRead: false,
+              userId,
+            },
+          },
+        },
+      }),
+      prisma.resource.count({
+        where: {
+          userResources: {
+            some: {
+              isBookmarked: true,
+              userId,
+            },
+          },
+        },
+      }),
+      prisma.resource.count({
+        where: {
+          userResources: {
+            some: {
+              isSnoozed: true,
+              userId,
+            },
+          },
+        },
+      }),
+      prisma.resource.groupBy({
+        _count: true,
+        by: ["type"],
+        where: {
+          userResources: {
+            some: {
+              userId,
+            },
+          },
+        },
+      }),
+    ]);
+
+  const counts = {
+    all: 0,
+    articles: 0,
+    bookmarks: bookmarksCount,
+    books: 0,
+    others: 0,
+    podcasts: 0,
+    snoozed: snoozedCount,
+    videos: 0,
+    unread: unreadCount,
+  };
+
+  groupedByTypeCounts.forEach(({ _count, type }) => {
+    const key = `${type.toLowerCase()}s` as `${Lowercase<ResourceType>}s`;
+    counts[key] = _count;
+  });
+
+  counts.all =
+    counts.articles +
+    counts.books +
+    counts.others +
+    counts.podcasts +
+    counts.videos;
+
+  return counts;
 }
+
+export type ResourceCountsByGroup = SerializeFrom<
+  typeof getResourceCountsByGroupForUserId
+>;
