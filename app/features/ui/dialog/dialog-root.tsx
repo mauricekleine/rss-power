@@ -8,8 +8,8 @@ type Props = {
   children: ReactNode | ReactNode[];
 };
 
-export default function DrawerRoot({ children }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function DialogRoot({ children }: Props) {
+  const [isOpen, setIsOpen] = useState(true);
   const transition = useTransition();
 
   useEffect(() => {

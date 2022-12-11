@@ -1,4 +1,4 @@
-import type { User, UserResource } from "@prisma/client";
+import type { UserResource } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
@@ -9,25 +9,6 @@ export type UserResourceFilter = {
   isBookmarked?: boolean;
   isSnoozed?: boolean;
 };
-
-export function getUserResourceCountForUserId({
-  filter,
-  userId,
-}: {
-  filter: UserResourceFilter;
-  userId: User["id"];
-}) {
-  return prisma.userResource.count({
-    select: {
-      _all: true,
-    },
-    where: {
-      isBookmarked: filter.isBookmarked,
-      isSnoozed: filter.isSnoozed,
-      userId,
-    },
-  });
-}
 
 export function updateUserResourceForResourceIdAndUserId({
   isBookmarked,

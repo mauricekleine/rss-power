@@ -4,27 +4,17 @@ import { Drawer } from "~/features/ui/drawer";
 import { List, X } from "~/features/ui/icon";
 
 import type { FeedsForUserId } from "~/models/feed.server";
-import type { User } from "~/models/user.server";
+import type { ResourceCountsByGroup } from "~/models/resource.server";
 
 import SidebarNavigation from "./sidebar-navigation";
 
 type Props = {
-  bookmarkedResourcesCount: number;
   children: ReactNode;
+  counts: ResourceCountsByGroup;
   feeds: FeedsForUserId;
-  snoozedResourcesCount: number;
-  unreadResourcesCount: number;
-  user: User;
 };
 
-export default function SidebarLayout({
-  bookmarkedResourcesCount,
-  children,
-  feeds,
-  snoozedResourcesCount,
-  unreadResourcesCount,
-  user,
-}: Props) {
+export default function SidebarLayout({ children, counts, feeds }: Props) {
   return (
     <>
       <Drawer>
@@ -42,13 +32,7 @@ export default function SidebarLayout({
           }
         >
           <div className="px-4 py-6">
-            <SidebarNavigation
-              bookmarkedResourcesCount={bookmarkedResourcesCount}
-              feeds={feeds}
-              snoozedResourcesCount={snoozedResourcesCount}
-              unreadResourcesCount={unreadResourcesCount}
-              user={user}
-            />
+            <SidebarNavigation counts={counts} feeds={feeds} />
           </div>
         </Drawer.Content>
       </Drawer>
@@ -58,13 +42,7 @@ export default function SidebarLayout({
       <div className="py-8">
         <div className="mx-auto max-w-3xl px-6 md:grid md:max-w-6xl md:grid-cols-12 md:gap-14 lg:px-8">
           <div className="hidden md:col-span-4 md:block lg:col-span-3">
-            <SidebarNavigation
-              bookmarkedResourcesCount={bookmarkedResourcesCount}
-              feeds={feeds}
-              snoozedResourcesCount={snoozedResourcesCount}
-              unreadResourcesCount={unreadResourcesCount}
-              user={user}
-            />
+            <SidebarNavigation counts={counts} feeds={feeds} />
           </div>
 
           <main className="md:col-span-8 lg:col-span-9">{children}</main>
